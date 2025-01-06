@@ -1,5 +1,5 @@
 //
-// Script for reconstructing the neutron flux from the direct method 
+// Script for reconstructing the proton spectra 
 //
 #include "TF1.h"
 #include "TH1D.h"
@@ -48,62 +48,6 @@ int parse_distances_data(int year, double *distances) {
     return 0;
 }
 
-std::vector<Double_t> giveMeTheAngle(
-    Long64_t N = 1e3,
-    Double_t D_mm = 149.7, 
-    Double_t target_radius_mm = 25.0 / 2, 
-    Double_t siA_radius_mm = sqrt(450.0 / TMath::Pi()), 
-    TVector3 target_n = TVector3(cos(TMath::Pi() / 4), 0., cos(TMath::Pi() / 4))
-) {
-    TRandom2 *rn = new TRandom2();
-    std::time_t seed = std::time(nullptr);
-    rn->SetSeed(seed);
-
-    std::vector<Double_t> angles; 
-
-    Double_t xt, yt, xd, yd;
-
-    TVector3 Point_detector, Point_target, distance;
-    TVector3 displacement(0.,0.,D_mm);
-
-    displacement.RotateY(-TMath::Pi()/9);
-
-    for(Int_t i=0;i<N;i++){
-        Point_target.SetX(target_radius_mm*2*(rn->Rndm()-0.5));
-        Point_target.SetY(target_radius_mm*2*(rn->Rndm()-0.5));
-        while(pow(Point_target.X(),2) + pow(Point_target.Y(),2) >= pow(target_radius_mm,2)){
-            Point_target.SetX(target_radius_mm*2*(rn->Rndm()-0.5));
-            Point_target.SetY(target_radius_mm*2*(rn->Rndm()-0.5));
-        }
-
-        Point_detector.SetX(siA_radius_mm*2*(rn->Rndm()-0.5));
-        Point_detector.SetY(siA_radius_mm*2*(rn->Rndm()-0.5));
-        while(pow(Point_detector.X(),2) + pow(Point_detector.Y(),2) >= pow(siA_radius_mm,2)){
-            Point_detector.SetX(siA_radius_mm*2*(rn->Rndm()-0.5));
-            Point_detector.SetY(siA_radius_mm*2*(rn->Rndm()-0.5));
-        }
-
-        Point_target.SetZ(0);
-        Point_detector.SetZ(0);
-
-
-        Point_target.RotateY(TMath::Pi()/4); //rotate point in target because the target has 45 deg inclination! 
-        Point_detector.RotateY(-TMath::Pi()/9);//rotate the coordinate to match the detector position
-    
-        Point_detector += displacement;
-
-        distance = Point_detector - Point_target;
-        //here we have coordinates in target (xt,yt) and detector (xd,xy)! 
-        //Now we will calculate the angle
-
-        angles.push_back(distance.Angle(displacement));
-
-    }
-
-    return angles;
-
-}
-
 
 void EtotFromSi1v3(){
     
@@ -126,9 +70,9 @@ KVMaterial *det1 = new KVMaterial("Si");//,tSi1*KVUnits::um);
 //---ooOOOoo---.---ooOOOoo---.---ooOOOoo---.---ooOOOoo---.---ooOOOoo---.---ooOOOoo---.---ooOOOoo---.---ooOOOoo---.
 
 
-TFile *ff = new TFile("/home/dearruda/ganil/medley_2023/reduced/370deb_v3.root","READ");
-
-ff = new TFile("/home/dearruda/ganil/medley_2023/reduced/370v5.root","READ");
+//TFile *ff = new TFile("/media/dearruda/Elements/LucasAnalysis/2023/reducedv61/370.root","READ");
+TFile *ff = new TFile("/media/dearruda/Elements/LucasAnalysis/2023/reducedv61/388.root","READ");
+//ff = new TFile("/home/dearruda/ganil/medley_2023/reduced/370v5.root","READ");
 
 
 tx = (TTree*) ff->Get("M");
@@ -137,7 +81,6 @@ Long64_t nEntries = tx->GetEntries();
 cout<<"number of events: "<<floor(nEntries)<<"k."<<endl;
 
 
- 
 //vector<Double_t> angles = giveMeTheAngle(nEntries);
 
 Int_t pid;
