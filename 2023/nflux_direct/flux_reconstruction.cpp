@@ -11,7 +11,7 @@
 #include <string>
 #include <iostream>
 #include <fstream>
-#include "/media/dearruda/Elements/LucasAnalysis/useful.h" //version6.10.2024.0002
+#include "/mnt/medley/LucasAnalysis/useful.h" //version6.10.2024.0002
 
 #include "TStopwatch.h"
 #include <time.h>
@@ -73,7 +73,7 @@ hh->Draw("same");
 //__.__.__.__.__.__.__.__.__.__.__.__.__.__.__.__.__.__.__.__.__.__.__.__.__.__.__.
 // calculating N flux
 
-TGraph *xs = new TGraph("/media/dearruda/Elements/LucasAnalysis/cross_secs/XS/nn.org_np_2to40MeV_LABrf_20.40.60.80deg.csv","%lg %lg %*lg %*lg %*lg",",");
+TGraph *xs = new TGraph("/mnt/medley/LucasAnalysis/cross_secs/XS/nn.org_np_2to40MeV_LABrf_20.40.60.80deg.csv","%lg %lg %*lg %*lg %*lg",",");
 double NA = 6.023e23;
 double NatH = 2*mch2*NA/14.0; // [mass of CH2 ⋅ NA / MM(CH2)] //TAKE A LOOK HERE
 double L = 464.72; //cm

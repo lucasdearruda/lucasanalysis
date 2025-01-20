@@ -5,20 +5,19 @@
 #include <TMath.h>
 #include "TVector3.h"
 #include "TMatrixT.h"
-#include "/home/pi/ganil/libraries/LArruda.h"
+#include "/home/dearruda/ganil/libraries/LArruda.h"
 #include "TStopwatch.h"
 #include "TFile.h"
 #include <iostream>
 
-string ganil_folder= "/home/pi/ganil/"; 
-
 //This function generates a random value following the given histogram
-double_t newEnergy(TH1D *h, TRandom2 *rn){
+double_t newEnergy( TH1D *h, TRandom2 *rn){
 
-    Double_t x,y, newE, maxCounts, a, b, yv;
-    Int_t nbins = h->GetNbinsX();
-    Int_t FirstBin = 1;
-    Int_t LastBin = 1;
+    	 Double_t x,y, newE, maxCounts, a, b, yv;
+         Int_t nbins = h->GetNbinsX();
+         Int_t FirstBin = 1;
+         Int_t LastBin = 1;
+
 
 //find the first non-zeron bins in ascending and descanding order
     Int_t i=1;
@@ -84,7 +83,7 @@ double_t newEnergy(TH1D *h, TRandom2 *rn){
 
 
 
-void apply_correction(string pElossFileName = Form("%s/kalscripts/eloss/results/UniformZ/CH2/v6/eloss_p_0.3deg_050.0um.root",ganil_folder.c_str()), string pSpecFileName = "protonsCH2.root", string target_mat = "CH2",Double_t th = 50){
+void apply_correction(string pElossFileName = "/home/dearruda/ganil/kalscripts/eloss/results/UniformZ/CH2/eloss_p_20.0deg.root", string pSpecFileName = "protonsCH2.root", string target_mat = "CH2",Double_t th = 50){
 TStopwatch timer;
 
 char particle = 'p';
@@ -100,11 +99,9 @@ if (!fEloss || fEloss->IsZombie()) {
     return; // Exit the function if the file does not exist or could not be opened
 }
 
-//create the TTree to the loss file 
+
 TTree *ElTree = (TTree*)fEloss->Get("SIM");
 
-
-//defining the response function:
 Int_t nbins = 200;
 TH2D *h= new TH2D("h","h",nbins, 0,40,nbins,0,40);
 TCanvas *c0 = new TCanvas("response_func_canvas","response_func_canvas",50,50,800,600);
@@ -119,12 +116,8 @@ h->Draw("colz");
 gPad->SetGridx();
 gPad->SetGridy();
 
-
 //TH1D *projY= h->ProjectionY("df",16,16);
 
-TCanvas *cc = new TCanvas();
-//projY->Draw();
-/*
 TH1D *projY[nbins+1];
 for (int b = 1; b <=nbins; b++)
 {
@@ -185,6 +178,6 @@ corrected_exp->SaveAs(SaveFileName.c_str());
 
 c1->SaveAs(SaveFileNameImage.c_str());
 c0->SaveAs(SaveFileNameImageRF.c_str());
-*/
+
 timer.Print();
 }
