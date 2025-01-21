@@ -12,79 +12,7 @@
 
 string ganil_folder= "/home/pi/ganil/"; 
 
-//This function generates a random value following the given histogram
-double_t newEnergy(TH1D *h, TRandom2 *rn){
-
-    Double_t x,y, newE, maxCounts, a, b, yv;
-    Int_t nbins = h->GetNbinsX();
-    Int_t FirstBin = 1;
-    Int_t LastBin = 1;
-
-//find the first non-zeron bins in ascending and descanding order
-    Int_t i=1;
-    while(!h->GetBinContent(i))
-    {
-        i++;
-        if(i == nbins)
-        {
-            cout<<"ZEROED HISTO!!!"<<endl;
-            return -1.0;
-        }
-    }
-    FirstBin = i;
-    i=nbins;
-    while(!h->GetBinContent(i))
-    {
-        i--;
-        if(i == 1)
-        {
-            cout<<"CRAZY ERROR!!!"<<endl;
-            return -1.0;
-        }
-    }
-    LastBin = i;
-
-    maxCounts =0;
-    Int_t binMaxCounts =-1;
-    for(Int_t b=FirstBin; b<=LastBin;b++)
-    {
-        if(h->GetBinContent(b)>maxCounts)
-        {
-            maxCounts = h->GetBinContent(b);
-            binMaxCounts = b;
-        } 
-    }
-    //cout<<"FirstBin = "<<FirstBin<<", LastBin = "<<LastBin<<". MaxCounts = "<<maxCounts<<" for bin #"<<binMaxCounts<<endl;
-
-    Int_t binX=0;
-
-    //defining the limits for random generation:
-    a = h->GetBinLowEdge(FirstBin);
-    b = h->GetBinLowEdge(LastBin+1);
-
-    x = a + (b-a)*rn->Rndm();
-    y = maxCounts*rn->Rndm();
-    
-    binX = h->GetXaxis()->FindBin(x);
-    yv = h->GetBinContent(binX);
-
-    while(y>yv){
-        //generate another x,y random pair
-        x = a + (b-a)*rn->Rndm();
-        y = maxCounts*rn->Rndm();
-        
-        //find the correspondent location
-        binX = h->GetXaxis()->FindBin(x);
-        yv = h->GetBinContent(binX);
-    }
-
-    return x;
-}
-
-
-
-
-void apply_correction(string pElossFileName = Form("%s/kalscripts/eloss/results/UniformZ/CH2/v6/eloss_p_0.3deg_050.0um.root",ganil_folder.c_str()), string pSpecFileName = "protonsCH2.root", string target_mat = "CH2",Double_t th = 50){
+void apply_correction2(string pElossFileName = Form("%s/kalscripts/eloss/results/UniformZ/CH2/v6/eloss_p_0.3deg_050.0um.root",ganil_folder.c_str()), string pSpecFileName = "protonsCH2.root", string target_mat = "CH2",Double_t th = 50){
 TStopwatch timer;
 
 char particle = 'p';
@@ -159,7 +87,7 @@ for (Int_t bn = 1; bn <= expSpec->GetNbinsX(); bn++)
 binProj = h->GetXaxis()->FindBin(expSpec->GetBinCenter(bn));
   for (Int_t i = 0; i < expSpec->GetBinContent(bn); i++)
   {
-    corrected_exp->Fill(newEnergy(projY[binProj],rand));
+    corrected_exp->Fill(projY[binProj]->GetRandom(rand));
   }
   
 }
