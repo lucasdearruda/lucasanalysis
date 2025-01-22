@@ -37,20 +37,20 @@ return (Qch2/Qc)* ((mch2/mmch2) / (mc/mmc));
 }
 
 
-void flux_reconstruction(){
-TFile *ff = new TFile("protonsCH2.root", "READ");
+TH1D* flux_reconstruction(string ch2file = "protonsCH2_corrected.root", string cfile = "protonsC_corrected.root", string name = "hexp"){
+TFile *ff = new TFile(ch2file.c_str(), "READ");
 
 TCanvas *c1 = new TCanvas("CH2_cv","CH2_cv");
 
 ff->Print();
-pch2 =  (TH1D*)ff->Get("hnew");
+pch2 =  (TH1D*)ff->Get(name.c_str());
 pch2->SetNameTitle("hch2","hch2");
 pch2->Draw();
 
 TCanvas *c2 = new TCanvas("C_cv","C_cv");
-ff = new TFile("protonsC.root", "READ");
+ff = new TFile(cfile.c_str(), "READ");
 ff->Print();
-pc =  (TH1D*)ff->Get("hnew");
+pc =  (TH1D*)ff->Get(name.c_str());
 pc->SetNameTitle("hc","hc");
 pc->Draw();
 
@@ -110,4 +110,6 @@ TGraphErrors *nspec = (TGraphErrors *)fflux->Get("Nspectrum");
 nspec->SetLineWidth(2);
 
 nspec->Draw("same");
+
+return nn;
 }
