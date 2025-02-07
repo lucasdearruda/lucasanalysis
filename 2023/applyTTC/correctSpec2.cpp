@@ -2,9 +2,6 @@
 ////////////////////////////////////////////////////////
 Function to correct spectrum, mode adapted to the new eloss files
 
-
-
-
 */
 #include "KVMaterial.h"
 #include "KVUnits.h"
@@ -22,13 +19,46 @@ Function to correct spectrum, mode adapted to the new eloss files
 string ganil_folder= "/home/pi/ganil/"; 
 
 
+TGraph *Fcorr(TTree *S, Int_t nbins = 400, bool drawit = true){
+
+TH1D *hprod = new TH1D("hprod","hprod",nbins,0,40);
+TH1D *hlost = new TH1D("hlost","hlost",nbins,0,40);
+
+S->Draw("E>>hprod","","goff");
+S->Draw("E>>hlost","!transmitted","goff");
+
+TGraph *Ffunc = new TGraph();
+Double_t F; 
+for(int i = 1; i <= nbins; i++){
+    F = hprod->GetBinContent(i)/(hprod->GetBinContent(i) - hlost->GetBinContent(i));
+    //F = F/hprod->GetBinWidth(i);
+    Ffunc->AddPoint(hprod->GetBinCenter(i),F);
+}
+Ffunc->GetXaxis()->SetTitle("Energy (MeV)");
+Ffunc->GetYaxis()->SetTitle("F factor ");
+
+if(drawit){
+    TCanvas *corrFcv = new TCanvas("corrFactorCv","correction Factor -- lost particles",150,150,800,678);
+    corrFcv->SetLeftMargin(0.14);
+
+    Ffunc->Draw("ALP");
+    gPad->SetGridx();
+    gPad->SetGridy();
+}
+
+return Ffunc;
+
+}
+
+
 TH1D* correctSpec(TH1D *expSpec = nullptr,
-                        string pSpecFileName = "myspec.root",
-                        string pElossFileName = "/home/pi/ganil/kalscripts/eloss/results/UniformZ/C/v6/eloss_p_0.3deg_075.0um.root", 
+                        bool correctDead = false,
+                        string pElossFileName = "/home/pi/ganil/kalscripts/eloss/results/UniformZ/C/v6/eloss_p_20.0deg_075.0um.root", 
                         string target_mat = "C",
                         Double_t th = 75,
                         char particle = 'p',
-                        bool saveCanvas = false
+                        bool saveCanvas = false,
+                        string pSpecFileName = "myspec.root"
                         ){
 
 TStopwatch timer;
@@ -81,9 +111,6 @@ gStyle->SetOptStat("e");
 h->SetTitle(Form("protons leaving %s target, %4.1f#mum",target_mat.c_str(),th));
 h->GetXaxis()->SetTitle("Measured proton energy (MeV)");
 h->GetYaxis()->SetTitle("Initial proton energy (MeV)");
-//h->Draw("colz");
-//gPad->SetGridx();
-//gPad->SetGridy();
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //creating the projections over Y axis
@@ -147,7 +174,7 @@ corrected_exp->SetFillColor(kRed);
 corrected_exp->SetFillStyle(3005);
 corrected_exp->SetLineColor(kRed);
 corrected_exp->SetLineWidth(2);
-expSpec->SetLineColor(kBlue);
+expSpec->SetLineColor(kBlack);
 expSpec->SetLineWidth(2);
 
 cvID =2;
@@ -201,6 +228,65 @@ if (gSystem->AccessPathName(directory.c_str())) { // Diretório NÃO existe
     std::cout << "Directory already exists: " << directory << std::endl;
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//generate correction factor for lost particles
+//Create a canvas to temporarly store the corrected spectrum
+
+TH1D *c2_exp;
+if(correctDead){
+TCanvas *corrFcv = new TCanvas("corrFactorCv","correction Factor -- lost particles",150,150,800,678);
+corrFcv->SetLeftMargin(0.14);
+cout<<"\n.\n.\n.nbins = "<<nbins<<endl;
+
+TH1D *hprod = new TH1D("hprod","hprod",nbins,expSpec->GetBinLowEdge(1),expSpec->GetBinLowEdge(nbins+1));
+TH1D *hlost = new TH1D("hlost","hlost",nbins,expSpec->GetBinLowEdge(1),expSpec->GetBinLowEdge(nbins+1));
+
+// //  problem with bins
+// hprod->Rebin(2);    
+// hlost->Rebin(2);    
+// cout<<"\n.\n.\n.nbins = "<<hprod->GetNbinsX()<<endl;
+
+// nbins = hprod->GetNbinsX();
+
+
+ElTree->Draw("E>>hprod","","goff");
+ElTree->Draw("E>>hlost","!transmitted","goff");
+
+TGraph *Ffunc = Fcorr(ElTree,nbins,false);
+Ffunc->GetXaxis()->SetTitle("Energy (MeV)");
+Ffunc->GetYaxis()->SetTitle("F factor ");
+Ffunc->Draw("ALP");
+
+gPad->SetGridx();
+gPad->SetGridy();
+
+
+c2_exp = (TH1D*)corrected_exp->Clone();
+c2_exp->SetNameTitle("c2_exp","c2_exp");
+
+for(int i = 1; i <= c2_exp->GetNbinsX(); i++){
+    c2_exp->SetBinContent(i,corrected_exp->GetBinContent(i)*Ffunc->Eval(corrected_exp->GetBinCenter(i)));
+}
+corrCv->cd(2);
+c2_exp->SetLineColor(kBlue);
+c2_exp->SetFillColor(kCyan);
+c2_exp->SetFillStyle(3004);
+c2_exp->SetLineWidth(2);
+c2_exp->Draw("same");
+TLegend *leg = new TLegend(0.6,0.6,0.9,0.9);
+leg->AddEntry(expSpec,"Experimental Spectrum","lpf");
+leg->AddEntry(corrected_exp,"Corrected Spectrum","lpf");
+leg->AddEntry(c2_exp,"Corrected Spectrum with F factor","lpf");
+leg->Draw();
+}else{ // if correctDead is false...
+    corrCv->cd(2);
+    TLegend *leg = new TLegend(0.6,0.6,0.9,0.9);
+    leg->AddEntry(expSpec,"Experimental Spectrum","lpf");
+    leg->AddEntry(corrected_exp,"Corrected Spectrum","lpf");
+    leg->Draw();
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 if(saveCanvas){
     corrCv->SaveAs(Form("%s/%s_TTC.root",directory.c_str(),pSpecFileName.substr(0, pSpecFileName.find_last_of('.')).c_str()));
@@ -209,7 +295,11 @@ if(saveCanvas){
     cout << "Saving canvas as: " << Form("%s/%s_TTC.root (.pdf and .png)",directory.c_str(),pSpecFileName.substr(0, pSpecFileName.find_last_of('.')).c_str()) << endl;
     
 }
-return corrected_exp;
+
+
 timer.Print();
+
+if(correctDead)return c2_exp;
+else return corrected_exp;
 
 }
