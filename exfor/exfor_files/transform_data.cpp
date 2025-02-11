@@ -79,10 +79,12 @@ txs->SetBranchAddress("XSerr", &XSerr_read);
     std::cout << "Reference: " << reference << std::endl;
 
     char existing_reference[200]; 
-    char existing_dataset[200];  // Para armazenar o dataset existente no TTree
+    char existing_dataset[200];
+    char existing_particle[200];  // Para armazenar o dataset existente no TTree
     bool dataset_exists = false;
     // Criar a árvore principal se ainda não existir
     if (!tree_exists) {
+        cout<<"TTree does not exist: creating it..."<<endl;
         final_tree = new TTree("DataTree", "Cross-section data");
 
 
@@ -96,12 +98,13 @@ txs->SetBranchAddress("XSerr", &XSerr_read);
         final_tree->Branch("Reference", &reference,"reference/C");
 
     }else{ // se existir settamos a coisa 
+        cout<<"TTree does exist: completing it..."<<endl;
         final_tree->SetBranchAddress("EN", &EN);
         final_tree->SetBranchAddress("E", &E);
         final_tree->SetBranchAddress("Ang", &Ang);
         final_tree->SetBranchAddress("XS", &XS);
         final_tree->SetBranchAddress("XSerr", &XSerr);
-        final_tree->SetBranchAddress("Particle", &particle);
+        final_tree->SetBranchAddress("Particle", &existing_particle);
         final_tree->SetBranchAddress("Dataset", &existing_dataset);
         final_tree->SetBranchAddress("Reference", &existing_reference);
     }
@@ -130,6 +133,7 @@ txs->SetBranchAddress("XSerr", &XSerr_read);
         std::cout << "Dataset não encontrado!" << std::endl;
         final_tree->SetBranchAddress("Dataset", &dataset);
         final_tree->SetBranchAddress("Reference", &reference);
+        final_tree->SetBranchAddress("Particle", &particle);
     }
 
 
