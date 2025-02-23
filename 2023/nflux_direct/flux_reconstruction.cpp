@@ -12,6 +12,8 @@
 #include <iostream>
 #include <fstream>
 #include "/mnt/medley/LucasAnalysis/useful.h" //version6.10.2024.0002
+#include "/home/pi/ganil/kalscripts/eloss/GetPPlot.cpp"
+
 
 #include "TStopwatch.h"
 #include <time.h>
@@ -38,6 +40,7 @@ return (Qch2/Qc)* ((mch2/mmch2) / (mc/mmc));
 
 
 TH1D* flux_reconstruction(string ch2file = "protonsCH2_corrected.root", string cfile = "protonsC_corrected.root", string name = "hexp"){
+//TH1D* flux_reconstruction(string ch2file = "protonsCH2.root", string cfile = "protonsC.root", string name = "hexp"){
 TFile *ff = new TFile(ch2file.c_str(), "READ");
 
 TCanvas *c1 = new TCanvas("CH2_cv","CH2_cv");
@@ -59,7 +62,7 @@ pc->Draw();
 TH1D *hh = (TH1D*)pch2->Clone();
 hh->SetNameTitle("hh","hh");
 double subfac = sub_fac(qCH2,qC,mch2,mc);
-cout<<subfac<<endl;
+cout<<"subtraction facto = "<< subfac<<endl;
 hh->Add(pc,-subfac);
 
 c1->cd();
@@ -86,8 +89,6 @@ double factor_mult = TMath::Pi()*2*sin(TMath::Pi()*20/180)*pow(L,2)/(NatH*omega_
 TH1D *nn = (TH1D*)hh->Clone();
 nn->SetNameTitle("nn","nn");
 
-TCanvas *c3 = new TCanvas("Nflux_cv","Nflux_cv");
-
 double bincontent, bincounts, bincenter,bin_width, xs_value ;
 
 for(Int_t b=1;b<=nn->GetNbinsX();b++){
@@ -103,13 +104,40 @@ for(Int_t b=1;b<=nn->GetNbinsX();b++){
 
 
 
+TGraph *gF = GetPfactor();
+TCanvas *cF = new TCanvas("Pfactor","Pfactor");
+gF->Draw("ALP");
+
+TCanvas *c3 = new TCanvas("Nflux_cv","Nflux_cv");
+
+
 nn->Draw();
+
+TH1D *nn2 = (TH1D*)nn->Clone();
+nn2->SetNameTitle("nn2","nn2");
+
+for(Int_t b=1;b<=nn2->GetNbinsX();b++){
+    bincounts = nn2->GetBinContent(b);
+    bincenter = nn2->GetBinCenter(b);
+
+    bincontent = bincounts*gF->Eval(bincenter); 
+    nn2->SetBinContent(b,bincontent); 
+
+    
+}
+nn2->SetLineColor(kRed);
+nn2->Draw("same");
+
+
 
 TFile *fflux = new TFile("run111.root","READ");
 TGraphErrors *nspec = (TGraphErrors *)fflux->Get("Nspectrum");
 nspec->SetLineWidth(2);
 
 nspec->Draw("same");
+
+
+
 
 return nn;
 }
