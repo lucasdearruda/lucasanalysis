@@ -1,8 +1,8 @@
 /*
 //Set of functions developed by Lucas de Arruda//
-version2025.01.24.001
+version2025.02.24.001
 
-
+2025-01-24::  giveMeTheAngle2 added
 2025-01-24:: definParticle added. Taken originally from kalscripts/eloss/includes/functions.hh
 2024-10-18::  new version of giveMeTheAngle added
 */
@@ -134,6 +134,69 @@ std::vector<Double_t> giveMeTheAngle(
 
 }
 
+
+
+std::vector<Double_t> giveMeTheAngle2(
+    Long64_t N = 1e3,
+    Double_t angle_telescope = 20.0, 
+    Double_t D_mm = 149.7, 
+    Double_t target_radius_mm = 25.0 / 2, 
+    Double_t siA_radius_mm = sqrt(450.0 / TMath::Pi()), 
+    TVector3 target_n = TVector3(cos(TMath::Pi() / 4), 0., cos(TMath::Pi() / 4))
+) {
+    TRandom2 *rn = new TRandom2();
+    std::time_t seed = std::time(nullptr);
+    rn->SetSeed(seed);
+
+    std::vector<Double_t> angles; 
+
+    Double_t xt, yt, xd, yd;
+
+    TVector3 Point_detector, Point_target, distance;
+    TVector3 displacement(0.,0.,D_mm);
+
+    if(angle_telescope<=90){
+        displacement.RotateY(-(angle_telescope/180.)*TMath::Pi());
+    }else{
+        displacement.RotateY((angle_telescope/180.)*TMath::Pi());
+    }
+        
+
+    for(Int_t i=0;i<N;i++){
+        Point_target.SetX(target_radius_mm*2*(rn->Rndm()-0.5));
+        Point_target.SetY(target_radius_mm*2*(rn->Rndm()-0.5));
+        while(pow(Point_target.X(),2) + pow(Point_target.Y(),2) >= pow(target_radius_mm,2)){
+            Point_target.SetX(target_radius_mm*2*(rn->Rndm()-0.5));
+            Point_target.SetY(target_radius_mm*2*(rn->Rndm()-0.5));
+        }
+
+        Point_detector.SetX(siA_radius_mm*2*(rn->Rndm()-0.5));
+        Point_detector.SetY(siA_radius_mm*2*(rn->Rndm()-0.5));
+        while(pow(Point_detector.X(),2) + pow(Point_detector.Y(),2) >= pow(siA_radius_mm,2)){
+            Point_detector.SetX(siA_radius_mm*2*(rn->Rndm()-0.5));
+            Point_detector.SetY(siA_radius_mm*2*(rn->Rndm()-0.5));
+        }
+
+        Point_target.SetZ(0);
+        Point_detector.SetZ(0);
+
+
+        Point_target.RotateY(TMath::Pi()/4); //rotate point in target because the target has 45 deg inclination! 
+        Point_detector.RotateY(-TMath::Pi()/9);//rotate the coordinate to match the detector position
+    
+        Point_detector += displacement;
+
+        distance = Point_detector - Point_target;
+        //here we have coordinates in target (xt,yt) and detector (xd,xy)! 
+        //Now we will calculate the angle
+
+        angles.push_back(distance.Angle(displacement));
+
+    }
+
+    return angles;
+
+}
 
 string listfiles(const char *dirname=getenv("PWD"),const char *ext="" ){
 //show the files and the return the name of the chosen one
