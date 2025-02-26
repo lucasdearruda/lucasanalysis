@@ -1,12 +1,49 @@
 /*
 //Set of functions developed by Lucas de Arruda//
-version2025.02.26.001
+version2025.02.26.002
 
-2025-01-26::  beamlivetime update. The method tx->GetMaximum() was causing a segmentation fault 
+2025-01-26.2::  cration of function GiveMetheCharge
+2025-01-26.1::  beamlivetime update. The method tx->GetMaximum() was causing a segmentation fault 
 2025-01-24::  giveMeTheAngle2 added
 2025-01-24:: definParticle added. Taken originally from kalscripts/eloss/includes/functions.hh
 2024-10-18::  new version of giveMeTheAngle added
 */
+
+Float_t GiveMeTheCharge(
+	Int_t runa = 31,
+	Int_t runb = 32,
+	string namefile = "/mnt/medley/LucasAnalysis/2023/runlist.csv", 
+	string fileformat = "RunN/I:Or/C:Target/C:Time_s/I:Time_h/F:TimeEval_s/I:TimeEval_h/F:ChargeIntegrator/F:ChargeFaraday/F"){
+
+cout<<"---------------------------------------------------"<<endl;
+TTree *InfoTree = new TTree("InfoTree", "InfoTree");
+InfoTree->ReadFile(namefile.c_str(), fileformat.c_str());
+
+Int_t RunN;
+Float_t ChargeFaraday;
+Float_t TotalChargeFaraday = 0;
+
+InfoTree->SetBranchAddress("RunN", &RunN);
+InfoTree->SetBranchAddress("ChargeFaraday", &ChargeFaraday);
+
+for(int i=0;i<InfoTree->GetEntries();i++)
+{
+    InfoTree->GetEntry(i);
+    //cout<< i<<", nrun = "<<RunN<< endl;
+    if (RunN<= runb && RunN>=runa)
+    {
+        //InfoTree->GetEntry(i);
+        cout << "RunN: " << RunN << " ChargeFaraday: " << ChargeFaraday << endl;
+        TotalChargeFaraday += ChargeFaraday;
+    }
+}
+cout<<"---------------------------------------------------"<<endl;
+cout<< "Total Charge Faraday: " << TotalChargeFaraday <<" µC"<< endl;
+
+
+return TotalChargeFaraday;
+
+}
 
 
 void defineParticle(char particle, Int_t* Zfis, Int_t* Afis){
