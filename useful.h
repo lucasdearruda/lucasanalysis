@@ -1,7 +1,8 @@
 /*
 //Set of functions developed by Lucas de Arruda//
-version2025.02.24.001
+version2025.02.26.001
 
+2025-01-26::  beamlivetime update. The method tx->GetMaximum() was causing a segmentation fault 
 2025-01-24::  giveMeTheAngle2 added
 2025-01-24:: definParticle added. Taken originally from kalscripts/eloss/includes/functions.hh
 2024-10-18::  new version of giveMeTheAngle added
@@ -709,25 +710,56 @@ Long64_t GetFirstNonZero(TTree *G, const char* branchName = "Medley_1_SI_DE2TS")
 }
 
 
+Long64_t GetLasttNonZero(TTree *G, const char* branchName = "Medley_1_SI_DE2TS"){
+    ULong64_t value, nE;
+    value = 0;
+    G->SetBranchAddress(branchName,&value);
+    nE=G->GetEntries();
+    for(Int_t i=nE-1; i>=0;i--){
+    	G->GetEntry(i);
+	if(value){
+	//cout<<"evt "<<i<<endl;
+	break;
+
+	}
+
+	}
+    return value;
+}
+
+
 //function to get the beam live time 
-TH1D *beamlivetime(TTree * tx, string branchname="Medley_1_SI_DE2TS",float *time_sec=NULL, float *avc = NULL, float *totaltime = NULL,float threshold = 20,string histoname="hc"){
+TH1D *beamlivetime(TTree * tx, string branchname="Medley_1_SI_DE2TS",float *time_sec=NULL, float *avc = NULL, float *totaltime = NULL,float threshold = 20,string histoname="hc", bool drawit =false){
 
 //Float_t firstvalue = GetFirstNonZero(tx)/1.e8;
-Float_t firstvalue = GetFirstNonZero(tx,branchname.c_str())/1.e8;
-Float_t lastvalue = tx->GetMaximum(branchname.c_str())/1.e8;
+Long64_t firstvalue = GetFirstNonZero(tx,branchname.c_str())/1.e8;
+Long64_t lastvalue = GetLasttNonZero(tx,branchname.c_str())/1.e8;
+
 Int_t nbinstime = round(lastvalue - firstvalue) +1;
-*totaltime = lastvalue - firstvalue;
+if(totaltime) *totaltime = lastvalue - firstvalue;
 
-cout << ">>>> 'beamlivetime' function report ---------------------------------"<<endl;
-cout<<".\n. first value found: "<<firstvalue<<endl;
-cout<<". last value found: "<<lastvalue<<endl;
-cout<<". bins TS histo: "<<nbinstime;
-
+cout << ">>>> 'beamlivetime' function report: (considering TS branches)-------"<<endl;
+cout<<".\n. first value found: "<<firstvalue<<" seconds."<<endl;
+cout<<". last value found: "<<lastvalue<<" seconds."<<endl;
+cout<<". bins TS histo: "<<nbinstime<<" seconds.\n."<<endl;
+cout << ">>>>-----------------------------------------------------------------"<<endl;
 
 
   TH1D *hc=new TH1D(histoname.c_str(),Form("counts over time: %s",histoname.c_str()),nbinstime,0,nbinstime);
+
     //cout<<"Maximum TT = "<<tx->GetMaximum
-  tx->Draw(Form("%s/1.e8 - %f>>%s",branchname.c_str(),firstvalue,histoname.c_str()),"","goff");	// Divide by 1.e8 to get it in s, because time stamp happens every 10 ns;
+if(drawit){
+    hc->GetXaxis()->SetTitle("time (s)");
+    tx->Draw(Form("%s/1.e8 - %lld>>%s",branchname.c_str(),firstvalue,histoname.c_str()),"");	// Divide by 1.e8 to get it in s, because time stamp happens every 10 ns;
+    TF1 *f1 = new TF1("f1","pol0",0,nbinstime);
+    f1->SetParameter(0,threshold);
+    f1->SetLineColor(kRed);
+    f1->SetLineWidth(2);
+    f1->Draw("same");
+}else{
+    tx->Draw(Form("%s/1.e8 - %lld>>%s",branchname.c_str(),firstvalue,histoname.c_str()),"", "goff");	// Divide by 1.e8 to get it in s, because time stamp happens every 10 ns;
+}
+  
    Int_t nbins=hc->GetNbinsX();
   //cout << "nbins= " << nbins << " limits: " << h1->GetXaxis()->GetXmin() << " " << h1->GetXaxis()->GetXmax() << endl;
   Int_t realbeamtime=0;
@@ -748,16 +780,20 @@ cout<<". bins TS histo: "<<nbinstime;
   }
 
   CR = 1.*CR/realbeamtime; //in secs
-  cout << "\n.\n>> Livetime summary -------------------------------------------------"<<endl;
+  cout << "\n\n>> Livetime summary -------------------------------------------------"<<endl;
 
   cout << ". Real beam time: " << realbeamtime <<  "(s)  = " << realbeamtime/3600. << " (h). Avg CR = " << CR<< "/s" << endl;
-  *time_sec = realbeamtime;
-  *avc = CR;
+  if(time_sec)*time_sec = realbeamtime;
+  if(avc)*avc = CR;
     cout << ".\n---------------------------------------------------------------------"<<endl;
 
 return hc;
 
+
+
 }
+
+
 
 
 //function for getting gamma flash
