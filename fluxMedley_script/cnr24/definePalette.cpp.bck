@@ -1,0 +1,464 @@
+#include "TColor.h"
+/*
+#include "TStyle.h"
+#include "TH2F.h"
+#include "TRandom.h"
+#include "TCanvas.h"
+
+// Define Wong's color palette
+void SetWongPalette(int id=1) {
+    const Int_t nColors =0;
+    Int_t colors[nColors] = {};
+    if(id==1){//Bang Won's
+        nColors = 9;
+        colors[nColors] = {
+            TColor::GetColor("#000000"),  // Black
+            TColor::GetColor("#E69F00"),  // Yellow
+            TColor::GetColor("#56B4E9"),  // Cyan
+            TColor::GetColor("#009E73"),  // Green
+            TColor::GetColor("#F0E442"),  // Yellow
+            TColor::GetColor("#0072B2"),  // Blue
+            TColor::GetColor("#D55E00"),  // Orange
+            TColor::GetColor("#CC79A7"),  // Rose
+        };
+    }else if(id==2){//IBM's
+        nColors = 5;
+        colors[nColors] = {
+                TColor::GetColor("#648FFF"),  // Blue
+                TColor::GetColor("#785EF0"),  // Purple
+                TColor::GetColor("#DC267F"),  // Salmon
+                TColor::GetColor("#FE6100"),  // Orange
+                TColor::GetColor("#FFB000"),  // Gold
+        };
+    }else if(id==3){//Paul Tol's
+        nColors = 8;
+        colors[nColors] = {
+                TColor::GetColor("#332288"),  // Purple
+                TColor::GetColor("#117733"),  // Dark Green
+                TColor::GetColor("#44AA99"),  // Aquamarine
+                TColor::GetColor("#88CCEE"),  // Sky Blue
+                TColor::GetColor("#DDCC77"),  // LightWood
+                TColor::GetColor("#CC6677"),  // Salmon
+                TColor::GetColor("#AA4499"),  // Violet
+                TColor::GetColor("#882255"),  // Satin
+        };
+    }else{
+        cerr<<"Provided ID not existent."<<endl;
+    }
+    
+
+    // Set the color palette
+    gStyle->SetPalette(nColors, colors);
+
+    // Optional: Adjust histogram color scale range
+    gStyle->SetNumberContours(nColors);  // Ensure the number of contours matches the number of colors
+
+
+
+}
+*/
+
+
+// Define Wong's color palette
+void SetWhichPalette(int id=1) {
+    // Define colors dynamically using std::vector
+    std::vector<Int_t> colors;
+    
+    if(id == 1) { // Bang Won's palette
+        cout<<"Bang Won's palette."<<endl;
+        colors = {
+            TColor::GetColor("#000000"),  // Black
+            TColor::GetColor("#E69F00"),  // Yellow
+            TColor::GetColor("#56B4E9"),  // Cyan
+            TColor::GetColor("#009E73"),  // Green
+            TColor::GetColor("#F0E442"),  // Yellow
+            TColor::GetColor("#0072B2"),  // Blue
+            TColor::GetColor("#D55E00"),  // Orange
+            TColor::GetColor("#CC79A7"),  // Rose
+        };
+    } else if(id == 2) { // IBM's palette
+        cout<<"IBM's palette."<<endl;
+        colors = {
+            TColor::GetColor("#648FFF"),  // Blue
+            TColor::GetColor("#785EF0"),  // Purple
+            TColor::GetColor("#DC267F"),  // Salmon
+            TColor::GetColor("#FE6100"),  // Orange
+            TColor::GetColor("#FFB000"),  // Gold
+        };
+    } else if(id == 3) { // Paul Tol's palette
+        cout<<"Paul Tol's palette."<<endl;
+        colors = {
+            TColor::GetColor("#332288"),  // Purple
+            TColor::GetColor("#117733"),  // Dark Green
+            TColor::GetColor("#44AA99"),  // Aquamarine
+            TColor::GetColor("#88CCEE"),  // Sky Blue
+            TColor::GetColor("#DDCC77"),  // LightWood
+            TColor::GetColor("#CC6677"),  // Salmon
+            TColor::GetColor("#AA4499"),  // Violet
+            TColor::GetColor("#882255"),  // Satin
+        };
+    } else {
+        cerr << "Provided ID not existent." << endl;
+        return;
+    }
+
+    // Set the color palette
+    Int_t nColors = colors.size();
+    gStyle->SetPalette(nColors, colors.data());
+
+    // Optional: Adjust histogram color scale range
+    gStyle->SetNumberContours(nColors);  // Ensure the number of contours matches the number of colors
+}
+
+void SetCustomPalette(int id=1) {
+    Int_t nColors = 0;
+    Int_t colors[256] = {};  // Array size should be large enough for all palettes
+    
+    if (id == 1) {  // Bang Wong's
+        nColors = 9;
+        Int_t bangWongColors[] = {
+            TColor::GetColor("#000000"),  // Black
+            TColor::GetColor("#E69F00"),  // Yellow
+            TColor::GetColor("#56B4E9"),  // Cyan
+            TColor::GetColor("#009E73"),  // Green
+            TColor::GetColor("#F0E442"),  // Yellow
+            TColor::GetColor("#0072B2"),  // Blue
+            TColor::GetColor("#D55E00"),  // Orange
+            TColor::GetColor("#CC79A7")   // Rose
+        };
+        memcpy(colors, bangWongColors, sizeof(bangWongColors));
+    } else if (id == 2) {  // IBM's
+        nColors = 5;
+        Int_t ibmColors[] = {
+            TColor::GetColor("#648FFF"),  // Blue
+            TColor::GetColor("#785EF0"),  // Purple
+            TColor::GetColor("#DC267F"),  // Salmon
+            TColor::GetColor("#FE6100"),  // Orange
+            TColor::GetColor("#FFB000")   // Gold
+        };
+        memcpy(colors, ibmColors, sizeof(ibmColors));
+    } else if (id == 3) {  // Paul Tol's
+        nColors = 8;
+        Int_t paulTolColors[] = {
+            TColor::GetColor("#332288"),  // Purple
+            TColor::GetColor("#117733"),  // Dark Green
+            TColor::GetColor("#44AA99"),  // Aquamarine
+            TColor::GetColor("#88CCEE"),  // Sky Blue
+            TColor::GetColor("#DDCC77"),  // LightWood
+            TColor::GetColor("#CC6677"),  // Salmon
+            TColor::GetColor("#AA4499"),  // Violet
+            TColor::GetColor("#882255")   // Satin
+        };
+        memcpy(colors, paulTolColors, sizeof(paulTolColors));
+    } else if (id == 4) {  // Sunset Discrete
+        nColors = 11;
+        Int_t sunsetColors[] = {
+            TColor::GetColor("#364B9A"),  // Dark Blue
+            TColor::GetColor("#4A7BB7"),  // Light Blue
+            TColor::GetColor("#6EA6CD"),  // Sky Blue
+            TColor::GetColor("#98CAE1"),  // Pale Blue
+            TColor::GetColor("#C2E4EF"),  // Very Pale Blue
+            TColor::GetColor("#EAECCC"),  // Cream
+            TColor::GetColor("#FEDA8B"),  // Light Yellow
+            TColor::GetColor("#FDB366"),  // Yellow-Orange
+            TColor::GetColor("#F67E4B"),  // Orange
+            TColor::GetColor("#DD3D2D"),  // Red
+            TColor::GetColor("#A50026")   // Dark Red
+        };
+        memcpy(colors, sunsetColors, sizeof(sunsetColors));
+    } else if (id == 5) {  // Nightfall Discrete
+        nColors = 9;
+        Int_t nightfallColors[] = {
+            TColor::GetColor("#125A56"),  // Dark Teal
+            TColor::GetColor("#238F9D"),  // Teal
+            TColor::GetColor("#60BCE9"),  // Light Blue
+            TColor::GetColor("#C6DBED"),  // Very Light Blue
+            TColor::GetColor("#ECEADA"),  // Light Beige
+            TColor::GetColor("#F9D576"),  // Light Yellow
+            TColor::GetColor("#FD9A44"),  // Orange
+            TColor::GetColor("#E94C1F"),  // Red
+            TColor::GetColor("#A01813")   // Dark Red
+        };
+        memcpy(colors, nightfallColors, sizeof(nightfallColors));
+    } else if (id == 6) {  // BuRd Discrete
+        nColors = 9;
+        Int_t buRdColors[] = {
+            TColor::GetColor("#2166AC"),  // Dark Blue
+            TColor::GetColor("#4393C3"),  // Light Blue
+            TColor::GetColor("#92C5DE"),  // Pale Blue
+            TColor::GetColor("#D1E5F0"),  // Very Pale Blue
+            TColor::GetColor("#F7F7F7"),  // Light Gray
+            TColor::GetColor("#FDDBC7"),  // Light Peach
+            TColor::GetColor("#F4A582"),  // Peach
+            TColor::GetColor("#D6604D"),  // Coral
+            TColor::GetColor("#B2182B")   // Dark Red
+        };
+        memcpy(colors, buRdColors, sizeof(buRdColors));
+    } else if (id == 7) {  // PRGn Discrete
+        nColors = 9;
+        Int_t prGnColors[] = {
+            TColor::GetColor("#762A83"),  // Dark Purple
+            TColor::GetColor("#9970AB"),  // Purple
+            TColor::GetColor("#C2A5CF"),  // Light Purple
+            TColor::GetColor("#E7D4E8"),  // Very Light Purple
+            TColor::GetColor("#F7F7F7"),  // Light Gray
+            TColor::GetColor("#D9F0D3"),  // Pale Green
+            TColor::GetColor("#ACD39E"),  // Light Green
+            TColor::GetColor("#5AAE61"),  // Green
+            TColor::GetColor("#1B7837")   // Dark Green
+        };
+        memcpy(colors, prGnColors, sizeof(prGnColors));
+    } else if (id == 8) {  // YlOrBr Discrete
+        nColors = 9;
+        Int_t ylOrBrColors[] = {
+            TColor::GetColor("#FFFFE5"),  // Very Pale Yellow
+            TColor::GetColor("#FFF7BC"),  // Pale Yellow
+            TColor::GetColor("#FEE391"),  // Light Yellow
+            TColor::GetColor("#FEC44F"),  // Yellow
+            TColor::GetColor("#FB9A29"),  // Orange
+            TColor::GetColor("#EC7014"),  // Dark Orange
+            TColor::GetColor("#CC4C02"),  // Brown
+            TColor::GetColor("#993404"),  // Dark Brown
+            TColor::GetColor("#662506")   // Very Dark Brown
+        };
+        memcpy(colors, ylOrBrColors, sizeof(ylOrBrColors));
+    } else if (id == 9) {  // WhOrBr
+        nColors = 9;
+        Int_t whOrBrColors[] = {
+            TColor::GetColor("#FFFFFF"),  // White
+            TColor::GetColor("#FFF7BC"),  // Pale Yellow
+            TColor::GetColor("#FEE391"),  // Light Yellow
+            TColor::GetColor("#FEC44F"),  // Yellow
+            TColor::GetColor("#FB9A29"),  // Orange
+            TColor::GetColor("#EC7014"),  // Dark Orange
+            TColor::GetColor("#CC4C02"),  // Brown
+            TColor::GetColor("#993404"),  // Dark Brown
+            TColor::GetColor("#662506")   // Very Dark Brown
+        };
+        memcpy(colors, whOrBrColors, sizeof(whOrBrColors));
+    } else if (id == 10) {  // Iridescent
+        nColors = 25;
+        Int_t iridescentColors[] = {
+            TColor::GetColor("#FEFBE9"),  // Very Pale Cream
+            TColor::GetColor("#FCF7D5"),  // Pale Cream
+            TColor::GetColor("#F5F3C1"),  // Light Cream
+            TColor::GetColor("#EAF0B5"),  // Light Yellow
+            TColor::GetColor("#DDECBF"),  // Pale Yellow
+            TColor::GetColor("#D0E7CA"),  // Light Green
+            TColor::GetColor("#C2E3D2"),  // Pale Teal
+            TColor::GetColor("#B5DDD8"),  // Light Teal
+            TColor::GetColor("#A8D8DC"),  // Teal
+            TColor::GetColor("#9BD2E1"),  // Light Blue
+            TColor::GetColor("#8DCBE4"),  // Blue
+            TColor::GetColor("#81C4E7"),  // Light Blue
+            TColor::GetColor("#7BBCE7"),  // Blue
+            TColor::GetColor("#7EB2E4"),  // Dark Blue
+            TColor::GetColor("#88A5DD"),  // Light Blue
+            TColor::GetColor("#9398D2"),  // Blue
+            TColor::GetColor("#9B8AC4"),  // Dark Blue
+            TColor::GetColor("#9D7DB2"),  // Dark Purple
+            TColor::GetColor("#9A709E"),  // Purple
+            TColor::GetColor("#906388"),  // Dark Purple
+            TColor::GetColor("#805770"),  // Very Dark Purple
+            TColor::GetColor("#684957"),  // Dark Brown
+            TColor::GetColor("#46353A"),  // Very Dark Brown
+        };
+        memcpy(colors, iridescentColors, sizeof(iridescentColors));
+    } else if (id == 11) {  // Rainbow PuRd
+        nColors = 22;
+        Int_t rainbowPuRdColors[] = {
+            TColor::GetColor("#6F4C9B"),  // Purple
+            TColor::GetColor("#6059A9"),  // Dark Blue
+            TColor::GetColor("#5568B8"),  // Blue
+            TColor::GetColor("#4E79C5"),  // Light Blue
+            TColor::GetColor("#4D8AC6"),  // Cyan
+            TColor::GetColor("#4E96BC"),  // Light Teal
+            TColor::GetColor("#549EB3"),  // Teal
+            TColor::GetColor("#59A5A9"),  // Light Teal
+            TColor::GetColor("#60AB9E"),  // Teal
+            TColor::GetColor("#69B190"),  // Light Green
+            TColor::GetColor("#77B77D"),  // Green
+            TColor::GetColor("#8CBC68"),  // Light Green
+            TColor::GetColor("#A6BE54"),  // Green
+            TColor::GetColor("#BEBC48"),  // Light Yellow
+            TColor::GetColor("#D1B541"),  // Yellow
+            TColor::GetColor("#DDAA3C"),  // Orange
+            TColor::GetColor("#E49C39"),  // Dark Orange
+            TColor::GetColor("#E78C35"),  // Red-Orange
+            TColor::GetColor("#E67932"),  // Dark Red
+            TColor::GetColor("#E4632D"),  // Red
+            TColor::GetColor("#DF4828"),  // Dark Red
+            TColor::GetColor("#DA2222")   // Very Dark Red
+        };
+        memcpy(colors, rainbowPuRdColors, sizeof(rainbowPuRdColors));
+    } else if (id == 12) {  // Rainbow PuBr
+        nColors = 25;
+        Int_t rainbowPuBrColors[] = {
+            TColor::GetColor("#6F4C9B"),  // Purple
+            TColor::GetColor("#6059A9"),  // Dark Blue
+            TColor::GetColor("#5568B8"),  // Blue
+            TColor::GetColor("#4E79C5"),  // Light Blue
+            TColor::GetColor("#4D8AC6"),  // Cyan
+            TColor::GetColor("#4E96BC"),  // Light Teal
+            TColor::GetColor("#549EB3"),  // Teal
+            TColor::GetColor("#59A5A9"),  // Light Teal
+            TColor::GetColor("#60AB9E"),  // Teal
+            TColor::GetColor("#69B190"),  // Light Green
+            TColor::GetColor("#77B77D"),  // Green
+            TColor::GetColor("#8CBC68"),  // Light Green
+            TColor::GetColor("#A6BE54"),  // Green
+            TColor::GetColor("#BEBC48"),  // Light Yellow
+            TColor::GetColor("#D1B541"),  // Yellow
+            TColor::GetColor("#DDAA3C"),  // Orange
+            TColor::GetColor("#E49C39"),  // Dark Orange
+            TColor::GetColor("#E78C35"),  // Red-Orange
+            TColor::GetColor("#E67932"),  // Dark Red
+            TColor::GetColor("#E4632D"),  // Red
+            TColor::GetColor("#DF4828"),  // Dark Red
+            TColor::GetColor("#DA2222"),  // Very Dark Red
+            TColor::GetColor("#B8221E"),  // Dark Red
+            TColor::GetColor("#95211B"),  // Brown
+            TColor::GetColor("#721E17"),  // Dark Brown
+            TColor::GetColor("#521A13")   // Very Dark Brown
+        };
+        memcpy(colors, rainbowPuBrColors, sizeof(rainbowPuBrColors));
+    } else if (id == 13) {  // Rainbow WhRd
+        nColors = 29;
+        Int_t rainbowWhRdColors[] = {
+            TColor::GetColor("#E8ECFB"),  // Pale Blue
+            TColor::GetColor("#DDD8EF"),  // Light Blue
+            TColor::GetColor("#D1C1E1"),  // Blue
+            TColor::GetColor("#C3A8D1"),  // Purple
+            TColor::GetColor("#B58FC2"),  // Pink
+            TColor::GetColor("#A778B4"),  // Lavender
+            TColor::GetColor("#9B62A7"),  // Purple
+            TColor::GetColor("#8C4E99"),  // Dark Purple
+            TColor::GetColor("#6F4C9B"),  // Dark Blue
+            TColor::GetColor("#6059A9"),  // Blue
+            TColor::GetColor("#5568B8"),  // Light Blue
+            TColor::GetColor("#4E79C5"),  // Sky Blue
+            TColor::GetColor("#4D8AC6"),  // Teal
+            TColor::GetColor("#4E96BC"),  // Light Teal
+            TColor::GetColor("#549EB3"),  // Teal
+            TColor::GetColor("#59A5A9"),  // Light Teal
+            TColor::GetColor("#60AB9E"),  // Teal
+            TColor::GetColor("#69B190"),  // Light Green
+            TColor::GetColor("#77B77D"),  // Green
+            TColor::GetColor("#8CBC68"),  // Light Green
+            TColor::GetColor("#A6BE54"),  // Green
+            TColor::GetColor("#BEBC48"),  // Yellow
+            TColor::GetColor("#D1B541"),  // Gold
+            TColor::GetColor("#DDAA3C"),  // Orange
+            TColor::GetColor("#E49C39"),  // Dark Orange
+            TColor::GetColor("#E78C35"),  // Red-Orange
+            TColor::GetColor("#E67932"),  // Dark Red
+            TColor::GetColor("#E4632D"),  // Red
+            TColor::GetColor("#DF4828"),  // Dark Red
+            TColor::GetColor("#DA2222"),  // Very Dark Red
+            TColor::GetColor("#B8221E"),  // Dark Red
+            TColor::GetColor("#95211B"),  // Brown
+            TColor::GetColor("#721E17"),  // Dark Brown
+            TColor::GetColor("#521A13")   // Very Dark Brown
+        };
+        memcpy(colors, rainbowWhRdColors, sizeof(rainbowWhRdColors));
+    } else if (id == 14) {  // Rainbow WhBr
+        nColors = 32;
+        Int_t rainbowWhBrColors[] = {
+            TColor::GetColor("#E8ECFB"),  // Pale Blue
+            TColor::GetColor("#DDD8EF"),  // Light Blue
+            TColor::GetColor("#D1C1E1"),  // Blue
+            TColor::GetColor("#C3A8D1"),  // Purple
+            TColor::GetColor("#B58FC2"),  // Pink
+            TColor::GetColor("#A778B4"),  // Lavender
+            TColor::GetColor("#9B62A7"),  // Purple
+            TColor::GetColor("#8C4E99"),  // Dark Purple
+            TColor::GetColor("#6F4C9B"),  // Dark Blue
+            TColor::GetColor("#6059A9"),  // Blue
+            TColor::GetColor("#5568B8"),  // Light Blue
+            TColor::GetColor("#4E79C5"),  // Sky Blue
+            TColor::GetColor("#4D8AC6"),  // Teal
+            TColor::GetColor("#4E96BC"),  // Light Teal
+            TColor::GetColor("#549EB3"),  // Teal
+            TColor::GetColor("#59A5A9"),  // Light Teal
+            TColor::GetColor("#60AB9E"),  // Teal
+            TColor::GetColor("#69B190"),  // Light Green
+            TColor::GetColor("#77B77D"),  // Green
+            TColor::GetColor("#8CBC68"),  // Light Green
+            TColor::GetColor("#A6BE54"),  // Green
+            TColor::GetColor("#BEBC48"),  // Yellow
+            TColor::GetColor("#D1B541"),  // Gold
+            TColor::GetColor("#DDAA3C"),  // Orange
+            TColor::GetColor("#E49C39"),  // Dark Orange
+            TColor::GetColor("#E78C35"),  // Red-Orange
+            TColor::GetColor("#E67932"),  // Dark Red
+            TColor::GetColor("#E4632D"),  // Red
+            TColor::GetColor("#DF4828"),  // Dark Red
+            TColor::GetColor("#DA2222"),  // Very Dark Red
+            TColor::GetColor("#B8221E"),  // Dark Red
+            TColor::GetColor("#95211B"),  // Brown
+            TColor::GetColor("#721E17"),  // Dark Brown
+            TColor::GetColor("#521A13")   // Very Dark Brown
+        };
+        memcpy(colors, rainbowWhBrColors, sizeof(rainbowWhBrColors));
+    } else if (id == 15) {  // Rainbow Discrete
+        nColors = 33;
+        Int_t rainbowDiscreteColors[] = {
+            TColor::GetColor("#E8ECFB"),  // Pale Blue
+            TColor::GetColor("#D9CCE3"),  // Light Blue
+            TColor::GetColor("#D1BBD7"),  // Blue
+            TColor::GetColor("#CAACCB"),  // Purple
+            TColor::GetColor("#BA8DB4"),  // Pink
+            TColor::GetColor("#AE76A3"),  // Lavender
+            TColor::GetColor("#AA6F9E"),  // Purple
+            TColor::GetColor("#994F88"),  // Dark Purple
+            TColor::GetColor("#882E72"),  // Very Dark Purple
+            TColor::GetColor("#1965B0"),  // Dark Blue
+            TColor::GetColor("#437DBF"),  // Blue
+            TColor::GetColor("#5289C7"),  // Light Blue
+            TColor::GetColor("#6195CF"),  // Sky Blue
+            TColor::GetColor("#7BAFDE"),  // Light Blue
+            TColor::GetColor("#4EB265"),  // Teal
+            TColor::GetColor("#90C987"),  // Light Green
+            TColor::GetColor("#CAE0AB"),  // Green
+            TColor::GetColor("#F7F056"),  // Yellow
+            TColor::GetColor("#F7CB45"),  // Orange
+            TColor::GetColor("#F6C141"),  // Light Orange
+            TColor::GetColor("#F4A736"),  // Orange
+            TColor::GetColor("#F1932D"),  // Red-Orange
+            TColor::GetColor("#EE8026"),  // Red
+            TColor::GetColor("#E8601C"),  // Dark Red
+            TColor::GetColor("#E65518"),  // Very Dark Red
+            TColor::GetColor("#DC050C"),  // Dark Red
+            TColor::GetColor("#A5170E"),  // Very Dark Red
+            TColor::GetColor("#72190E"),  // Dark Brown
+            TColor::GetColor("#42150A")   // Very Dark Brown
+        };
+        memcpy(colors, rainbowDiscreteColors, sizeof(rainbowDiscreteColors));
+    }
+}
+
+
+void definePalette(){
+    cout<<"\n;\n;\n--> To apply Palette: \n void SetWhichPalette(int id = 1 2 or 3).\n--> To test:\ndefinePalette_example() . "<<endl;
+}
+
+// Define the main function for ROOT to execute
+void definePalette_example() {
+    // Apply Wong's color palette
+    SetWhichPalette(3);
+    
+    // Create a 2D histogram
+    TH2F *h2 = new TH2F("h2", "Example 2D Histogram", 100, -4, 4, 100, -4, 4);
+
+    // Fill 2D histogram with random data
+    for (int i = 0; i < 10000; ++i) {
+        h2->Fill(gRandom->Gaus(0, 1), gRandom->Gaus(0, 1));
+    }
+
+    // Create a canvas and draw the 2D histogram
+    TCanvas *c = new TCanvas("c", "Canvas", 800, 600);
+    h2->Draw("COLZ");  // Use COLZ option to show the color palette
+
+    // Update the canvas to ensure it is drawn properly
+    c->Update();
+}
