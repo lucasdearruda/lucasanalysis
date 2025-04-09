@@ -15,9 +15,17 @@ Function to correct spectrum, mode adapted to the new eloss files
 #include "TStopwatch.h"
 #include "TFile.h"
 #include <iostream>
+#include "/home/pi/ganil/kalscripts/eloss/GetPfactor.cpp"
 
 string ganil_folder= "/home/pi/ganil/"; 
 
+
+
+void splitPath(const std::string& fullPath, std::string& directory, std::string& filename) {
+    size_t found = fullPath.find_last_of("/\\"); // Encontra última barra
+    directory = fullPath.substr(0, found + 1);  // Inclui a barra final
+    filename = fullPath.substr(found + 1);      // Parte após a barra
+}
 
 TGraph *Fcorr(TTree *S, Int_t nbins = 400, bool drawit = true){
 
@@ -53,9 +61,9 @@ return Ffunc;
 
 TH1D* correctSpec(TH1D *expSpec = nullptr,
                         bool correctDead = false,
-                        string pElossFileName = "/home/pi/ganil/kalscripts/eloss/results/UniformZ/C/v6/eloss_p_20.0deg_075.0um.root", 
-                        string target_mat = "C",
-                        Double_t th = 75,
+                        string pElossFileName = "/home/pi/ganil/kalscripts/eloss/results/UniformZ/CH2/v7/eloss_p_20.0deg_050.0um.root", 
+                        string target_mat = "CH2",
+                        Double_t th = 50,
                         char particle = 'p',
                         bool saveCanvas = false,
                         string pSpecFileName = "myspec.root"
@@ -101,9 +109,6 @@ cout<<"Definig the number of bins for the response function equal to NbinsX for 
 //Now, I will create the response function
 TH2D *h= new TH2D("h","h",nbins, expSpec->GetBinLowEdge(1),expSpec->GetBinLowEdge(nbins+1),nbins,expSpec->GetBinLowEdge(1),expSpec->GetBinLowEdge(nbins+1));
 
-//I need to create a canvas to draw the response function
-//TCanvas *c0 = new TCanvas("response_func_canvas","response_func_canvas",50,50,800,600);
-//c0->SetRightMargin(0.16);
 
 //Here I will draw the response function
 ElTree->Draw("E:Erem>>h","","goff");
@@ -234,50 +239,48 @@ if (gSystem->AccessPathName(directory.c_str())) { // Diretório NÃO existe
 
 TH1D *c2_exp;
 if(correctDead){
-TCanvas *corrFcv = new TCanvas("corrFactorCv","correction Factor -- lost particles",150,150,800,678);
-corrFcv->SetLeftMargin(0.14);
-cout<<"\n.\n.\n.nbins = "<<nbins<<endl;
+    TCanvas *corrFcv = new TCanvas("corrFactorCv","correction Factor -- lost particles",150,150,800,678);
+    corrFcv->SetLeftMargin(0.14);
+    cout<<"\n.\n.\n.nbins = "<<nbins<<endl;
 
-TH1D *hprod = new TH1D("hprod","hprod",nbins,expSpec->GetBinLowEdge(1),expSpec->GetBinLowEdge(nbins+1));
-TH1D *hlost = new TH1D("hlost","hlost",nbins,expSpec->GetBinLowEdge(1),expSpec->GetBinLowEdge(nbins+1));
+    TH1D *hprod = new TH1D("hprod","hprod",nbins,expSpec->GetBinLowEdge(1),expSpec->GetBinLowEdge(nbins+1));
+    TH1D *hlost = new TH1D("hlost","hlost",nbins,expSpec->GetBinLowEdge(1),expSpec->GetBinLowEdge(nbins+1));
 
-// //  problem with bins
-// hprod->Rebin(2);    
-// hlost->Rebin(2);    
-// cout<<"\n.\n.\n.nbins = "<<hprod->GetNbinsX()<<endl;
+    std::string directory, filename;
 
-// nbins = hprod->GetNbinsX();
+    splitPath(pElossFileName, directory, filename);
 
+    cout<<"Debugging splitPath:"<<endl;
+    cout<<"directory = "<<directory<<endl;
+    cout<<"filename = "<<filename<<endl;
 
-ElTree->Draw("E>>hprod","","goff");
-ElTree->Draw("E>>hlost","!transmitted","goff");
+    TGraph *Ffunc = GetPfactor(filename,directory,800, false);//= Fcorr(ElTree,nbins,false);
+    Ffunc->GetXaxis()->SetTitle("Energy (MeV)");
+    Ffunc->GetYaxis()->SetTitle("F factor ");
+    Ffunc->Draw("ALP");
 
-TGraph *Ffunc = Fcorr(ElTree,nbins,false);
-Ffunc->GetXaxis()->SetTitle("Energy (MeV)");
-Ffunc->GetYaxis()->SetTitle("F factor ");
-Ffunc->Draw("ALP");
-
-gPad->SetGridx();
-gPad->SetGridy();
+    gPad->SetGridx();
+    gPad->SetGridy();
 
 
-c2_exp = (TH1D*)corrected_exp->Clone();
-c2_exp->SetNameTitle("c2_exp","c2_exp");
+    c2_exp = (TH1D*)corrected_exp->Clone();
+    c2_exp->SetNameTitle("c2_exp","c2_exp");
 
-for(int i = 1; i <= c2_exp->GetNbinsX(); i++){
-    c2_exp->SetBinContent(i,corrected_exp->GetBinContent(i)*Ffunc->Eval(corrected_exp->GetBinCenter(i)));
-}
-corrCv->cd(2);
-c2_exp->SetLineColor(kBlue);
-c2_exp->SetFillColor(kCyan);
-c2_exp->SetFillStyle(3004);
-c2_exp->SetLineWidth(2);
-c2_exp->Draw("same");
-TLegend *leg = new TLegend(0.6,0.6,0.9,0.9);
-leg->AddEntry(expSpec,"Experimental Spectrum","lpf");
-leg->AddEntry(corrected_exp,"Corrected Spectrum","lpf");
-leg->AddEntry(c2_exp,"Corrected Spectrum with F factor","lpf");
-leg->Draw();
+    for(int i = 1; i <= c2_exp->GetNbinsX(); i++){
+        c2_exp->SetBinContent(i,corrected_exp->GetBinContent(i)*Ffunc->Eval(corrected_exp->GetBinCenter(i)));
+    }
+    corrCv->cd(2);
+    c2_exp->SetLineColor(kBlue);
+    c2_exp->SetFillColor(kCyan);
+    c2_exp->SetFillStyle(3004);
+    c2_exp->SetLineWidth(2);
+    c2_exp->Draw("same");
+    TLegend *leg = new TLegend(0.6,0.6,0.9,0.9);
+    leg->AddEntry(expSpec,"Experimental Spectrum","lpf");
+    leg->AddEntry(corrected_exp,"Corrected Spectrum","lpf");
+    leg->AddEntry(c2_exp,"Corrected Spectrum with F factor","lpf");
+    leg->Draw();
+
 }else{ // if correctDead is false...
     corrCv->cd(2);
     TLegend *leg = new TLegend(0.6,0.6,0.9,0.9);

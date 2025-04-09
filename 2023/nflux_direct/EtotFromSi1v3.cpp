@@ -11,7 +11,7 @@
 #include <string>
 #include <iostream>
 #include <fstream>
-#include "/media/dearruda/Elements/LucasAnalysis/useful.h" //version6.10.2024.0002
+#include "/mnt/medley/LucasAnalysis/useful.h" //version6.10.2024.0002
 
 #include "TStopwatch.h"
 #include <time.h>
@@ -22,7 +22,7 @@ const int MAX_TEL = 8;
 
 
 int parse_distances_data(int year, double *distances) {
-    std::string filename = "/home/dearruda/ganil/kalscripts/PARAMETERS_TELESCOPES/distances" + std::to_string(year) + ".dat";
+    std::string filename = "/home/pi/ganil/kalscripts/PARAMETERS_TELESCOPES/distances" + std::to_string(year) + ".dat";
     std::ifstream file(filename);
     if (!file) {
         std::cerr << "Error opening file: " << filename << std::endl;
@@ -70,8 +70,8 @@ KVMaterial *det1 = new KVMaterial("Si");//,tSi1*KVUnits::um);
 //---ooOOOoo---.---ooOOOoo---.---ooOOOoo---.---ooOOOoo---.---ooOOOoo---.---ooOOOoo---.---ooOOOoo---.---ooOOOoo---.
 
 
-//TFile *ff = new TFile("/media/dearruda/Elements/LucasAnalysis/2023/reducedv61/370.root","READ");
-TFile *ff = new TFile("/media/dearruda/Elements/LucasAnalysis/2023/reducedv61/388.root","READ");
+//TFile *ff = new TFile("/mnt/medley/LucasAnalysis/2023/reducedv61/370.root","READ");
+TFile *ff = new TFile("/mnt/medley/LucasAnalysis/2023/reducedv61/388.root","READ");
 //ff = new TFile("/home/dearruda/ganil/medley_2023/reduced/370v5.root","READ");
 
 

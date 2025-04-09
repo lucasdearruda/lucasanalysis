@@ -30,6 +30,10 @@ def parse_to_csv(input_file, output_file, extra_column=None):
     with open(output_file, mode='w', newline='') as csv_file:
         writer = csv.writer(csv_file)
         
+         # Escreve o cabeçalho no CSV
+        header = ["#EN", "E", "ANG", "DATA", "ERR-S"]
+        writer.writerow(header)
+
         # Escreve as linhas no CSV
         writer.writerows(parsed_data)
 

@@ -19,8 +19,11 @@
 #include <time.h>
 
 TH1D *pc, *pch2;
-Double_t qC = 305744;//µC
-Double_t qCH2 = 222542;//µC
+
+Double_t qC = 305744;//µC run 388
+Double_t qCH2 = 222542;//µC run 370
+
+
 Double_t mch2 = 0.0237;//g 
 Double_t mc = 0.0408;//g 
 

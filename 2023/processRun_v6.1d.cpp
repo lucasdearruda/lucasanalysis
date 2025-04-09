@@ -30,7 +30,7 @@
 #include <fstream>
 
 // Inclua o functions.hh, mas o root-config cuida das libs do ROOT, então nada redundante
-#include "/media/dearruda/Elements/LucasAnalysis/2023/include/functions2.hh"
+#include "/mnt/medley/LucasAnalysis/2023/include/functions2.hh"
 
 int main(int argc, char* argv[]) {
 
@@ -53,7 +53,7 @@ int main(int argc, char* argv[]) {
 	int nrun = std::stoi(argv[1]);
     //---ooOOOoo---.---ooOOOoo---.---ooOOOoo---.---ooOOOoo---.---ooOOOoo---.---ooOOOoo---.---ooOOOoo---.---ooOOOoo---.
     
-    string infofile = "/media/dearruda/Elements/LucasAnalysis/2023/MEDLEY2023.csv";
+    string infofile = "/mnt/medley/LucasAnalysis/2023/MEDLEY2023.csv";
     cout<<"Obtaining run data from "<<infofile<<"..."<<endl;
 
     //obtaining runData: 
@@ -95,7 +95,7 @@ int main(int argc, char* argv[]) {
     //Create the TGraphs for correction:
         //TGraphErrors *correctionP, *correctionD;
 
-        string correctionsPath = "/media/dearruda/Elements/LucasAnalysis/2023/Corrections";
+        string correctionsPath = "/mnt/medley/LucasAnalysis/2023/Corrections";
         
         TFile *file = new TFile(Form("%s/dcorrection.root", correctionsPath.c_str()), "READ");
         TFile *fileP = new TFile(Form("%s/pcorrection.root", correctionsPath.c_str()), "READ");
@@ -115,7 +115,7 @@ int main(int argc, char* argv[]) {
     //---ooOOOoo---.---ooOOOoo---.---ooOOOoo---.---ooOOOoo---.---ooOOOoo---.---ooOOOoo---.---ooOOOoo---.---ooOOOoo---.
     //CREATE THE REDUCED TTREE
 
-    const char * outputFileName  = Form("/media/dearruda/Elements/LucasAnalysis/2023/reducedv61/%03d.root",nrun);
+    const char * outputFileName  = Form("/mnt/medley/LucasAnalysis/2023/reducedv61/%03d.root",nrun);
     cout<<"--> OUTPUT FILENAME: "<<outputFileName<<"."<<endl;
 
     TFile* outputFile = new TFile(outputFileName, "RECREATE");
@@ -165,7 +165,7 @@ int main(int argc, char* argv[]) {
     for (Int_t j = 0; j <= 999 && fExist; j++)
     {
         ifstream mfile;
-        sprintf(name, "/media/dearruda/Elements/RootA_2023/r%04d_%03da.root", nrun, j);
+        sprintf(name, "/mnt/medley/RootA_2023/r%04d_%03da.root", nrun, j);
         mfile.open(name);
         if (mfile)
         {
@@ -198,7 +198,7 @@ int main(int argc, char* argv[]) {
     //cut npt csi 
     TCutG *cut_protonsNPTCsI[5], *cut_deuteronsNPTCsI[5];
 
-    string cuts_path =   "/media/dearruda/Elements/LucasAnalysis/2023/PIDv6";
+    string cuts_path =   "/mnt/medley/LucasAnalysis/2023/PIDv6";
     
     for(int telN = 1; telN<=4; telN++){
         

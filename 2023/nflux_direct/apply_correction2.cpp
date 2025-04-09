@@ -9,10 +9,35 @@
 #include "TStopwatch.h"
 #include "TFile.h"
 #include <iostream>
+//#include "/mnt/medley/LucasAnalysis/2023/nflux_direct"
 
 string ganil_folder= "/home/pi/ganil/"; 
 
-void apply_correction2(string pElossFileName = Form("%s/kalscripts/eloss/results/UniformZ/CH2/v6/eloss_p_0.3deg_050.0um.root",ganil_folder.c_str()), string pSpecFileName = "protonsCH2.root", string target_mat = "CH2",Double_t th = 50){
+
+// function to give the correction for dead particles 
+TGraph *DeadParticlesCorrection(
+  TTree* elossT = nullptr,  
+  string pSpecFileName = "curve.root",
+  bool savecurve = false
+){
+  TH1D *h = new TH1D("h","h",400,0,40);
+  //F = #produced/ (#produced - #dead)
+  //elossT->Draw("")
+
+
+
+  return nullptr;
+}
+
+
+void apply_correction2(
+  string pSpecFileName = "protonsCH2.root",
+  string pElossFileName = Form("%s/kalscripts/eloss/results/UniformZ/CH2/v7/eloss_p_20deg_050.0um.root",ganil_folder.c_str()),  
+  string target_mat = "CH2",
+  Double_t th = 50
+  ){
+
+
 TStopwatch timer;
 
 char particle = 'p';
@@ -70,14 +95,14 @@ rand->SetSeed(seed);
 TFile *expFile = new TFile(pSpecFileName.c_str(),"READ");
 TH1D *expSpec = (TH1D*)expFile->Get("hnew");
 
-
+/*
 TCanvas *c1 = new TCanvas("imaginary_p_Exp","imaginary_p_Exp",100,200,800,600);
 //Lets construct an imaginary exp protons spec (monoenergetic!)
 c1->SetLeftMargin(0.14);
 gStyle->SetOptStat(0);
 expSpec->SetTitle(pSpecFileName.c_str());
 //expSpec->Draw();
-
+*/
 TH1D *corrected_exp = new TH1D("hexp","hexp",400,0,40);
 
 Int_t binProj=0;
@@ -117,6 +142,9 @@ corrected_exp->SaveAs(SaveFileName.c_str());
 
 c1->SaveAs(SaveFileNameImage.c_str());
 c0->SaveAs(SaveFileNameImageRF.c_str());
+
+
+
 
 timer.Print();
 

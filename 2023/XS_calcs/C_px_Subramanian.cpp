@@ -44,7 +44,7 @@ TH1D *hp = new TH1D("hp","hp",100,0,40);
 tx->Draw("E>>hp",Form("ENN>%f && ENN<%f && PID==1 && ang == 20",Ea, Eb));
 
 //calculate corrected spectrum
-TH1D *hTTC = correctSpec(hp,true,"/home/pi/ganil/kalscripts/eloss/results/UniformZ/MedleyCarbon/v6/eloss_p_20.0deg_075.0um.root","Carbon",75,'p',false);
+TH1D *hTTC = correctSpec(hp,true,"/home/pi/ganil/kalscripts/eloss/results/UniformZ/MedleyCarbon/v7/eloss_p_20.0deg_075.0um.root","Carbon",75,'p',false);
 hTTC->Draw("same");
 
 TCanvas * xs_cv = new TCanvas("XS","XS");

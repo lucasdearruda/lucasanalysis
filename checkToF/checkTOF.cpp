@@ -81,6 +81,7 @@ void checkTOF(){
     Double_t rad = 0.1;//Mev
     TEllipse *circles[Np];
     TLatex *tlx[Np];
+    //TLatex *text_condition[Np];
 
     TCanvas *cv[Np];
 
@@ -113,6 +114,7 @@ void checkTOF(){
         circles[i]->Draw("same"); 
 
 
+        ///text coordinates:
         if(i<11){
             tlx[i] = new TLatex(Xp[i] +0.15, Yp[i] +0.11,Form("%d",i+1));    
         }else{
@@ -123,13 +125,13 @@ void checkTOF(){
 
         htof_all[i] = new TH1D(Form("htof_all%d",i+1),Form("htof_all%d",i+1),350,50,400);
         
-        htof_all[i]->SetLineColor(kBlue);
+        htof_all[i]->SetLineColor(kRed);
         htof_all[i]->SetLineWidth(2);
 
         htof_point[i] = new TH1D(Form("htof_p%d",i+1),Form("htof_p%d",i+1),350,50,400);
 
-        htof_point[i]->SetLineColor(kRed);
-        htof_point[i]->SetFillColor(kRed);
+        htof_point[i]->SetLineColor(kBlue);
+        htof_point[i]->SetFillColor(kBlue);
         htof_point[i]->SetFillStyle(3005);
         htof_point[i]->SetLineWidth(2);
 
@@ -143,11 +145,11 @@ void checkTOF(){
         
         
         //division
-        if(!ucsi[i]){
+        //if(!ucsi[i]){
             cv[i]->Divide(2,1);
-        }else{
+        /*}else{
             cv[i]->Divide(3,1);
-        }
+        }*/
 
         //common part:
          cv[i]->cd(1);
@@ -182,20 +184,22 @@ void checkTOF(){
 
             tx->Draw(Form("rt>>htof_all%d",i+1),"PID==1 && ang == 20");
             
-            if(ucsi[i]) tx->Draw(Form("rt>>htof_p%d",i+1),Form("circle%d && si1+si2+csi>=11.5",i+1),"same");
-            else    tx->Draw(Form("rt>>htof_p%d",i+1),Form("circle%d",i+1),"same");
-            gPad->SetLogy();
+            if(ucsi[i]){
+                tx->Draw(Form("rt>>htof_p%d",i+1),Form("circle%d && si1+si2+csi>=11.5",i+1),"same");
+                //write here 
+                //(Form("htof_p%d",i+1),Form("htof_p%d",i+1),350,50,400);
+                hsi[i]->SetTitle(Form("htof_p%d -- En>11.5 MeV",i+1));
+            }else{
+                tx->Draw(Form("rt>>htof_p%d",i+1),Form("circle%d",i+1),"same");
+            }   
+            //gPad->SetLogy();
             gPad->SetGridx();
             gPad->SetGridy();
-        if(ucsi[i]){
+        /*if(ucsi[i]){
             cout<<"point #"<<i+1<<"part 3..."<<endl;
-            //cv[i]->cd(3);
-           // tx->Draw(Form("%f:%f>>h2e%d",,,i+1),Form("circle%d",i+1),"same");
-            
-
-            
-
-        }
+            cv[i]->cd(3);
+            tx->Draw(Form("%f:%f>>h2e%d",,,i+1),Form("circle%d",i+1),"same"); 
+        }*/
     }
 
 

@@ -2,7 +2,7 @@
 //========= Macro generated from object: p_npt_1/Graph
 //========= by ROOT version6.24/06
    
-   cutg = new TCutG("p_npt_1",23);
+   TCutG* cutg = new TCutG("p_npt_1",23);
    //cutg->SetVarX("dE2");
    //cutg->SetVarY("dE1");
    cutg->SetVarX("Medley_1_dE2");

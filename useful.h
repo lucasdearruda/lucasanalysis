@@ -9,7 +9,7 @@ version2025.02.26.002
 2024-10-18::  new version of giveMeTheAngle added
 */
 
-Float_t GiveMeTheCharge(
+Float_t giveMeTheCharge(
 	Int_t runa = 31,
 	Int_t runb = 32,
 	string namefile = "/mnt/medley/LucasAnalysis/2023/runlist.csv", 
