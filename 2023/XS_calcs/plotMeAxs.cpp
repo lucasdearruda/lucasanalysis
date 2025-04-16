@@ -1,8 +1,9 @@
-void plotMeAxs(string namefile = "", bool same = true){
+//void plotMeAxs(string namefile = "", bool same = true){
 
+TGraph* plotMeAxs(string namefile = "", bool same = true){
     if(namefile == ""){
         cerr<<"Error: No file name provided."<<endl;
-        return;
+        return nullptr;
     }else{
 
 
@@ -20,18 +21,20 @@ void plotMeAxs(string namefile = "", bool same = true){
         for(Long64_t i = 0; i < nEntries; ++i) {
             tx->GetEntry(i);
 
-            cout<<Eprod<<" "<<total<<endl;
+            //cout<<Eprod<<" "<<total<<endl;
             gr->AddPoint(Eprod, total);
             // Plotting code here
             // For example:
             // hist->Fill(Eplot, total);
         }
+        gr->SetName("gr");
+        gr->SetLineWidth(2);
         if(same){
             gr->Draw("same");
         }else{
             gr->Draw();
         }
-
+        return gr;
     }
 
 
