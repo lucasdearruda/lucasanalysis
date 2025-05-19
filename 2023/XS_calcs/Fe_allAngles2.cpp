@@ -4,8 +4,8 @@
 std::vector<TH1D*> Fe_allAngles2() {
     std::vector<TH1D*> h(8);
 
-    vector<Int_t> runs_a = {40};//, 47, 29, 396, 396, 396, 396, 396};
-    vector<Int_t> runs_b = {44};// 49, 34, 405, 405, 405, 405, 405};
+    vector<Int_t> runs_a = {396};//, 47, 29, 396, 396, 396, 396, 396};
+    vector<Int_t> runs_b = {405};// 49, 34, 405, 405, 405, 405, 405};
     
     vector<Int_t> runs_aR = {410};//, 396, 396, 396, 396, 396, 396, 396};
     vector<Int_t> runs_bR = {412};//, 405, 405, 405, 405, 405, 405, 405};
