@@ -2,6 +2,29 @@
 // Script for evaluation the ddx for Fe in 2023 runs
 // This script accepts multiple runs
 
+#include "TTree.h"
+#include "TGraph.h"
+#include "TGraphErrors.h"
+#include "TH1.h"
+#include "TH1I.h"
+#include "TH2.h"
+#include "TH2D.h"
+#include "TCanvas.h"
+#include "TSpectrum.h"
+#include "TSystem.h"
+#include "TSystemDirectory.h"
+#include "TSystemFile.h"
+#include "TStopwatch.h"
+#include "TStyle.h"
+#include "TApplication.h"
+#include "TFile.h"
+#include "TROOT.h"
+#include "TVirtualPad.h"  
+#include "TCutG.h"       // para TCutG
+#include "TLegend.h"     // para TLegend
+#include "TChain.h"      // para TChain
+#include "TGraph2D.h" 
+
 #include "/mnt/medley/LucasAnalysis/2023/applyTTC/correctSpec2.cpp" // for correcting the spectrum
 #include "/mnt/medley/LucasAnalysis/2023/Etot/newE.hh" // for the energy calibration
 
@@ -44,7 +67,7 @@ Int_t Ta;
 //whichSpec = 2 --> TCC+ deadCorr ( i.e. with F factor)
 TH1D* Fe_ddx_mRuns(Double_t Ea = 25, Double_t Eb = 26 , Int_t whichSpec = 1,Float_t angle = 20., char particle = 'p', vector<Int_t> runs_a = {40},vector<Int_t> runs_b = {44}){
 TStopwatch timer;
-
+//TH1::AddDirectory(kFALSE);
  //Int_t runa = 396,Int_t runb = 405
 
 
@@ -227,7 +250,12 @@ if(whichSpec ==2){
     tl->AddEntry(xspC,"With TTC","lpf");
 }
 tl->Draw();
-
+////////////////////////////
+ff->Close();
+delete ff;
+delete tx;
+delete InfoTree;
+////////////////////////////
 if(whichSpec){
     return xspC;
 }else{
