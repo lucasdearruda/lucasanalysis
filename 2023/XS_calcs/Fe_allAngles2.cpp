@@ -1,5 +1,5 @@
 #include "/mnt/medley/LucasAnalysis/2023/XS_calcs/Fe_ddx_mRuns.cpp" 
-
+using namespace std;
 
 std::vector<TH1D*> Fe_allAngles2(Float_t Ea = 25, Float_t Eb = 26) {
     //TH1::AddDirectory(kFALSE);

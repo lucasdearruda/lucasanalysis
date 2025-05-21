@@ -1,6 +1,11 @@
 //
 // Script for evaluation the ddx for Fe in 2023 runs
 // This script accepts multiple runs
+#include <iostream>     // for std::cout, std::cerr, std::endl
+#include <fstream>      // for std::ifstream
+#include <string>       // for std::string
+#include <vector>       // for std::vector
+using namespace std;
 
 #include "TTree.h"
 #include "TGraph.h"
@@ -55,7 +60,7 @@ Int_t pCode(char particle = 'p'){
         cerr<<"Error: Unknown particle code."<<endl;
         return 0;
     }   
-
+    return 0;
 }
 //-------------------------------------------------------------------------------------------
 
@@ -77,6 +82,10 @@ TStopwatch timer;
  }
 
 TChain *tx = new TChain("M");
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+TList *myList = new TList();
+myList->Add(tx);
 
 
 string processed_runs = "/mnt/medley/LucasAnalysis/2023/reducedv61";
@@ -108,6 +117,7 @@ for(int it = 0;it<runs_a.size();it++)
         
     }
 }
+
 
 cout<<"---------------------------------------------------"<<endl;
 TTree *InfoTree = new TTree("InfoTree", "InfoTree");
@@ -239,7 +249,9 @@ gPad->SetGridy();
 
 
 /////////////////////////////////
-
+// //myList->Add(mfile);
+// myList->Add(InfoTree);
+// gROOT->GetListOfCleanups()->Add(myList);
 
 
 TLegend *tl = new TLegend(0.523,0.5945,0.88,0.86);
@@ -251,10 +263,22 @@ if(whichSpec ==2){
 }
 tl->Draw();
 ////////////////////////////
-ff->Close();
-delete ff;
+
+// ff->close();
+// delete ff;
+
+//tx->Delete();
 delete tx;
-delete InfoTree;
+
+//InfoTree->Delete();
+//delete InfoTree;
+//delete tx;
+//tx->Reset();
+//delete InfoTree;
+//free(ff);
+//free(tx);
+//free(InfoTree);
+
 ////////////////////////////
 if(whichSpec){
     return xspC;
@@ -262,9 +286,9 @@ if(whichSpec){
     return xsp;
 }
 
+timer.Print();
+
 return nullptr;
 
-
-timer.Print();
 }
 
