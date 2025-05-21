@@ -86,17 +86,19 @@ float ang = 20;
 
 
 //reading file for energy loss:
-TFile *fEloss = new TFile(pElossFileName.c_str(),"READ"); 
+// TFile *fEloss = new TFile(pElossFileName.c_str(),"READ"); 
 
-// Check if the file was successfully opened
-if (!fEloss || fEloss->IsZombie()) {
-    std::cerr << "Warning: The file " << pElossFileName << " does not exist or could not be opened." << std::endl;
-    if (fEloss) fEloss->Close(); // Close the file if it is open but in a bad state
-    delete fEloss; // Clean up
-}
+// // Check if the file was successfully opened
+// if (!fEloss || fEloss->IsZombie()) {
+//     std::cerr << "Warning: The file " << pElossFileName << " does not exist or could not be opened." << std::endl;
+// }
+// fEloss->Close();
 
 //create the TTree to the loss file 
-TTree *ElTree = (TTree*)fEloss->Get("SIM");
+//TTree *ElTree = (TTree*)fEloss->Get("SIM");
+TChain *ElTree = new TChain("SIM");
+
+ElTree->Add(pElossFileName.c_str());
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //defining the response function:
@@ -301,7 +303,7 @@ if(saveCanvas){
 
 
 timer.Print();
-
+delete ElTree;
 if(correctDead)return c2_exp;
 else return corrected_exp;
 
