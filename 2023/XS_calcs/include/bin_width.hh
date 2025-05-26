@@ -1,0 +1,1 @@
+Float_t binMeV = 1.0; //MeV
