@@ -1,13 +1,34 @@
 /*
 //Set of functions developed by Lucas de Arruda//
-version2025.02.26.002
+version2025.05.27.001
 
-2025-01-26.2::  cration of function GiveMetheCharge
+2025-05-27:: creation of function NumIntegrationTF1
+2025-01-26.2::  creation of function GiveMetheCharge
 2025-01-26.1::  beamlivetime update. The method tx->GetMaximum() was causing a segmentation fault 
 2025-01-24::  giveMeTheAngle2 added
 2025-01-24:: definParticle added. Taken originally from kalscripts/eloss/includes/functions.hh
 2024-10-18::  new version of giveMeTheAngle added
 */
+
+
+double NumIntegrationTF1(TF1 *f, double x1, double x2, int npts = 1000) {
+
+	double integral = 0.0;
+
+	double xa,xb;
+
+	//calculate step size
+	double step = (x2 - x1) / (npts - 1);
+
+	for (int i = 0; i < npts-1; ++i) {
+		xa = x1 + i * step;
+		xb = xa + step;
+		integral += (f->Eval(xa) + f->Eval(xb)) * step / 2.0; // Trapezoidal rule
+	}
+
+	return integral;
+}
+
 
 Float_t giveMeTheCharge(
 	Int_t runa = 31,
@@ -971,6 +992,8 @@ double TrapezoidalIntegration(TGraph* graph, double xmin, double xmax) {
 
     return integral;
 }
+
+
 
 //function to sort vector based on another vector
 void sortAsc(double x[], double v[], int s){
