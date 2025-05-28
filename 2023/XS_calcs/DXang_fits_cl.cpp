@@ -208,7 +208,7 @@ void DXang_fits_cl() {
         fitGraph->SetNameTitle(Form("%.1f", neutron_En[i]), Form("%.1f", neutron_En[i]));
         mg->Add(fitGraph, "L");
         //out_integral << neutron_En[i] << "\t" << Leg_int << endl; // Save integral of the fit
-        cout << "Integral for " << neutron_En[i] << " MeV: " << Leg_int << endl;
+        cout << "Integral for " << neutron_En[i] << " MeV: " << 2*TMath::Pi()*Leg_int << endl;
     }
 
     mg->SetTitle("Fits with Legendre Polynomials;cos(#theta);Cross section (mb/sr)");
@@ -242,7 +242,7 @@ void DXang_fits_cl() {
             double x = -1.0 + j * (2.0 / (nfit - 1));
             double y = f->Eval(x);
             double z = i;  // bin index
-            line->SetPoint(j, x, z, y);  // order: x, y, z
+            line->SetPoint(j, x, neutron_En[i], y);  // order: x, y, z
         }
 
         line->SetLineColor(kRed);

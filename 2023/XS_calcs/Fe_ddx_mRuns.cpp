@@ -225,6 +225,18 @@ for(int i=1;i<=hpC->GetNbinsX();i++)
 {
     xsp->SetBinContent(i,1e3*Factor*hpC->GetBinContent(i)/hpC->GetBinWidth(i));//1e3 changes to mb
     xspC->SetBinContent(i,1e3*Factor*hTTC->GetBinContent(i)/hTTC->GetBinWidth(i));//1e3 changes to mb
+
+    //treating the uncertainties:
+    // When we multiply the histogram by a factor, the uncertainty should be multiplied by the same factor.
+    // but, instead, it is given by ROOT as sqrt(newvalue). 
+    //What does ROOT do: 
+    // before N counts ----> after f*N counts
+    // before uncertainty: sqrt(N) ----> after uncertainty: sqrt(f*N) = sqrt(f)*sqrt(N)
+    //Therefore, it is up to us to multiply the uncertainty by sqrt(f) to guarantee it will be f*sqrt(N).
+
+    xsp->SetBinError(i,1e3*Factor*sqrt( hpC->GetBinContent(i))/hpC->GetBinWidth(i)  );
+    xspC->SetBinError(i, 1e3*Factor*sqrt( hTTC->GetBinContent(i))/hTTC->GetBinWidth(i) );
+
 }
 xsp->GetYaxis()->SetTitle("mb/sr#dot1-MeV");
 xsp->GetXaxis()->SetTitle("E_{protons} (MeV)");
