@@ -14,7 +14,7 @@
 #include <vector>
 #include <string>
 #include "/mnt/medley/LucasAnalysis/useful.h" //version2025.02.26.002
-
+#include "/mnt/medley/LucasAnalysis/2023/XS_calcs/include/bin_width.hh" 
 //
 //
 //  Script adapted to deal with TGraphErrors' results, procuded by 'prodduce_pXSv2.cpp'.
@@ -90,7 +90,7 @@ Int_t N_param = 5;
 //======================================================
 // Main function to read graphs, fit with Legendre, and draw
 //======================================================
-void DXang_fits_wErrors() {
+void DXang_fits_wErrors(bool step_by_step = false) {
     // Open input ROOT file
     TFile *ff = new TFile("/mnt/medley/LucasAnalysis/2023/XS_calcs/Fe_pXS.root", "READ");
 
@@ -122,9 +122,15 @@ void DXang_fits_wErrors() {
     TIter next(ff->GetListOfKeys());
     
     TKey *key;
-    TCanvas *cc = new TCanvas("cc", "Fits de DXang", 800, 600);
+    //TCanvas *cc = new TCanvas("cc", "Fits de DXang", 800, 600);
+
+    TCanvas *cc = new TCanvas("cc", "Fits de DXang", 1600, 600);
+    cc->Divide(2,1); // Divide canvas into 3 pads for better visualization
+
+
+
     TGraphErrors *totXS = new TGraphErrors();
-    
+    float_t integral_function = 0;
     float parameters[] = {7,1.3,4.5,8.5,0.2}; // Initialize parameters for the fit
 
     while ((key = (TKey*)next())) {
@@ -141,8 +147,16 @@ void DXang_fits_wErrors() {
         fitFunc->SetParNames("a0", "a1", "a2", "a3", "a4", "a5");
         //fitFunc->SetParameters(7,1.3,4.5,8.5,0.2);
         fitFunc->SetParameters(parameters[0], parameters[1], parameters[2], parameters[3], parameters[4]);
+        
+        
         // Style and draw
-        cc->Clear();
+        //cc->Clear();
+        cc->cd(1)->Clear();
+        cc->cd(2)->Clear();
+        
+
+        cc->cd(1);    
+        cc->cd(1)->SetGrid();
         graph->SetMarkerStyle(20);
         graph->SetMarkerSize(1.2);
         graph->SetLineWidth(2);
@@ -151,10 +165,70 @@ void DXang_fits_wErrors() {
         graph->Fit(fitFunc, "RF");
         fitsVec.push_back(fitFunc);
         graphsVec.push_back(graph);
+        //-----------------------------------------------------------------------------------------------------
+        /// Here I will calculate the graphs and stuff for the error: 
+        TGraph *major_graph = new TGraph();
+        TGraph *minor_graph = new TGraph();
+        for(int i=0; i<graph->GetN(); i++){
+            double x, y;
+            graph->GetPoint(i, x, y);
+            double ex = graph->GetErrorX(i);
+            double ey = graph->GetErrorY(i);
+            
+            // Major error
+            major_graph->SetPoint(i, x, y + ey);
+            // Minor error
+            minor_graph->SetPoint(i, x, y - ey);
+        }
+        cc->cd(2);
+        cc->cd(2)->SetGrid();
+        major_graph->SetLineColor(kBlue);
+        major_graph->SetLineWidth(2);
+        major_graph->SetNameTitle("Major Error", "Major Error");
+        major_graph->Draw("AP");
+        major_graph->SetMarkerStyle(20);
+        major_graph->SetMarkerColor(kBlue);
+        major_graph->SetMarkerSize(1.2);
+
+        minor_graph->SetLineColor(kBlack);
+        minor_graph->SetLineWidth(2);
+        minor_graph->SetNameTitle("Minor Error", "Minor Error");
+        minor_graph->Draw("P SAME");
+        minor_graph->SetMarkerStyle(20);
+        minor_graph->SetMarkerColor(kBlack);
+        minor_graph->SetMarkerSize(1.2);
+
+        //I want to fit the mator and minor graphs with the same fit function, integrate it, and get the error in the integral
+        TF1 *major_fitFunc = new TF1(("major_fit_" + name).c_str(), legendreFitFunc, -1.0, 1.0, N_param);
+        major_fitFunc->SetParameters(fitFunc->GetParameters());
+        major_graph->Fit(major_fitFunc, "RF");
+        TF1 *minor_fitFunc = new TF1(("minor_fit_" + name).c_str(), legendreFitFunc, -1.0, 1.0, N_param);
+        minor_fitFunc->SetParameters(fitFunc->GetParameters());
+        minor_graph->Fit(minor_fitFunc, "RF");
+        // Calculate the integral of the major and minor fits
+        Float_t major_integral =  2 * TMath::Pi() * major_fitFunc->Integral(-1, 1);
+        Float_t minor_integral =  2 * TMath::Pi() * minor_fitFunc->Integral(-1, 1);
+        // Calculate the error in the integral
+        Float_t integral_error =  2 * TMath::Pi() * TMath::Abs(major_integral - minor_integral) / 2.0; // Average of the two errors
+        // Print the results
+        cout << "Major Integral: " << major_integral << ", Minor Integral: " << minor_integral 
+             << ", Integral Error: " << integral_error << endl;
+
+        cout<< endl <<endl<<"Summarizing integral results for " << name << ":" << endl;
+        integral_function =  2 * TMath::Pi() * fitFunc->Integral(-1, 1);
+        cout << "Integral of the fit: " << integral_function << " \u00B1 " << integral_error << endl;
+        // Now, we can save the integral results to the output file
+        out_integral << neutron_En.back() << "\t" << integral_function << "\t" << integral_error << std::endl;
+        //and add the point to the total XS graph
+        totXS->AddPoint(neutron_En.back(), integral_function);
+        totXS->SetPointError(totXS->GetN()-1, binMeV/2, integral_error); // Set error for the point
+        //-----------------------------------------------------------------------------------------------------
         
+        if(step_by_step){
+            cout<<"press some key to continue..."<<endl;
+            cin.get(); // Wait for user input to continue
+        }
         
-        cout<<"press some key to continue..."<<endl;
-        cin.get(); // Wait for user input to continue
         //Create folder for each parnum
         
         char folderName[100];
@@ -188,13 +262,21 @@ void DXang_fits_wErrors() {
 
     
 
-    // //========================
-    // //Integral of the fits -- total XS
-    // //========================
-    // TCanvas *cXS = new TCanvas("cXS", "Integral of the fits", 1000, 700);
-    // totXS->SetName("totalXSgraph");
-    // totXS->SetTitle("Total XS from Legendre fits;cos(#theta);Cross section (mb/)");
-    // totXS->Draw();
+    //========================
+    //Integral of the fits -- total XS
+    //========================
+    TCanvas *cXS = new TCanvas("cXS", "Integral of the fits", 1000, 700);
+    totXS->SetName("totalXSgraph");
+    totXS->SetTitle("^{nat}Fe total XS from Legendre fits;E_{NN} (MeV);Cross section (mb)");
+    //We should plot without lines, with bigger points with error bars
+    totXS->SetMarkerStyle(20);
+    totXS->SetMarkerSize(1.2);
+    totXS->SetLineWidth(2);
+    totXS->SetMarkerColor(kBlack);
+    totXS->SetLineColor(kBlack);
+    //and also draw a grid
+    cXS->SetGrid();
+    totXS->Draw("AP");
     
 
     // //========================
