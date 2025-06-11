@@ -92,6 +92,9 @@ Int_t N_param = 5;
 //======================================================
 void DXang_fits_wErrors(bool step_by_step = false) {
     // Open input ROOT file
+    
+    TFile* fout = new TFile("DXang_fit_results.root", "RECREATE"); // Output ROOT file for graphs and fits
+
     TFile *ff = new TFile("/mnt/medley/LucasAnalysis/2023/XS_calcs/Fe_pXS.root", "READ");
 
     // Output text file for fit parameters
@@ -165,6 +168,8 @@ void DXang_fits_wErrors(bool step_by_step = false) {
         graph->Fit(fitFunc, "RF");
         fitsVec.push_back(fitFunc);
         graphsVec.push_back(graph);
+
+
         //-----------------------------------------------------------------------------------------------------
         /// Here I will calculate the graphs and stuff for the error: 
         TGraph *major_graph = new TGraph();
@@ -205,6 +210,17 @@ void DXang_fits_wErrors(bool step_by_step = false) {
         TF1 *minor_fitFunc = new TF1(("minor_fit_" + name).c_str(), legendreFitFunc, -1.0, 1.0, N_param);
         minor_fitFunc->SetParameters(fitFunc->GetParameters());
         minor_graph->Fit(minor_fitFunc, "RF");
+
+        //adding to the output
+        fout->cd();
+        graph->Write((name + "_data").c_str());
+        fitFunc->Write((name + "_fit").c_str());
+        major_graph->Write((name + "_Major").c_str());
+        major_fitFunc->Write((name + "_major_fit").c_str());
+        minor_graph->Write((name + "_Minor").c_str());
+        minor_fitFunc->Write((name + "_minor_fit").c_str());
+        
+
         // Calculate the integral of the major and minor fits
         Float_t major_integral =  2 * TMath::Pi() * major_fitFunc->Integral(-1, 1);
         Float_t minor_integral =  2 * TMath::Pi() * minor_fitFunc->Integral(-1, 1);
@@ -277,6 +293,10 @@ void DXang_fits_wErrors(bool step_by_step = false) {
     //and also draw a grid
     cXS->SetGrid();
     totXS->Draw("AP");
+
+    //Add to output file
+    fout->cd();
+    totXS->Write();
     
 
     // //========================
@@ -368,4 +388,6 @@ void DXang_fits_wErrors(bool step_by_step = false) {
     // cc->Close();
 
     // std::cout << "Fits concluídos e resultados salvos em 'fit_results_Legendre.txt'.\n";
+    fout->Close();
+    delete fout;
 }

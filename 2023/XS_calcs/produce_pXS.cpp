@@ -1,13 +1,17 @@
 #include "/mnt/medley/LucasAnalysis/2023/XS_calcs/Fe_allAngles2.cpp" 
-
+#include "/mnt/medley/LucasAnalysis/2023/XS_calcs/include/bin_width.hh" 
 #include <vector>
 #include <iostream>
 #include "TStopwatch.h"
 
 
-//define binwidth in a HH file 
-void produce_pXS(Float_t Ea = 25, Float_t Eb = 26, Float_t binMeV = 1, string filename = "Fe_pXS.root"){ 
-    
+
+
+
+//define binMeV in a HH file 
+//void produce_pXS(Float_t Ea = 25, Float_t Eb = 26, Float_t binMeV = 1, string filename = "Fe_pXS.root"){ 
+void produce_pXS(Float_t Ea = 25, Float_t Eb = 26, string filename = "Fe_pXS.root"){ 
+
     TStopwatch timer;
     TCanvas *cc = new TCanvas("cc","cc");
 
@@ -20,6 +24,12 @@ void produce_pXS(Float_t Ea = 25, Float_t Eb = 26, Float_t binMeV = 1, string fi
 
     Int_t nEbins = 0;
     //Add some warning for safety 
+
+    if( Ea + binMeV > Eb) {
+            std::cerr << "Warning: The last energy bin will not be filled completely. Adjust the binning or energy range." << std::endl;
+            return;
+    }
+
     for (Float_t i = Ea; i < Eb; i+=binMeV) {
         nEbins++;
     }//calculate the number of histograms
@@ -116,7 +126,7 @@ void produce_pXS(Float_t Ea = 25, Float_t Eb = 26, Float_t binMeV = 1, string fi
         {
             ff->cd();
             Cv[i]->cd(l+1);
-            hist[l][i]->Draw();
+            hist[l][i]->Draw("E1 HIST");
             gPad->SetGridx();
             gPad->SetGridy();
             //hist[l][i]->Write();
@@ -138,12 +148,12 @@ void produce_pXS(Float_t Ea = 25, Float_t Eb = 26, Float_t binMeV = 1, string fi
             std::cout << "Angle: " << 20 + 20 * j << " MeV: " << i + 2 << " Value: " << intg << std::endl;
         }
 
-        gAngle[i]->SetTitle(Form("Fe(n,Xp) - d#sigma/d#Omega (mb/sr) for %02.1f MeV",En));
+        gAngle[i]->SetTitle(Form("Fe(n,Xp) - d#sigma/d#Omega (mb/sr) for %02.1f #pm %.1f  MeV",En,binMeV));
         gAngle[i]->SetName(Form("ddOmega_%s_%dp%d_MeV",target_details.c_str(),intEn,decEn));
         gAngle[i]->GetXaxis()->SetTitle("Angle (deg)");
         gAngle[i]->GetYaxis()->SetTitle("d#sigma/d#Omega (mb/sr)");
         //gAngle[i]->Write();
-        gCosAngle[i]->SetTitle(Form("Fe(n,Xp) - d#sigma/d#Omega (mb/sr) for %02.1f MeV",En));
+        gCosAngle[i]->SetTitle(Form("Fe(n,Xp) - d#sigma/d#Omega (mb/sr) for %02.1f #pm %.1f  MeV",En,binMeV));
         gCosAngle[i]->SetName(Form("ddOmega_%s_%dp%d_MeV_cos",target_details.c_str(),intEn,decEn));
         gCosAngle[i]->GetXaxis()->SetTitle("cos(#theta)");
         gCosAngle[i]->GetYaxis()->SetTitle("d#sigma/d#Omega (mb/sr)");

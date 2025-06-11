@@ -175,8 +175,13 @@ TH1D *hp_si1 = new TH1D("hp_si1","hp_si1",10*nbins,0,40);
 
 tx->Draw("E>>hp",Form("ENN>%f && ENN<%f && PID==%d && ang == %f",Ea, Eb, pCode(particle), angle));
 
-tx->Draw("si1>>hp_si1",Form("ENN>%f && ENN<%f && PID==%d && ang == %f",Ea, Eb, pCode(particle), angle),"goff");
-TH1D *hpC = newE(hp_si1,"hpC",false);
+//comment this to not draw the Si1 spectrum
+//tx->Draw("si1>>hp_si1",Form("ENN>%f && ENN<%f && PID==%d && ang == %f",Ea, Eb, pCode(particle), angle),"goff");
+//TH1D *hpC = newE(hp_si1,"hpC",false);
+//uncomment below to ignore the Energy reconstruction
+TH1D *hpC = (TH1D *)hp_si1->Clone("hpC");
+tx->Draw("E>>hpC",Form("ENN>%f && ENN<%f && PID==%d && ang == %f",Ea, Eb, pCode(particle), angle),"goff");
+
 hpC->SetLineColor(kRed);
 hpC->SetLineWidth(2);
 hpC->Rebin(10);
