@@ -8,6 +8,9 @@
 #include <iostream>
 
 //global definitions
+Double_t mc;
+Double_t M; 
+
 Double_t NA = 6.02214076e23; //mol^-1
 Double_t Nc = (mc/M) * NA; //atoms/cm^3
 Double_t omega_tel = 0.040 ;//sr 
@@ -24,7 +27,7 @@ std::vector<std::vector<TH1D*>> GetDDX(
     const std::vector<char>& particles,
     const std::vector<int>& runsForward,
     const std::vector<int>& runsBackward
-)
+);
 
 
 
@@ -112,29 +115,29 @@ Float_t totalCharge(vector<Int_t> runs, bool verbose = true, string infofile =  
 std::vector<std::vector<TH1D*>> GetDDX(
     float Ea = 25,
     float Eb = 26,
-    const std::vector<float>& angles,
-    const std::vector<char>& particles,
-    const std::vector<int>& runsForward,
-    const std::vector<int>& runsBackward
+    const std::vector<float>& angles =  {20.0, 40.0, 60.0, 80.0, 100.0, 120.0, 140.0, 160.0},
+    const std::vector<char>& particles = {'p', 'd', 't', 'h', 'a'},
+    const std::vector<int>& runsForward = {},
+    const std::vector<int>& runsBackward = {}
 ){
 
     //First thing, calculate the total charge for the runs forward and backward: 
-    //the vectors runsForward(Backward) contains intervals, so they whould be read two by two
+    //the vectors runsForward(Backward) contains intvs, so they whould be read two by two
     //reading charges:: 
-    Int_t intervals = runsForward.size()/2; //Should always be pair
+    Int_t intvs = runsForward.size()/2; //Should always be pair
         if(runsForward.size() % 2 != 0 || runsBackward.size() % 2 != 0) {
         std::cerr << "Error: The number of runs in runsForward and runsBackward must be even." << std::endl;
         return {};
     } 
     
-    Float_t TotalChargeForward = 0;
-    Float_t TotalChargeBackward = 0;
     
-    //Disclaimer: 
-    // runsForward and runsBackward are vectors containing intervals of runs:
+    //Disclaimer: ---------------------------------------------------------------------------------------------------------------
+    // runsForward and runsBackward are vectors containing intvs of runs:
     //  std::vector<int> runsForward = {12, 12, 15, 15, 18, 21, 44, 44, 56, 59}; -->12, 15, 18 to 21, 44 to 59
     //to input this into totalCharge, we need to iterate over the vector two by two:
     // std::vector<int> runs = {12, 15, 18, 19, 20, 21, 44, 56, 57, 58, 59};
+    Float_t TotalChargeForward = 0;
+    Float_t TotalChargeBackward = 0;
     
         std::vector<int> runs;
 
@@ -160,9 +163,95 @@ std::vector<std::vector<TH1D*>> GetDDX(
     }
     TotalChargeBackward = totalCharge(runs, true);
     //Now we have the total charge for the forward and backward runs, so we will print them for the user
+    std::cout << "::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::" << std::endl;
+    std::cout << "::" << std::endl;
     std::cout << "Total Charge Forward: " << TotalChargeForward << " µC" << std::endl;
     std::cout << "Total Charge Backward: " << TotalChargeBackward << " µC" << std::endl;
 
+    //Charge thing: ---------------------------------------------------------------------------------------------------------------
+
+
+    TChain *tx_Forward = new TChain("M");
+    TChain *tx_Backward = new TChain("M");
+
+    Int_t EntriesForward = 0;
+    Int_t EntriesBackward = 0;
+    //Load the files into the TChains
+
+    string processed_runs = "/mnt/medley/LucasAnalysis/2023/reducedv61";
+    string name;
+
+    //Loading up the forward runs::
+    // ---------------------------------------------------------------------------------------------------------------
+    std::cout << ".__.__.__.__.__.__.__.__.__.__.__.__.__.__.__.__.__.__.__.__.__.__.__.__" << std::endl;
+    std::cout << "Adding forward runs..." << std::endl;
+    for (Int_t intv = 0; intv + 1 < runsForward.size(); intv += 2)
+    {
+        int startRun = runsForward[intv];
+        int endRun = runsForward[intv + 1];
+        for (int i = startRun; i <= endRun; ++i)
+        {
+            bool fExist = true;
+            std::string name = Form("%s/%03d.root", processed_runs.c_str(), i);
+            std::cout <<Form("%03d : ",i) << name << std::endl;
+
+            std::ifstream mfile(name);
+            if (!mfile)
+            {
+                fExist = false;
+            }
+            mfile.close();
+
+            if (fExist)
+            {
+                std::cout << "Adding " << name << std::endl;
+                tx_Forward->Add(name.c_str());
+                EntriesForward = (Int_t)(tx_Forward->GetEntries());
+                std::cout << "Entries " << EntriesForward / 1000 << "k " << std::endl;
+            }
+        }
+    }
+    
+    //Loading up the backward runs::
+    // ---------------------------------------------------------------------------------------------------------------
+    std::cout << ".__.__.__.__.__.__.__.__.__.__.__.__.__.__.__.__.__.__.__.__.__.__.__.__" << std::endl;
+    std::cout << "Adding backward runs..." << std::endl;
+    for (Int_t intv = 0; intv + 1 < runsBackward.size(); intv += 2)
+    {
+        int startRun = runsBackward[intv];
+        int endRun = runsBackward[intv + 1];
+        for (int i = startRun; i <= endRun; ++i)
+        {
+            bool fExist = true;
+            std::string name = Form("%s/%03d.root", processed_runs.c_str(), i);
+            std::cout << Form("%03d : ", i) << name << std::endl;
+
+            std::ifstream mfile(name);
+            if (!mfile)
+            {
+                fExist = false;
+            }
+            mfile.close();
+
+            if (fExist)
+            {
+                std::cout << "Adding " << name << std::endl;
+                tx_Backward->Add(name.c_str());
+                EntriesBackward = (Int_t)(tx_Backward->GetEntries());
+                std::cout << "Entries " << EntriesBackward / 1000 << "k " << std::endl;
+            }
+        }
+    }
+    std::cout << "::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::" << std::endl;
+    std::cout << "::" << std::endl;
+    std::cout << "Total Charge Forward: " << TotalChargeForward << " µC" << std::endl;
+    std::cout << "Total Charge Backward: " << TotalChargeBackward << " µC" << std::endl;
+    std::cout << "Entries Forward: " << EntriesForward / 1000 << "k" << std::endl;
+    std::cout << "Entries Backward: " << EntriesBackward / 1000 << "k" << std::endl;
+
+
+    // ---------------------------------------------------------------------------------------------------------------
     return {};
 
 }
+
