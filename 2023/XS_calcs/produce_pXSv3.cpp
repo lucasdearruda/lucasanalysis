@@ -3,35 +3,31 @@
 #include <vector>
 #include <iostream>
 #include "TStopwatch.h"
+#include "include/xs_functions.hh"
+//xs_functions contains: 
+/// -> total Charge calculation
+/// -> global def of Nc, omega_tel, and NA
 
 
-
-Float_t histIntegralError(TH1D * histo){
-    Float_t sum = 0;
-    Int_t nbins = histo->GetNbinsX();
-    for (Int_t i = 1; i <= nbins; i++) {
-        if (histo->GetBinContent(i) > 0) {
-            Float_t error = histo->GetBinError(i);
-            sum += error * error * histo->GetBinWidth(i) * histo->GetBinWidth(i);
-        }
-    }
-
-    return sqrt(sum);
-}
+//target dependent defintions:
+Double_t mc = 0.0851;//g 
+Double_t M = 55.845; //g/mol
 
 //define binMeV in a HH file 
-//version 2 deals with integral uncertainties and other improvements
-void produce_pXSv2(Float_t Ea = 25, Float_t Eb = 26, string filename = "Fe_pXS.root"){ 
+
+void produce_pXSv3(Float_t Ea = 25, Float_t Eb = 26, string filename = "Fe_p_XSv3.root"){ 
 
     TStopwatch timer;
+    
     TCanvas *cc = new TCanvas("cc","cc");
 
     //string of histograms; 
     std::vector<TH1D*> h;
 
-
+    //Create the 2D graph for cross-section data
     TGraph2DErrors * XSgr = new TGraph2DErrors();
-    Float_t intg, intgEr;
+    Float_t dsigma_dOmega, dsigma_dOmegaEr;
+    
 
     Int_t nEbins = 0;
     //Add some warning for safety 

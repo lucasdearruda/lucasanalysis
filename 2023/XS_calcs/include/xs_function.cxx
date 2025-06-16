@@ -1,9 +1,8 @@
 #include "headers/xs_functions.hh"
 #include "bin_width.hh"
-
 #include "/mnt/medley/LucasAnalysis/2023/Etot/newE.hh"  
 //#include "/mnt/medley/LucasAnalysis/useful.h"
-
+#include "/mnt/medley/LucasAnalysis/2023/applyTTC/include/correctSpec2.cxx"
 // Function to get the thickness of Si1 based on the angle
 Double_t GetSi1Thickness(Double_t angle = 20){
 
@@ -28,6 +27,17 @@ Double_t GetSi1Thickness(Double_t angle = 20){
         return 53.4; // Default thickness for unrecognized angles
     }
 
+}
+
+
+//Function to convert a double value to a string in the format "XpY" (e.g., 2.3 -> "2p3")
+std::string DoubleToXpY(double value) {
+    int intPart = static_cast<int>(value);
+    int fracPart = static_cast<int>(std::round(std::abs((value - intPart) * 10))); // one digit
+
+    std::ostringstream oss;
+    oss << intPart << "p" << fracPart;
+    return oss.str();
 }
 
 //// Function to get the atomic number (Z) and mass number (A) for a given particle
@@ -254,6 +264,7 @@ TGraph * histoToGraph(TH1D *hh){
 // Match_CORR: boolean to activate of not the matching correction
 // TTC_CORR: boolean to activate of not the thick targe correction
 // target: string with the name of the target; it is forwarded to the function Attribute_Target
+// DrawFlux: boolean to draw the flux in the canvas
 std::vector<std::vector<TH1D*>> GetDDX(
     float Ea = 25,
     float Eb = 26,
@@ -261,9 +272,10 @@ std::vector<std::vector<TH1D*>> GetDDX(
     const std::vector<char>& particles = {'p', 'd', 't', 'h', 'a'},
     const std::vector<int>& runsForward = {},
     const std::vector<int>& runsBackward = {},
-    bool Match_CORR = false,
+    bool Match_CORR = true,
     bool TTC_CORR = true,
-    string target = "Fe"
+    string target = "Fe",
+    bool DrawFlux = false
 ){
     Attribute_Target(target);
     //First thing, calculate the total charge for the runs forward and backward: 
@@ -399,15 +411,15 @@ std::vector<std::vector<TH1D*>> GetDDX(
             char particle = particles[i];
             float angle = angles[j];
 
-            std::string hname = Form("h_%c_%.0f", particle, angle);
-            std::string htitle = Form("h %c, angle %.0f deg", particle, angle);
+            std::string hname = Form("%c_ang_%.0f_deg_%.1f_%.1fMeV", particle, angle, Ea, Eb);
+            std::string htitle = Form("%c_ang_%.0f_deg_%.1f_%.1fMeV", particle, angle, Ea, Eb);
 
             TH1D* h = new TH1D(hname.c_str(), htitle.c_str(), binsdE, minE,maxE);
             h->Sumw2();
 
             //To be Corrected
-              std::string hname_Ecorr = Form("h_%c_%.0f_Ecorr", particle, angle);
-              std::string htitle_Ecorr = Form("h %c, angle %.0f deg - Ecorr", particle, angle);
+              std::string hname_Ecorr = Form("%c_ang_%.0f_deg_%.1f_%.1fMeV_MatchC", particle, angle, Ea, Eb);
+              std::string htitle_Ecorr = Form("%c_ang_%.0f_deg_%.1f_%.1fMeV_MatchC", particle, angle, Ea, Eb);
             
               TH1D* h_Ecorr = new TH1D(hname_Ecorr.c_str(), htitle_Ecorr.c_str(), binsdE, minE, maxE);
               h_Ecorr->Sumw2();
@@ -507,6 +519,61 @@ std::vector<std::vector<TH1D*>> GetDDX(
             }
             
 
+            //TTC:
+            if(TTC_CORR){
+                
+                //apply the correction to the histograms
+                //h_Ecorr = correctSpec(h, true, Form("/home/pi/ganil/kalscripts/eloss/results/UniformZ/Fe_thick/v7/eloss_%c_%02.1fdeg_025.0um.root",particles[i], angle), "Fe_thick_Medley", 25, particles[i], false);
+               Double_t angle_ttc;
+                //mapping the angles to angle_ttc, 100 deg -> 80 deg, 120 deg -> 60 deg, 140 deg -> 40 deg, 160 deg -> 20 deg
+                if(angle > 80.0){
+                    angle_ttc = -angle + 180.0;
+                }else{
+                    angle_ttc = angle;
+                }
+                cout<<"angle_ttc: "<<angle_ttc<<endl;
+                string histoname = h_Ecorr->GetName();
+                string histotitle = h_Ecorr->GetTitle();
+                
+                // // DEBUGGING...
+                // Double_t sum_of_errors, sum_of_errors_after;
+                // sum_of_errors = 0;
+                // sum_of_errors_after = 0;
+                // //calculate the sum of errors of all bins in h_Ecorr
+                // for(Int_t b = 1; b <= h_Ecorr->GetNbinsX(); b++){
+                //     sum_of_errors += h_Ecorr->GetBinError(b);
+                // }
+                
+
+                h_Ecorr = correctSpec(h_Ecorr, true, Form("/home/pi/ganil/kalscripts/eloss/results/UniformZ/Fe_thick/v7/eloss_%c_%02.1fdeg_025.0um.root",particles[i], angle_ttc), "Fe_thick_Medley", 25, particles[i], false);
+                histograms_Ecorr[i][j] = h_Ecorr;
+                
+                // // DEBUGGING...
+                // for(Int_t b = 1; b <= h_Ecorr->GetNbinsX(); b++){
+                //     sum_of_errors_after += h_Ecorr->GetBinError(b);
+                // }
+
+                // cout<<"Sum of errors before correction: "<<sum_of_errors<<endl;
+                // cout<<"Sum of errors after correction: "<<sum_of_errors_after<<endl;
+                // //wait for the user to press ENTER
+                // std::cout << "Pressione ENTER para continuar...";
+                // std::cin.get();
+                
+                h_Ecorr->SetName(Form("%s",histoname.c_str()));
+                h_Ecorr->SetTitle(Form("%s",histotitle.c_str()));
+
+                histoname = h->GetName();
+                histotitle = h->GetTitle();
+
+                h = correctSpec(h, true, Form("/home/pi/ganil/kalscripts/eloss/results/UniformZ/Fe_thick/v7/eloss_%c_%02.1fdeg_025.0um.root",particles[i], angle_ttc), "Fe_thick_Medley", 25, particles[i], false);
+                histograms[i][j] = h;
+
+                h->SetName(Form("%s",histoname.c_str()));
+                h->SetTitle(Form("%s",histotitle.c_str()));
+            }
+
+            h_Ecorr->Sumw2();
+            h->Sumw2();
             for(Int_t b = 1; b<= h->GetNbinsX();b++){
                 if (angle < 90.0) {
                     h->SetBinContent(b,h->GetBinContent(b)*FactorF);

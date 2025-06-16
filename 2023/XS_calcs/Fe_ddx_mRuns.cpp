@@ -35,8 +35,12 @@ using namespace std;
 
 //Thick Fe info
 //Double_t mc = 0.0182;//g 
+
+//target dependent:
 Double_t mc = 0.0851;//g 
 Double_t M = 55.845; //g/mol
+
+//global:
 Double_t NA = 6.02214076e23; //mol^-1
 Double_t Nc = (mc/M) * NA; //atoms/cm^3
 Double_t omega_tel = 0.040 ;//sr 
@@ -158,7 +162,7 @@ TH1D *nflux = (TH1D*)ff->Get("nflux");
 TCanvas * cflux = new TCanvas("cflux","cflux");
 nflux->Draw();
 
-Double_t nflux_En = nflux->GetBinContent(nflux->FindBin((Ea+Eb)/2.0));
+Double_t nflux_En = nflux->Integral(nflux->FindBin(Ea),nflux->FindBin(Eb),"w")/(Eb-Ea);
 cout << "nflux_En ("<<(Ea+Eb)/2.0<<" MeV): " << nflux_En << " n / sr / µC / 1-MeV."<<endl;// --> "<<nflux_En*(Eb-Ea)<< " n / sr / µC ."<<endl;
 
 

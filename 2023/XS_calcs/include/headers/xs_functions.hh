@@ -28,6 +28,7 @@ extern const Double_t omega_tel;
 
 //Declaring of the functions : _ _ : - - : - - : _ _ :  _ _ : - - : - - : _ _ :  _ _ : - - : - - : _ _ :  _ _ : - - : - - : _ _ :  _ _ : - - : - - : _ _ : 
 Double_t GetSi1Thickness(Double_t angle = 20);
+std::string DoubleToXpY(double value) ;
 std::pair<int, int> get_ZA(char particle);
 Int_t pCode(char particle = 'p');
 Float_t histIntegralError(TH1D * histo);
@@ -41,7 +42,8 @@ std::vector<std::vector<TH1D*>> GetDDX(
     const std::vector<int>& runsBackward = {},
     bool Match_CORR = true,
     bool TTC_CORR = true,
-    string target = "Fe"
+    string target = "Fe",
+    bool DrawFlux = false
 );
 //Long64_t LoadRunsToChain(TChain* chain, const std::vector<int>& runIntervals, const std::string& dir, bool verbose = true);
 TGraph * histoToGraph(TH1D *hh);
