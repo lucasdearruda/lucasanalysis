@@ -4,6 +4,21 @@
 //#include "/mnt/medley/LucasAnalysis/useful.h"
 #include "/mnt/medley/LucasAnalysis/2023/applyTTC/include/correctSpec2.cxx"
 // Function to get the thickness of Si1 based on the angle
+
+
+
+//function to get the current time as a string
+
+string getCurrentTime() {
+    char cur_time[128];
+    time_t t = time(NULL);
+    struct tm* ptm = localtime(&t);
+    strftime(cur_time, sizeof(cur_time), "%Y-%m-%d_%H:%M:%S", ptm);
+    return std::string(cur_time);
+}
+
+
+
 Double_t GetSi1Thickness(Double_t angle = 20){
 
     if(abs(angle - 20.0f) < 1e-3f) {

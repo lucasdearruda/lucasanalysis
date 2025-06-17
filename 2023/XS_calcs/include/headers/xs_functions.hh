@@ -12,6 +12,7 @@
 #include <TGraph.h>
 #include <set>
 #include <iostream>
+#include <ctime>
 
 // Declarar variáveis globais como extern para evitar múltiplas definições
 extern Double_t mc;
@@ -24,6 +25,8 @@ extern const Double_t omega_tel;
 // Protótipos de funções...
 // ex:
 // Float_t histIntegralError(TH1D * histo);
+
+string getCurrentTime();
 
 
 //Declaring of the functions : _ _ : - - : - - : _ _ :  _ _ : - - : - - : _ _ :  _ _ : - - : - - : _ _ :  _ _ : - - : - - : _ _ :  _ _ : - - : - - : _ _ : 
