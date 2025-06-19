@@ -93,11 +93,11 @@ Float_t EfromName(const std::string& name) {
 //======================================================
 Double_t legendreFitFunc(Double_t *x, Double_t *par) {
     double c = x[0];
-    return par[0]*1.0 +
+    return par[0]*(1.0 +
            par[1]*c +
            par[2]*0.5*(3*c*c - 1) +
            par[3]*0.5*(5*c*c*c - 3*c)+
-           par[4]*0.125*(35*c*c*c*c - 30*c*c + 3);//+
+           par[4]*0.125*(35*c*c*c*c - 30*c*c + 3));//+
            //par[5]*0.125*(63*c*c*c*c*c - 70*c*c*c + 15*c);
     // return par[0]*(1.0 +
     // par[1]*c +
@@ -113,7 +113,7 @@ Int_t N_param = 5;
 void GetXSfromDDX(string filename = "Fe_p_DDX.root", bool step_by_step = false) {
     // Open input ROOT file
     
-    TFile* fout = new TFile(Form("XSfrom%s_results.root",filename.substr(0, filename.rfind(".root")).c_str()), "RECREATE"); // Output ROOT file for graphs and fits
+    TFile* fout = new TFile(Form("XSfrom%s_results2.root",filename.substr(0, filename.rfind(".root")).c_str()), "RECREATE"); // Output ROOT file for graphs and fits
     cout<<"Writting results to: "<<fout->GetName()<<endl;
     TFile *ff = new TFile(filename.c_str(), "READ");
     cout<< "Opening file: " << filename << endl;
@@ -128,7 +128,7 @@ void GetXSfromDDX(string filename = "Fe_p_DDX.root", bool step_by_step = false) 
     //
     //Temporary output 
     //
-    std::ofstream out_integral("integral_results_Legendre.txt", std::ios::app);
+    std::ofstream out_integral("integral_results_Legendre2.txt", std::ios::app);
     if (!out_integral.is_open()) {
         std::cerr << "Erro ao criar o arquivo de saída." << std::endl;
         return;
@@ -138,7 +138,7 @@ void GetXSfromDDX(string filename = "Fe_p_DDX.root", bool step_by_step = false) 
     //
     //Temporary output -- numerical
     //
-    std::ofstream out_integral_num("integral_results_TRAPEZ.txt", std::ios::app);
+    std::ofstream out_integral_num("integral_results_TRAPEZ2.txt", std::ios::app);
     if (!out_integral.is_open()) {
         std::cerr << "Erro ao criar o arquivo de saída." << std::endl;
         return;
@@ -204,7 +204,11 @@ void GetXSfromDDX(string filename = "Fe_p_DDX.root", bool step_by_step = false) 
                 fitFunc->SetParameters(parameters[0], parameters[1], parameters[2], parameters[3], parameters[4]);
                 //ROOT::Math::MinimizerOptions::SetDefaultMinimizer("Fumilli");
                 g2->Fit(fitFunc, "RFU");
-
+                parameters[0] = fitFunc->GetParameter(0);
+                parameters[1] = fitFunc->GetParameter(1);
+                parameters[2] = fitFunc->GetParameter(2);
+                parameters[3] = fitFunc->GetParameter(3);
+                parameters[4] = fitFunc->GetParameter(4);
                 ///////// Pad 3 - major/minor variation //////////////
                 cc->cd(3);
                 TGraph* major = new TGraph();
@@ -305,184 +309,6 @@ void GetXSfromDDX(string filename = "Fe_p_DDX.root", bool step_by_step = false) 
             
             }
         }
-
-/*
-
-
-    TCanvas *cc = new TCanvas("cc", "Fits de DXang", 1600, 600);
-    cc->Divide(2,1); // Divide canvas into 3 pads for better visualization
-
-    TGraphErrors *totXS = new TGraphErrors();
-    float_t integral_function = 0;
-    float parameters[] = {7,1.3,4.5,8.5,0.2}; // Initialize parameters for the fit
-
-
-
-
-
-    while ((key = (TKey*)next())) {
-        std::string name = key->GetName();
-        if (name.find("_cos") == std::string::npos) continue; //if didnt find "_cos" in the name, skip it
-
-        TGraphErrors *graph = dynamic_cast<TGraphErrors*>(key->ReadObj());
-        if (!graph) continue;
-        neutron_En.push_back(EfromName(name)); // Store neutron energy
-        cout<< "\n. .\n. .\nProcessing graph: " << name << " with energy: " << neutron_En.back() << " MeV" << endl;
-        cout<< ". .\n. ."<<endl;
-
-        TF1 *fitFunc = new TF1(("fit_" + name).c_str(), legendreFitFunc, -1.0, 1.0, N_param);
-        fitFunc->SetParNames("a0", "a1", "a2", "a3", "a4", "a5");
-        //fitFunc->SetParameters(7,1.3,4.5,8.5,0.2);
-        fitFunc->SetParameters(parameters[0], parameters[1], parameters[2], parameters[3], parameters[4]);
-        
-        
-        // Style and draw
-        //cc->Clear();
-        cc->cd(1)->Clear();
-        cc->cd(2)->Clear();
-        
-
-        cc->cd(1);    
-        cc->cd(1)->SetGrid();
-        graph->SetMarkerStyle(20);
-        graph->SetMarkerSize(1.2);
-        graph->SetLineWidth(2);
-        graph->Draw("AP");
-        // Fit and store
-        graph->Fit(fitFunc, "RF");
-        fitsVec.push_back(fitFunc);
-        graphsVec.push_back(graph);
-
-
-        //-----------------------------------------------------------------------------------------------------
-        /// Here I will calculate the graphs and stuff for the error: 
-        TGraph *major_graph = new TGraph();
-        TGraph *minor_graph = new TGraph();
-        for(int i=0; i<graph->GetN(); i++){
-            double x, y;
-            graph->GetPoint(i, x, y);
-            double ex = graph->GetErrorX(i);
-            double ey = graph->GetErrorY(i);
-            
-            // Major error
-            major_graph->SetPoint(i, x, y + ey);
-            // Minor error
-            minor_graph->SetPoint(i, x, y - ey);
-        }
-        cc->cd(2);
-        cc->cd(2)->SetGrid();
-        major_graph->SetLineColor(kBlue);
-        major_graph->SetLineWidth(2);
-        major_graph->SetNameTitle("Major Error", "Major Error");
-        major_graph->Draw("AP");
-        major_graph->SetMarkerStyle(20);
-        major_graph->SetMarkerColor(kBlue);
-        major_graph->SetMarkerSize(1.2);
-
-        minor_graph->SetLineColor(kBlack);
-        minor_graph->SetLineWidth(2);
-        minor_graph->SetNameTitle("Minor Error", "Minor Error");
-        minor_graph->Draw("P SAME");
-        minor_graph->SetMarkerStyle(20);
-        minor_graph->SetMarkerColor(kBlack);
-        minor_graph->SetMarkerSize(1.2);
-
-        //I want to fit the mator and minor graphs with the same fit function, integrate it, and get the error in the integral
-        TF1 *major_fitFunc = new TF1(("major_fit_" + name).c_str(), legendreFitFunc, -1.0, 1.0, N_param);
-        major_fitFunc->SetParameters(fitFunc->GetParameters());
-        major_graph->Fit(major_fitFunc, "RF");
-        TF1 *minor_fitFunc = new TF1(("minor_fit_" + name).c_str(), legendreFitFunc, -1.0, 1.0, N_param);
-        minor_fitFunc->SetParameters(fitFunc->GetParameters());
-        minor_graph->Fit(minor_fitFunc, "RF");
-
-        //adding to the output
-        fout->cd();
-        graph->Write((name + "_data").c_str());
-        fitFunc->Write((name + "_fit").c_str());
-        major_graph->Write((name + "_Major").c_str());
-        major_fitFunc->Write((name + "_major_fit").c_str());
-        minor_graph->Write((name + "_Minor").c_str());
-        minor_fitFunc->Write((name + "_minor_fit").c_str());
-        
-
-        // Calculate the integral of the major and minor fits
-        Float_t major_integral =  2 * TMath::Pi() * major_fitFunc->Integral(-1, 1);
-        Float_t minor_integral =  2 * TMath::Pi() * minor_fitFunc->Integral(-1, 1);
-        // Calculate the error in the integral
-        Float_t integral_error =  2 * TMath::Pi() * TMath::Abs(major_integral - minor_integral) / 2.0; // Average of the two errors
-        // Print the results
-        cout << "Major Integral: " << major_integral << ", Minor Integral: " << minor_integral 
-             << ", Integral Error: " << integral_error << endl;
-
-        cout<< endl <<endl<<"Summarizing integral results for " << name << ":" << endl;
-        integral_function =  2 * TMath::Pi() * fitFunc->Integral(-1, 1);
-        cout << "Integral of the fit: " << integral_function << " \u00B1 " << integral_error << endl;
-        // Now, we can save the integral results to the output file
-        out_integral << neutron_En.back() << "\t" << integral_function << "\t" << integral_error << std::endl;
-        //and add the point to the total XS graph
-        totXS->AddPoint(neutron_En.back(), integral_function);
-        totXS->SetPointError(totXS->GetN()-1, binMeV/2, integral_error); // Set error for the point
-        //-----------------------------------------------------------------------------------------------------
-        
-        if(step_by_step){
-            cout<<"press some key to continue..."<<endl;
-            cin.get(); // Wait for user input to continue
-        }
-        
-        //Create folder for each parnum
-        
-        char folderName[100];
-        sprintf(folderName, "fits/par%d", N_param);  // Cria o nome da pasta com N_param
-
-        // Cria a pasta se não existir
-        gSystem->mkdir(folderName, true);
-
-        // Monta o caminho completo do arquivo
-        char FigfileName[200];
-        sprintf(FigfileName, "%s/%s_fit.png", folderName, name.c_str());
-
-        // Save canvas
-        cc->SaveAs(FigfileName); // Salva o gráfico com o fit
-
-        // Save parameters to text file
-        out << name << "\n";
-        for (int i = 0; i < N_param; ++i) {
-            out << "a" << i << "\t" 
-                << fitFunc->GetParameter(i) << "\t" 
-                << fitFunc->GetParError(i) << "\n";
-
-            parameters[i] = fitFunc->GetParameter(i); // Update parameters for next fit
-        }
-        // Float_t Leg_int = fitFunc->Integral(-1, 1);
-        // totXS->AddPoint(points++, Leg_int);
-         //out << "Integral\t" << Leg_int << "\n\n"; // Save integral of the it
-        // out_integral << neutron_En[neutron_En.size()-1] <<"\t"<< Leg_int <<endl; // Save integral of the fit
-        
-    }
-
-    
-
-    //========================
-    //Integral of the fits -- total XS
-    //========================
-    TCanvas *cXS = new TCanvas("cXS", "Integral of the fits", 1000, 700);
-    totXS->SetName("totalXSgraph");
-    totXS->SetTitle("^{nat}Fe total XS from Legendre fits;E_{NN} (MeV);Cross section (mb)");
-    //We should plot without lines, with bigger points with error bars
-    totXS->SetMarkerStyle(20);
-    totXS->SetMarkerSize(1.2);
-    totXS->SetLineWidth(2);
-    totXS->SetMarkerColor(kBlack);
-    totXS->SetLineColor(kBlack);
-    //and also draw a grid
-    cXS->SetGrid();
-    totXS->Draw("AP");
-
-    //Add to output file
-    fout->cd();
-    totXS->Write();
-    
-*/
     fout->Close();
     delete fout;
 }

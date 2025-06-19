@@ -2,7 +2,7 @@
 #include <iostream>
 #include "TStopwatch.h"
 #include "include/xs_function.cxx"
-void produce_pXSv4(Float_t Ea = 28, Float_t Eb = 29, string filename = "Fe_p_DDX.root");
+void produce_aXS(Float_t Ea = 28, Float_t Eb = 29, string filename = "Fe_a_DDX.root");
 
 //define binMeV in a HH file 
 //std::vector<std::vector<std::vector<TH1D*>>> allHistos;
@@ -33,22 +33,22 @@ void RunSeveral_vBin(){
         Float_t Ea = vals[i];
         Float_t Eb = vals[i+1];
 
-        cout << "Calling produce_pXSv4 with Ea = " << Ea << ", Eb = " << Eb << endl;
+        cout << "Calling produce_aXS with Ea = " << Ea << ", Eb = " << Eb << endl;
 
         // Se quiser, pode modificar o filename com os valores, ou deixar fixo
-        produce_pXSv4(Ea, Eb, "nightowl/Fe_p_DDX.root");
+        produce_aXS(Ea, Eb, "nightowl/Fe_a_DDX.root");
     }
 
 }
 
-void produce_pXSv4(Float_t Ea = 28, Float_t Eb = 29, string filename = "Fe_p_DDX.root"){ 
+void produce_aXS(Float_t Ea = 28, Float_t Eb = 29, string filename = "Fe_a_DDX.root"){ 
 
 
     TStopwatch timer;
     //std::vector<int> runsForward = {396,405};
-    //std::vector<int> runsBackward = {410,412,383,384};
+    std::vector<int> runsBackward = {410,412,383,384};
     std::vector<int> runsForward = {396,405};
-    std::vector<int> runsBackward = {410,412};
+   // std::vector<int> runsBackward = {410,412};
 
 
     // std::vector<std::vector<TH1D*>> GetDDX(
@@ -67,7 +67,7 @@ void produce_pXSv4(Float_t Ea = 28, Float_t Eb = 29, string filename = "Fe_p_DDX
    //std::vector<std::vector<TH1D*>> hp = GetDDX(Ea,Eb,{20,40,60,80,100,120,140,160},{'p'},runsForward,runsBackward,true);
    
    std::vector<float> angles = {20.0, 40.0, 60.0, 80.0, 100.0, 120.0, 140.0, 160.0};
-   std::vector<std::vector<TH1D*>> hp = GetDDX(Ea,Eb,angles,{'p'},runsForward,runsBackward,true,false);
+   std::vector<std::vector<TH1D*>> hp = GetDDX(Ea,Eb,angles,{'a'},runsForward,runsBackward,true,false);
 
    TFile *ff = new TFile(filename.c_str(), "UPDATE");
 
@@ -153,7 +153,7 @@ void produce_pXSv4(Float_t Ea = 28, Float_t Eb = 29, string filename = "Fe_p_DDX
     }
 
     string cur_time = getCurrentTime();
-    TNamed *processing_info= new TNamed("processed by /mnt/medley/LucasAnalysis/2023/XS_calcs/produce_pXSv4.cpp:version4.2025-06-17.0",cur_time);
+    TNamed *processing_info= new TNamed("processed by /mnt/medley/LucasAnalysis/2023/XS_calcs/produce_aXSv4.cpp:version4.2025-06-17.0",cur_time);
     processing_info->Write();
     ff->Close();
     CloseAllRootFiles();
