@@ -45,11 +45,11 @@ std::vector<std::vector<TH1D*>> GetDDX(
     const std::vector<int>& runsBackward = {},
     bool Match_CORR = true,
     bool TTC_CORR = true,
-    string target = "Fe",
+    string target = "Fe_thick_Medley",
     bool DrawFlux = false
 );
 //Long64_t LoadRunsToChain(TChain* chain, const std::vector<int>& runIntervals, const std::string& dir, bool verbose = true);
 TGraph * histoToGraph(TH1D *hh);
 Float_t histIntegralError(TH1D * histo);
-void Attribute_Target(string target_name = "Fe");
+void Attribute_Target(string target_name = "Fe_thick_Medley");
 #endif

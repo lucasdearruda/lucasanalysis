@@ -78,8 +78,8 @@ const Double_t NA = 6.02214076e23; // mol^-1
 Double_t Nc = 0;                   // precisa ser calculada, depois que mc e M forem definidos
 const Double_t omega_tel = 0.040;  // sr
 
-void Attribute_Target(string target_name = "Fe"){
-    if(target_name == "Fe"){
+void Attribute_Target(string target_name = "Fe_thick_Medley"){
+    if(target_name == "Fe_thick_Medley" || target_name == "Fe_thick"){
         mc = 0.0851;//g 
         M = 55.845; //g/mol
         Nc = (mc/M) * NA;
@@ -208,6 +208,7 @@ Float_t totalCharge(vector<Int_t> runs, bool verbose = true, string infofile =  
     }
 
     if(verbose) cout<<"---------------------------------------------------"<<endl;
+    delete InfoTree;
     return TotalCharge;
 }
 
@@ -289,7 +290,7 @@ std::vector<std::vector<TH1D*>> GetDDX(
     const std::vector<int>& runsBackward = {},
     bool Match_CORR = true,
     bool TTC_CORR = true,
-    string target = "Fe",
+    string target = "Fe_thick_Medley",
     bool DrawFlux = false
 ){
     Attribute_Target(target);
@@ -489,8 +490,8 @@ std::vector<std::vector<TH1D*>> GetDDX(
     //Double_t FactorF = pow(L,2)*cm2_to_mbarn/(Nc*omega_tel*TotalChargeForward*nflux_En);
     //Double_t FactorB = pow(L,2)*cm2_to_mbarn/(Nc*omega_tel*TotalChargeBackward*nflux_En);
     
-    Double_t FactorF = pow(L,2)*cm2_to_mbarn/(Nc*omega_tel*TotalChargeForward*nflux_En*binWidthNeutron*bindE);
-    Double_t FactorB = pow(L,2)*cm2_to_mbarn/(Nc*omega_tel*TotalChargeBackward*nflux_En*binWidthNeutron*bindE);
+    Double_t FactorF = pow(L,2)*cm2_to_mbarn/(Nc*omega_tel*TotalChargeForward*nflux_En*cos(TMath::Pi()*45/180)*binWidthNeutron*bindE);
+    Double_t FactorB = pow(L,2)*cm2_to_mbarn/(Nc*omega_tel*TotalChargeBackward*nflux_En*cos(TMath::Pi()*45/180)*binWidthNeutron*bindE);
 
     cout<<"FactorF: "<<FactorF<<endl;
     cout<<"FactorB: "<<FactorB<<endl;
@@ -560,7 +561,8 @@ std::vector<std::vector<TH1D*>> GetDDX(
                 // }
                 
 
-                h_Ecorr = correctSpec(h_Ecorr, true, Form("/home/pi/ganil/kalscripts/eloss/results/UniformZ/Fe_thick/v7/eloss_%c_%02.1fdeg_025.0um.root",particles[i], angle_ttc), "Fe_thick_Medley", 25, particles[i], false);
+                //h_Ecorr = correctSpec(h_Ecorr, true, Form("/home/pi/ganil/kalscripts/eloss/results/UniformZ/Fe_thick/v7/eloss_%c_%02.1fdeg_025.0um.root",particles[i], angle_ttc), "Fe_thick_Medley", 25, particles[i], false);
+                h_Ecorr = correctSpec(h_Ecorr, true, Form("/home/pi/ganil/kalscripts/eloss/results/UniformZ/Fe_thick_Medley/v7/eloss_%c_%02.1fdeg_025.0um.root",particles[i], angle_ttc), "Fe_thick_Medley", 25, particles[i], false);
                 histograms_Ecorr[i][j] = h_Ecorr;
                 
                 // // DEBUGGING...
@@ -580,7 +582,8 @@ std::vector<std::vector<TH1D*>> GetDDX(
                 histoname = h->GetName();
                 histotitle = h->GetTitle();
 
-                h = correctSpec(h, true, Form("/home/pi/ganil/kalscripts/eloss/results/UniformZ/Fe_thick/v7/eloss_%c_%02.1fdeg_025.0um.root",particles[i], angle_ttc), "Fe_thick_Medley", 25, particles[i], false);
+                //h = correctSpec(h, true, Form("/home/pi/ganil/kalscripts/eloss/results/UniformZ/Fe_thick/v7/eloss_%c_%02.1fdeg_025.0um.root",particles[i], angle_ttc), "Fe_thick_Medley", 25, particles[i], false);
+                h = correctSpec(h, true, Form("/home/pi/ganil/kalscripts/eloss/results/UniformZ/Fe_thick_Medley/v7/eloss_%c_%02.1fdeg_025.0um.root",particles[i], angle_ttc), "Fe_thick_Medley", 25, particles[i], false);
                 histograms[i][j] = h;
 
                 h->SetName(Form("%s",histoname.c_str()));
@@ -608,7 +611,8 @@ std::vector<std::vector<TH1D*>> GetDDX(
         }
     }
 
-
+    delete tx_Forward;
+    delete tx_Backward;
     if(Match_CORR) return histograms_Ecorr;
     return histograms;
 
