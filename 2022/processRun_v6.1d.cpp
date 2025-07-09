@@ -30,7 +30,7 @@
 #include <fstream>
 
 // Inclua o functions.hh, mas o root-config cuida das libs do ROOT, então nada redundante
-#include "/mnt/medley/LucasAnalysis/2023/include/functions2.hh"
+#include "/mnt/medley/LucasAnalysis/2022/include/functions2.hh"
 
 int main(int argc, char* argv[]) {
 
@@ -53,7 +53,7 @@ int main(int argc, char* argv[]) {
 	int nrun = std::stoi(argv[1]);
     //---ooOOOoo---.---ooOOOoo---.---ooOOOoo---.---ooOOOoo---.---ooOOOoo---.---ooOOOoo---.---ooOOOoo---.---ooOOOoo---.
     
-    string infofile = "/mnt/medley/LucasAnalysis/2023/MEDLEY2023.csv";
+    string infofile = "/mnt/medley/LucasAnalysis/2022/runlist2022.csv";
     cout<<"Obtaining run data from "<<infofile<<"..."<<endl;
 
     //obtaining runData: 
@@ -115,7 +115,7 @@ int main(int argc, char* argv[]) {
     //---ooOOOoo---.---ooOOOoo---.---ooOOOoo---.---ooOOOoo---.---ooOOOoo---.---ooOOOoo---.---ooOOOoo---.---ooOOOoo---.
     //CREATE THE REDUCED TTREE
 
-    const char * outputFileName  = Form("/mnt/medley/LucasAnalysis/2023/reducedv61/%03d.root",nrun);
+    const char * outputFileName  = Form("/mnt/medley/LucasAnalysis/2022/reducedv7/%03d.root",nrun);
     cout<<"--> OUTPUT FILENAME: "<<outputFileName<<"."<<endl;
 
     TFile* outputFile = new TFile(outputFileName, "RECREATE");
@@ -165,7 +165,7 @@ int main(int argc, char* argv[]) {
     for (Int_t j = 0; j <= 999 && fExist; j++)
     {
         ifstream mfile;
-        sprintf(name, "/mnt/medley/RootA_2023/r%04d_%03da.root", nrun, j);
+        sprintf(name, "/mnt/medley/runswithMM_2022/r%04d_%03dr.root", nrun, j);
         mfile.open(name);
         if (mfile)
         {
@@ -198,7 +198,7 @@ int main(int argc, char* argv[]) {
     //cut npt csi 
     TCutG *cut_protonsNPTCsI[5], *cut_deuteronsNPTCsI[5];
 
-    string cuts_path =   "/mnt/medley/LucasAnalysis/2023/PIDv6";
+    string cuts_path =   "/mnt/medley/LucasAnalysis/2022/PID";
     
     for(int telN = 1; telN<=4; telN++){
         
@@ -343,14 +343,14 @@ int main(int argc, char* argv[]) {
 
     Float_t L[9];
     //distances Medley target --> Telescope
-    L[1] = 157.6*1e-3;
-    L[2] = 157.8*1e-3;
-    L[3] = 159.0*1e-3;
-    L[4] = 160.5*1e-3;
-    L[5] = 158.5*1e-3;
-    L[6] = 155.8*1e-3;
-    L[7] = 156.5*1e-3;
-    L[8] = 157.4*1e-3;
+    L[1] = getDistanceTel(1);
+    L[2] = getDistanceTel(2);
+    L[3] = getDistanceTel(3);
+    L[4] = getDistanceTel(4);
+    L[5] = getDistanceTel(5);
+    L[6] = getDistanceTel(6);
+    L[7] = getDistanceTel(7);
+    L[8] = getDistanceTel(8);
 
     // 1: proton
     // 2: deuteron

@@ -291,6 +291,113 @@ void loadCuts(int telN=1){
 
 }
 
+void setEnergyAliases(int telN=1 ){
+    cout <<"g's values: g1 = "<<g1<<", g2 = "<<g2<<", g3 = "<<g3<<endl;
+    
+    tx->SetAlias("dE1", Form("Medley_%d_dE1*%f",telN,g1));
+    tx->SetAlias("dE2", Form("Medley_%d_dE2*%f",telN,g2));
+    tx->SetAlias("Eres", Form("Medley_%d_Eres*%f",telN,g3));
+    tx->SetAlias("E", "dE1 + dE2 + Eres");        
+    cout<<"Aliases set for telescope "<<telN<<":\n";
+    cout<<"dE1 = Medley_"<<telN<<"_dE1 * "<<g1<<endl;
+    cout<<"dE2 = Medley_"<<telN<<"_dE2 * "<<g2<<endl;
+    cout<<"Eres = Medley_"<<telN<<"_Eres * "<<g3<<endl;
+    cout<<"E = dE1 + dE2 + Eres"<<endl;
+}
+
+void setParticlesAliases(int telN=1 ){
+   
+    loadCuts(telN);
+    tx->SetAlias("protons", Form("(p_npt_%d && pnptcsi_%d)||(p_pt_dE_%d && p_pt_%d)",telN,telN,telN,telN));
+    tx->SetAlias("deuterons", Form("!protons && ((d_npt_%d && dnptcsi_%d)||(d_pt_dE_%d && d_pt_%d))",telN,telN,telN,telN));
+    tx->SetAlias("tritons", Form("!protons &&!deuterons ((t_npt_%d && Eres<0.5)||(t_pt_dE_%d && t_pt_%d))",telN,telN,telN));
+    tx->SetAlias("he3", Form("he3_%d",telN));
+    tx->SetAlias("alphas", Form("alphas%d",telN));
+    
+    cout<<"Aliases set for telescope "<<telN<<":\n";
+    cout<<"protons = (p_npt_"<<telN<<" && pnptcsi_"<<telN<<")||(p_pt_dE_"<<telN<<" && p_pt_"<<telN<<")"<<endl;
+    cout<<"deuterons = !protons && ((d_npt_"<<telN<<" && dnptcsi_"<<telN<<")||(d_pt_dE_"<<telN<<" && d_pt_"<<telN<<"))"<<endl;
+    cout<<"tritons = !protons &&!deuterons ((t_npt_"<<telN<<" && Eres<0.5)||(t_pt_dE_"<<telN<<" && t_pt_"<<telN<<"))"<<endl;
+    cout<<"he3 = he3_"<<telN<<endl;
+    cout<<"alphas = alphas"<<telN<<endl;
+    
+    if(cut_protons[telN] != nullptr){
+        cut_protons[telN]->SetVarY("dE1");
+        cut_protons[telN]->SetVarX("dE2");
+        cout<<"Cut for protons set to dE1:dE2"<<endl;
+    }
+    
+    if(cut_protonsPT[telN] != nullptr){    
+        cut_protonsPT[telN]->SetVarY("dE1");
+        cut_protonsPT[telN]->SetVarX("dE2");
+        cout<<"Cut for protons PT set to dE1:dE2"<<endl;
+    }
+
+    if(cut_protonsCsI[telN]!= nullptr){
+        cut_protonsCsI[telN]->SetVarY("dE2");
+        cut_protonsCsI[telN]->SetVarX("Eres");
+        cout<<"Cut for protons CsI set to dE2:Eres"<<endl;
+    }
+
+    if(cut_protonsNPTCsI[telN]!=nullptr){
+        cut_protonsNPTCsI[telN]->SetVarY("dE2");
+        cut_protonsNPTCsI[telN]->SetVarX("Eres");    
+        cout<<"Cut for protons NPT CsI set to dE2:Eres"<<endl;
+    }
+
+    if(cut_deuterons[telN] != nullptr){
+        cut_deuterons[telN]->SetVarY("dE1");
+        cut_deuterons[telN]->SetVarX("dE2");
+        cout<<"Cut for deuterons set to dE1:dE2"<<endl;
+    }
+    
+    if(cut_deuteronsPT[telN] != nullptr){
+        cut_deuteronsPT[telN]->SetVarY("dE1");
+        cut_deuteronsPT[telN]->SetVarX("dE2");
+        cout<<"Cut for deuterons PT set to dE1:dE2"<<endl;
+    }
+
+    if(cut_deuteronsCsI[telN] != nullptr){
+        cut_deuteronsCsI[telN]->SetVarY("dE2");
+        cut_deuteronsCsI[telN]->SetVarX("Eres");
+        cout<<"Cut for deuterons CsI set to dE2:Eres"<<endl;
+    }
+    if(cut_deuteronsNPTCsI[telN] != nullptr){
+        cut_deuteronsNPTCsI[telN]->SetVarY("dE2");
+        cut_deuteronsNPTCsI[telN]->SetVarX("Eres");
+        cout<<"Cut for deuterons NPT CsI set to dE2:Eres"<<endl;
+    }
+
+    if(cut_tritons[telN] != nullptr){
+        cut_tritons[telN]->SetVarY("dE1");
+        cut_tritons[telN]->SetVarX("dE2");
+        cout<<"Cut for tritons set to dE1:dE2"<<endl;
+    }
+    if(cut_tritonsPT[telN] != nullptr){
+        cut_tritonsPT[telN]->SetVarY("dE1");
+        cut_tritonsPT[telN]->SetVarX("dE2");
+        cout<<"Cut for tritons PT set to dE1:dE2"<<endl;
+    }
+    if(cut_tritonsCsI[telN] != nullptr){
+        cut_tritonsCsI[telN]->SetVarY("dE2");
+        cut_tritonsCsI[telN]->SetVarX("Eres");
+        cout<<"Cut for tritons CsI set to dE2:Eres"<<endl;  
+    }
+    if(cut_he[telN] != nullptr){
+        cut_he[telN]->SetVarY("dE1");
+        cut_he[telN]->SetVarX("dE2");
+        cout<<"Cut for he3 set to dE1:dE2"<<endl;
+    }
+    if(cut_alphas[telN] != nullptr){
+        cut_alphas[telN]->SetVarY("dE1");
+        cut_alphas[telN]->SetVarX("dE2");
+        cout<<"Cut for alphas set to dE1:dE2"<<endl;
+    }
+    
+    return;
+}
+
+
 void plotCuts(int telN=1,int type = 1, TCanvas* c = nullptr){
 
     if(c == nullptr){
@@ -574,7 +681,7 @@ void plotPlots(int plot_nr = 1, TCanvas* c = nullptr) {
     }
 }
 
-void loadRuns(int nruni =63 ,int nrunf =63){
+TChain* loadRuns(int nruni =63 ,int nrunf =63){
 
     if(!nruni){
         cout<<"No run number given, using default run 111"<<endl;
@@ -613,6 +720,8 @@ void loadRuns(int nruni =63 ,int nrunf =63){
             }
         }
     }
+
+    return tx;
 
 }
 
