@@ -12,7 +12,6 @@
 using namespace std;
 
 
-
 // Definição do struct para armazenar os dados
 struct MedleyData {
     Int_t RunN;
@@ -134,7 +133,8 @@ Float_t GetGflash(TTree *tx, const std::string& branchname = "Medley_1_dE2_ToF",
 
     double tof_peak[2];
     TSpectrum *spec = new TSpectrum();
-    Int_t npeaks = spec->Search(htof, 6,"",0.1);//originally 0.3
+    //Int_t npeaks = spec->Search(htof, 6,"",0.1);//originally 0.3
+	Int_t npeaks = spec->Search(htof, 4,"",0.01);//originally 0.3
     Double_t *xpeaks = spec->GetPositionX();
     cout<<"ToF plot: "<<npeaks<<" peak found.\n";
     for(int t =0;t<npeaks;t++){
@@ -266,6 +266,52 @@ std::string getCurrentTime() {
     strftime(cur_time, sizeof(cur_time), "%Y-%m-%d_%H:%M:%S", ptm);
 
     return std::string(cur_time);
+}
+
+Double_t getDistanceTel(int telN = 1){
+	switch (telN)
+	{
+	case 1:
+		return 218.4*1e-3; //meters
+		break;
+	case 2:
+		return 160.9*1e-3; //meters
+		break;
+	case 3:
+		return 160.9*1e-3; //meters
+		break;
+	case 4:
+		return 160.9*1e-3; //meters
+		break;
+	case 5:
+		return 173.9*1e-3; //meters
+		break;
+	case 6:
+		return 173.9*1e-3; //meters
+		break;
+	case 7:
+		return 170.9*1e-3; //meters
+		break;
+	case 8:
+		return 207.9*1e-3; //meters
+		break;
+	default:
+		return 218.4*1e-3; //meters
+		break;
+	}
+
+}
+
+
+double ToFneutron(double Eparticle, double L = 0.1497)
+{
+//returns the ToF for the a particle 'particle' with energy Eparticle, that crosses distance 'L'
+
+	if(Eparticle<=0){ cout<<Form("ToFproton ERROR. Eparticle(%.3f MeV)<=0 is not allowed. Check the other steps.",Eparticle)<<endl; return 0;}
+	double c= 0.299792458;
+	double m = 939.56542052;
+
+    return L/(c*sqrt(1 - pow((m/(Eparticle+m)),2))); // comes from E = (γ-1)mc^2 solved for t given that v = L/t.
 }
 
 
