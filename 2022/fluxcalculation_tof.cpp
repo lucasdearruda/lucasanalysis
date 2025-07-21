@@ -5,7 +5,7 @@
 //////
 // This script is in its vertions version1.2025-07-14.0
 
-void fluxcalculation_tof() {
+void fluxcalculation_tof(Int_t runA = 35, Int_t runB = 38) {
     //this function will calculate the flux for the 2022 data using the time of flight method.
 
     std::cout << "Flux calculation function called." << std::endl;
@@ -13,8 +13,8 @@ void fluxcalculation_tof() {
     TFile *fcorr = new TFile("pcorr.root", "READ");
     TGraph *pcorr = (TGraph*)fcorr->Get("pcorr");
 
-    Int_t runA = 35; // Starting run number
-    Int_t runB = 38; // Ending run number
+    // Int_t runA = 35; // Starting run number
+    // Int_t runB = 38; // Ending run number
     cout<<"Loading runs from " << runA << " to " << runB << endl;
     double Qtot = 0; // Total charge variable
     Int_t Ttot = 0; // Total charge variable
@@ -141,15 +141,15 @@ void fluxcalculation_tof() {
 
     
 
-    TH2D *hh = new TH2D("hh", "hh", 500, 0, 500, 400, 0, 40);
-    //for (Long64_t i = 0; i < nentries/50; i++) {
+    //TH2D *hh = new TH2D("hh", "hh", 500, 0, 500, 400, 0, 40);
+    for (Long64_t i = 0; i < nentries; i++) {
 
     int p=0;
-    for (Long64_t i = 0; i < 2000000; i++) {
+    //for (Long64_t i = 0; i < 2000000; i++) {
 
         tx->GetEntry(i);
         itof = tx->GetLeaf(Form("Medley_%d_dE2_ToF",telN))->GetValue();
-        
+        rawtof = itof;
         if(itof > gflash || itof ==0) continue; //if the event is faster than gamma... go to next event
       
                 //cout<<i<<", "<<p++<<": itof = "<<itof<<", "<<gflash<<endl;
@@ -188,8 +188,10 @@ void fluxcalculation_tof() {
 
                     ENN = En(tofnn);
                     ENNwoc = En(tofnn_woc);
+                    
 
-                    hh->Fill(tofnn, energy);
+                    newtree->Fill();
+                    
                     
                 }
             
@@ -206,9 +208,36 @@ void fluxcalculation_tof() {
 
 
     }
-    hh->Draw("colz");
-    //pcorr->Draw();
 
+    // TGraph *xs = new TGraph("/mnt/medley/LucasAnalysis/2023/fluxMedley_script/XS/nn.org_np_2to40MeV_LABrf_20.40.60.80deg.csv","%lg %lg %*lg %*lg %*lg",",");
+
+    // //we already have Qtot, 
+    // Double_t Omegatel = 0.0011; //SACALCV3 sr
+    // Double_t cos_alpha = cos(TMath::Pi()*45/180);
+    // double NatH = 2*0.0237*6.02e23/14.0; //2 ⋅ [mass of CH2 ⋅ NA / MM(CH2)]
+    // double L = 504.4; //cm
+    // double cm2_per_barn = 1e-24 ;//cm²
+
+
+    // Int_t nbins = 400;
+    // TH1D *flux = new TH1D("flux","flux",nbins,0,40);
+    // TH1D *flux_woc = new TH1D("flux_woc","flux_woc",nbins,0,40);
+    // flux_woc->SetLineColor(1179);
+    // flux->SetLineColor(1180);
+
+    // tx->Draw("ENNwoc>>flux_woc");
+    // tx->Draw("ENN>>flux","","same");
+
+    //tx->Draw()
+
+
+
+    //hh->Draw("colz");
+    //pcorr->Draw();
+    outputFile->Write();
+    //
+    // Close the output file
+    outputFile->Close();
 
 
 
