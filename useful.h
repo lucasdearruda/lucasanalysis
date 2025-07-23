@@ -1,7 +1,8 @@
 /*
 //Set of functions developed by Lucas de Arruda//
-version2025.05.27.001
+version2025.07.22.001
 
+2025-07-22:: Updating GetGflash function to include sigma and threshold parameters
 2025-05-27:: creation of function NumIntegrationTF1
 2025-01-26.2::  creation of function GiveMetheCharge
 2025-01-26.1::  beamlivetime update. The method tx->GetMaximum() was causing a segmentation fault 
@@ -9,7 +10,6 @@ version2025.05.27.001
 2025-01-24:: definParticle added. Taken originally from kalscripts/eloss/includes/functions.hh
 2024-10-18::  new version of giveMeTheAngle added
 */
-
 
 double NumIntegrationTF1(TF1 *f, double x1, double x2, int npts = 1000) {
 
@@ -855,7 +855,8 @@ return hc;
 
 
 //function for getting gamma flash
-Float_t GetGflash(TTree *tx, string branchname="Medley_1_dE2_ToF", float guess = 500, bool closecanvas = false){
+//Float_t GetGflash(TTree *tx, string branchname="Medley_1_dE2_ToF", float guess = 500, bool closecanvas = false){
+Float_t GetGflash(TTree *tx, string branchname="Medley_1_dE2_ToF", float guess = 500, bool closecanvas = false, Float_t sigma= 4,Float_t threshold= 0.1){
 
 
 	TCanvas *Ctof = new TCanvas("ctof",Form("Time of flight"),50,50,600,600);
@@ -867,7 +868,7 @@ Float_t GetGflash(TTree *tx, string branchname="Medley_1_dE2_ToF", float guess =
 
     double tof_peak[2];
     TSpectrum *spec = new TSpectrum();
-    Int_t npeaks = spec->Search(htof, 6,"",0.1);//originally 0.3
+    Int_t npeaks = spec->Search(htof, sigma,"",threshold);//originally 0.3
     Double_t *xpeaks = spec->GetPositionX();
     cout<<"ToF plot: "<<npeaks<<" peak found.\n";
     for(int t =0;t<npeaks;t++){
@@ -993,6 +994,41 @@ double TrapezoidalIntegration(TGraph* graph, double xmin, double xmax) {
     return integral;
 }
 
+//It works for TGraph and TF1 objects
+double SimplifiedTrapezoidalIntegration(TObject* obj, double xmin, double xmax, int Nstep = 1e4) {
+    if (!obj) {
+        std::cerr << "Erro: Objeto nulo.\n";
+        return 0;
+    }
+
+    double step = (xmax - xmin) / Nstep;
+    double sum = 0;
+
+    std::string className = obj->IsA()->GetName();
+
+    if (auto func = dynamic_cast<TF1*>(obj)) {
+        for (int i = 0; i < Nstep; ++i) {
+            double x1 = xmin + i * step;
+            double x2 = x1 + step;
+            double y1 = func->Eval(x1);
+            double y2 = func->Eval(x2);
+            sum += 0.5 * step * (y1 + y2);
+        }
+    } else if (auto graph = dynamic_cast<TGraph*>(obj)) {
+        for (int i = 0; i < Nstep; ++i) {
+            double x1 = xmin + i * step;
+            double x2 = x1 + step;
+            double y1 = graph->Eval(x1);
+            double y2 = graph->Eval(x2);
+            sum += 0.5 * step * (y1 + y2);
+        }
+    } else {
+        std::cerr << "Erro: Tipo '" << className << "' não suportado para integração.\n";
+        return 0;
+    }
+
+    return sum;
+}
 
 
 //function to sort vector based on another vector
