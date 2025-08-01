@@ -106,7 +106,7 @@ Float_t angularXS(int E = 20, Float_t *xs_sigma =nullptr){
     for(ang = 20; ang<=80; ang=ang+20){
 
         TCanvas *c = plotDDX(E,part[0],ang,2);
-        talysgr = plotMeAxs(Form("/mnt/medley/LucasAnalysis/talys_calcs/Fe56/best/%cddxE00%02d.000A0%02d.0.deg",part[0],E,ang));
+        talysgr = plotMeAxs(Form("/mnt/medley/LucasAnalysis/talys_calcs/Fe56/best_9June/%cddxE00%02d.000A0%02d.0.deg",part[0],E,ang));
         IntTalys = TrapezoidalIntegration(talysgr,0,40);
 
         cout<<"Integral Talys: "<<IntTalys<<endl;

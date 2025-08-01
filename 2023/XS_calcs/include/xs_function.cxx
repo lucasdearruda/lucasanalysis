@@ -291,6 +291,7 @@ std::vector<std::vector<TH1D*>> GetDDX(
     bool Match_CORR = true,
     bool TTC_CORR = true,
     string target = "Fe_thick_Medley",
+    bool fluxPPACs = false,
     bool DrawFlux = false
 ){
     Attribute_Target(target);
@@ -391,18 +392,48 @@ std::vector<std::vector<TH1D*>> GetDDX(
     // Open nflux -- from Medley 
     //__.__.__.__.__.__.__.__.__.__.__.__.__.__.__.__.__.__.__.__.__.__.__.__.__.__.__.__.__.__.__.__.__.__.__.__.__.__.__.__.__.__.__.__.__.__.__.__.__.__.__.__.__.__.
 
-    TFile *ff = new TFile("/mnt/medley/LucasAnalysis/2023/nflux_direct/nflux.root", "READ");
-    TH1D *nflux = (TH1D*)ff->Get("nflux");
     TCanvas * cflux = new TCanvas("cflux","cflux");
-    nflux->Draw();
+    if(fluxPPACs){
+        cout << "Using flux from PPACs." << endl;
+        TFile *ff = new TFile("/mnt/medley/LucasAnalysis/2023/nflux_direct/run111.root", "READ");
+        TGraphErrors *gflux = (TGraphErrors*)ff->Get("Nspectrum");
+        gflux->Draw();
+        
+        Double_t nflux_En = gflux->Eval((Ea+Eb)/2.0);
+        cout << "nflux_En ("<<(Ea+Eb)/2.0<<" MeV): " << nflux_En << " n / sr / µC / 1-MeV."<<endl;// --> "<<nflux_En*(Eb-Ea)<< " n / sr / µC ."<<endl;
 
-    TGraph *fluxGr = histoToGraph(nflux);
-    // fluxGr->SetLineColor(kRed);
-    // fluxGr->SetLineWidth(2);
-    // fluxGr->Draw("same");
 
-    Double_t nflux_En = fluxGr->Eval((Ea+Eb)/2.0);
-    cout << "nflux_En ("<<(Ea+Eb)/2.0<<" MeV): " << nflux_En << " n / sr / µC / 1-MeV."<<endl;// --> "<<nflux_En*(Eb-Ea)<< " n / sr / µC ."<<endl;
+    }else{
+        cout << "Using flux from Medley" << endl;
+        TFile *ff = new TFile("/mnt/medley/LucasAnalysis/2023/nflux_direct/nflux.root", "READ");
+        TH1D *nflux = (TH1D*)ff->Get("nflux");
+        TCanvas * cflux = new TCanvas("cflux","cflux");
+        nflux->Draw();
+
+        TGraph *fluxGr = histoToGraph(nflux);
+        
+        // fluxGr->SetLineColor(kRed);
+        // fluxGr->SetLineWidth(2);
+        // fluxGr->Draw("same");
+
+        Double_t nflux_En = fluxGr->Eval((Ea+Eb)/2.0);
+        cout << "nflux_En ("<<(Ea+Eb)/2.0<<" MeV): " << nflux_En << " n / sr / µC / 1-MeV."<<endl;// --> "<<nflux_En*(Eb-Ea)<< " n / sr / µC ."<<endl;
+
+    }
+    
+    // TFile *ff = new TFile("/mnt/medley/LucasAnalysis/2023/nflux_direct/nflux.root", "READ");
+    // TH1D *nflux = (TH1D*)ff->Get("nflux");
+    // TCanvas * cflux = new TCanvas("cflux","cflux");
+    // nflux->Draw();
+
+    // TGraph *fluxGr = histoToGraph(nflux);
+    
+    // // fluxGr->SetLineColor(kRed);
+    // // fluxGr->SetLineWidth(2);
+    // // fluxGr->Draw("same");
+
+    // Double_t nflux_En = fluxGr->Eval((Ea+Eb)/2.0);
+    // cout << "nflux_En ("<<(Ea+Eb)/2.0<<" MeV): " << nflux_En << " n / sr / µC / 1-MeV."<<endl;// --> "<<nflux_En*(Eb-Ea)<< " n / sr / µC ."<<endl;
 
     //__.__.__.__.__.__.__.__.__.__.__.__.__.__.__.__.__.__.__.__.__.__.__.__.__.__.__.__.__.__.__.__.__.__.__.__.__.__.__.__.__.__.__.__.__.__.__.__.__.__.__.__.__.__.
 

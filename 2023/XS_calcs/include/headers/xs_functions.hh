@@ -46,6 +46,7 @@ std::vector<std::vector<TH1D*>> GetDDX(
     bool Match_CORR = true,
     bool TTC_CORR = true,
     string target = "Fe_thick_Medley",
+    bool fluxPPACs = false,
     bool DrawFlux = false
 );
 //Long64_t LoadRunsToChain(TChain* chain, const std::vector<int>& runIntervals, const std::string& dir, bool verbose = true);

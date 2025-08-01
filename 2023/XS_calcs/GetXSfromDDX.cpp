@@ -91,14 +91,31 @@ Float_t EfromName(const std::string& name) {
 //======================================================
 // Legendre fit function with P0 to P5 terms (up to l=5)
 //======================================================
+// Double_t legendreFitFunc(Double_t *x, Double_t *par) {
+//     double c = x[0];
+//     return par[0]*(1.0 +
+//            par[1]*c +
+//            par[2]*0.5*(3*c*c - 1) +
+//            par[3]*0.5*(5*c*c*c - 3*c)+
+//            par[4]*0.125*(35*c*c*c*c - 30*c*c + 3));//+
+//            //par[5]*0.125*(63*c*c*c*c*c - 70*c*c*c + 15*c);
+//     // return par[0]*(1.0 +
+//     // par[1]*c +
+//     // 0*par[2]*0.5*(3*c*c - 1) +
+//     // 0*par[3]*0.5*(5*c*c*c - 3*c)) ;//+
+//     //par[4]*0.125*(35*c*c*c*c - 30*c*c + 3);// +
+//     //par[5]*0.125*(63*c*c*c*c*c - 70*c*c*c + 15*c);
+// }
+
+
 Double_t legendreFitFunc(Double_t *x, Double_t *par) {
     double c = x[0];
     return par[0]*(1.0 +
            par[1]*c +
            par[2]*0.5*(3*c*c - 1) +
            par[3]*0.5*(5*c*c*c - 3*c)+
-           par[4]*0.125*(35*c*c*c*c - 30*c*c + 3));//+
-           //par[5]*0.125*(63*c*c*c*c*c - 70*c*c*c + 15*c);
+           par[4]*0.125*(35*c*c*c*c - 30*c*c + 3))+
+           par[5]*0.125*(63*c*c*c*c*c - 70*c*c*c + 15*c);
     // return par[0]*(1.0 +
     // par[1]*c +
     // 0*par[2]*0.5*(3*c*c - 1) +
@@ -106,7 +123,8 @@ Double_t legendreFitFunc(Double_t *x, Double_t *par) {
     //par[4]*0.125*(35*c*c*c*c - 30*c*c + 3);// +
     //par[5]*0.125*(63*c*c*c*c*c - 70*c*c*c + 15*c);
 }
-Int_t N_param = 5;
+
+Int_t N_param = 6;
 //======================================================
 // Main function to read graphs, fit with Legendre, and draw
 //======================================================
@@ -158,8 +176,9 @@ void GetXSfromDDX(string filename = "Fe_p_DDX.root", bool step_by_step = false) 
     cc->Divide(3,1); // Divide canvas into 3 pads for better visualization
     TGraphErrors *totXS = new TGraphErrors();
     Float_t integral_function = 0;
-    Float_t parameters[] = {5.20957, 3.59675, 1.81913, -0.0940362, 0.836435}; // Initialize parameters for the fit
-
+    Float_t parameters[] = {5.20957, 3.59675, 1.81913, -0.0940362, 0.836435, 1}; // Initialize parameters for the fit
+    out<< "En (MeV)" << "\t" 
+                    << "xs (mb)"<< endl;
     // Loop through all keys in the file
     // This will read all TGraphErrors objects in the file
     // and perform the fitting and graphing operations.
@@ -190,7 +209,8 @@ void GetXSfromDDX(string filename = "Fe_p_DDX.root", bool step_by_step = false) 
                         g1->Draw("APL");
                         gPad->SetGrid();
 
-
+                auto range = ExtractEnergyRange(name2);
+                Float_t neutron_En = (range.first + range.second)*0.5;
                 ///////// Pad 2 - plot gCosAngle //////////////////////
                 cc->cd(2);
                 g2->SetTitle("gCosAngle - for Fitting");
@@ -209,6 +229,9 @@ void GetXSfromDDX(string filename = "Fe_p_DDX.root", bool step_by_step = false) 
                 parameters[2] = fitFunc->GetParameter(2);
                 parameters[3] = fitFunc->GetParameter(3);
                 parameters[4] = fitFunc->GetParameter(4);
+                parameters[5] = fitFunc->GetParameter(5);
+                out<< neutron_En << "\t" 
+                    << 4*TMath::Pi()*parameters[0] << endl;
                 ///////// Pad 3 - major/minor variation //////////////
                 cc->cd(3);
                 TGraph* major = new TGraph();
@@ -263,8 +286,7 @@ void GetXSfromDDX(string filename = "Fe_p_DDX.root", bool step_by_step = false) 
                 //////////////////////////////////////////////////////////
                 // Calculate the integral of the major and minor fits
 
-                auto range = ExtractEnergyRange(name2);
-                Float_t neutron_En = (range.first + range.second)*0.5;
+                
 
                 cout<<"Energies ::  "<<range.first<<" MeV - "<<range.second<<" MeV"<<endl;
                 cout<<"Neutron Energy :: "<<neutron_En<<" MeV"<<endl;

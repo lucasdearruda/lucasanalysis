@@ -41,7 +41,7 @@ void RunSeveral_vBin(){
 
 }
 
-void produce_pXSv4(Float_t Ea = 28, Float_t Eb = 29, string filename = "Fe_p_DDX.root"){ 
+void produce_pXSvPPACs(Float_t Ea = 28, Float_t Eb = 29, string filename = "Fe_p_DDX_PPACs.root"){ 
 
 
     TStopwatch timer;

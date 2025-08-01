@@ -36,7 +36,7 @@ void RunSeveral_vBin(){
         cout << "Calling produce_pXSv4 with Ea = " << Ea << ", Eb = " << Eb << endl;
 
         // Se quiser, pode modificar o filename com os valores, ou deixar fixo
-        produce_pXSv4(Ea, Eb, "nightowl/Fe_p_DDX.root");
+        produce_pXSv4(Ea, Eb, "newresults/Fe_p_DDX.root");
     }
 
 }
@@ -67,7 +67,7 @@ void produce_pXSv4(Float_t Ea = 28, Float_t Eb = 29, string filename = "Fe_p_DDX
    //std::vector<std::vector<TH1D*>> hp = GetDDX(Ea,Eb,{20,40,60,80,100,120,140,160},{'p'},runsForward,runsBackward,true);
    
    std::vector<float> angles = {20.0, 40.0, 60.0, 80.0, 100.0, 120.0, 140.0, 160.0};
-   std::vector<std::vector<TH1D*>> hp = GetDDX(Ea,Eb,angles,{'p'},runsForward,runsBackward,true,false);
+   std::vector<std::vector<TH1D*>> hp = GetDDX(Ea,Eb,angles,{'p'},runsForward,runsBackward,true,true);
 
    TFile *ff = new TFile(filename.c_str(), "UPDATE");
 
