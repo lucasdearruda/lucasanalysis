@@ -218,10 +218,10 @@ for (const auto& bin : energy_bins) {
 
                 //now we attribute
 
-                myhisto1 = (TH1D*)histSi1->Clone("myhisto1"); // Save the histogram for debugging
+                
                 hist = newE(histSi1, hname.Data(), thicknessFirstTel(int(angle / 20)), A, Z); // Apply the newE function to the histogram
                 hist->Rebin(20); // Rebin the histogram to 20 bins
-                myhisto2 = (TH1D*)hist->Clone("myhisto2");
+                
                 //gDirectory->Remove(histSi1); // Remove the histogram from the directory
                 //delete histSi1; // Delete the histogram to free memory
 
