@@ -9,11 +9,10 @@
 
 // #include "/mnt/medley/LucasAnalysis/useful.h"
 
-
+//bool considerangle = false,
 TH1D *newE(
     TH1D *hh = nullptr, 
     string nametitle = "h", 
-    bool considerangle = false,
     Double_t tSi1 = 53.4, 
     Int_t Z = 1,
     Int_t A = 1
@@ -29,6 +28,8 @@ TH1D *newE(
     KVMaterial *det1 = new KVMaterial("Si");
     det1->SetThickness(tSi1 * KVUnits::um);
     cout << "Thickness of Si1: " << tSi1 << " µm" << endl;
+    Float_t maxdE = det1->GetMaxDeltaE(Z,A); //condition for the max dE in Si1
+
 
     Int_t nbins = hh->GetNbinsX();
     Int_t ncounts = hh->GetEntries();
@@ -39,7 +40,7 @@ TH1D *newE(
     // std::time_t seed = std::time(nullptr);
     // rn->SetSeed(seed);
     
-    
+    bool considerangle = false;
     vector<Double_t> angles;
     if(considerangle) vector<Double_t> angles = giveMeTheAngle2(ncounts, 20);
     
@@ -48,9 +49,15 @@ TH1D *newE(
     Double_t si1, newE,angle_factor;
 
     angle_factor = 1;
+    Int_t not_calc = 0;
     for(Int_t i=0;i<ncounts;i++){
         si1 = hh->GetRandom();
         
+        if(si1 > maxdE){
+            not_calc++;
+            continue; // Skip this iteration if si1 exceeds max dE
+        }
+
         if(considerangle){
             angle_factor = 1 /cos(angles[i]);
             det1->SetThickness(tSi1 * angle_factor * KVUnits::um);    
@@ -61,6 +68,8 @@ TH1D *newE(
         h->Fill(newE);
     }
 
+    cout << "Number of entries not calculated due to max dE condition: " << not_calc << endl;
+    cout << "Total entries processed: " << ncounts << endl;
     timer.Print();
     return h;
 

@@ -1,0 +1,197 @@
+//prod_DXX.cpp, version 1.2025-08-07.0
+// Script for evaluation the ddx for Fe in 2023 runs
+// This script accepts multiple runs
+
+
+#include <iostream>     // for std::cout, std::cerr, std::endl
+#include <fstream>      // for std::ifstream
+#include <string>       // for std::string
+
+
+//for the time:
+#include <time.h>
+//for the vectors and pairs:
+#include <vector>
+#include <utility> 
+#include "TVector3.h"
+
+using namespace std;
+
+
+//This should be included manually, but it is here for convenience:
+#include "/mnt/medley/LucasAnalysis/2023/XS_calcs/Aug25/src/runLoader.cxx" // for GetRunData
+#include "/mnt/medley/LucasAnalysis/2023/XS_calcs/Aug25/src/functions.cxx" // for my functions 
+#include "/mnt/medley/LucasAnalysis/2023/XS_calcs/Aug25/src/newE.cxx" // for the matching correction 
+
+//////////
+//The 'global' variables (like binWidth, mc, M, ...) are defined in functions.cxx for simplicity
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Here we will procude DDX for Fe in 2023 runs:: this new version is more organized and save everything in a ROOT file 
+// Different than before, many settings will be defined within the script, not passed as arguments
+void prod_DDX(
+    bool matchingCORR = true,
+    bool TTC = true,
+    bool plotIt = true, 
+    bool saveIt = true, 
+    bool pause_each = true, 
+    string outputFileName = "prod_DDX.root"    
+    ) {
+    
+    string cur_time = getCurrentTime();
+    clock_t tStart = clock();
+    
+    //cout<< "If not compiled, remember loading the .CXX files:" << endl;
+    //cout<< ".L /mnt/medley/LucasAnalysis/2023/XS_calcs/Aug25/src/runLoader.cxx" << endl;
+    //cout<< ".L /mnt/medley/LucasAnalysis/2023/XS_calcs/Aug25/src/functions.cxx" << endl;
+    cout<<endl<<endl<<endl<<endl;
+
+    //: : : Defining what we want to get: 
+        //std::vector<float> angles =  {20.0, 40.0, 60.0, 80.0, 100.0, 120.0, 140.0, 160.0};
+    std::vector<float> angles =  {20,160.0};
+        //std::vector<char> particles = {'p', 'd', 't', 'h', 'a'};
+    std::vector<char> particles = {'p'};
+    //string outputFileName = "prod_DDX.root";
+    cout << "Output file name: " << outputFileName << endl;
+
+    //: : : Here we can define using loops os stuff like that::
+
+    //I defined the pairs because we know that the relationship bet time and energi is non-linear
+    //and we measured neutrons's energy (calc. from ToF)...
+    std::vector<std::pair<float, float>> energy_bins = {
+        {6.5, 7.5},
+        {7.5, 9.0}
+        // ... outros bins conforme sua necessidade
+    };
+
+
+    // Getting runs and charges -- . -- . -- . -- . -- . -- . -- . -- . -- . -- . -- . -- . -- . -- . -- . -- . -- . -- . -- . -- . -- .
+    cout<< "Loading runs and charges..." << endl;  
+    std::vector<int> runsForward = {400,402};
+    std::vector<int> runsBackward = {383,384};
+
+    cout<< "Starting prod_DDX..." << endl;
+
+    //quick benchmark
+    Float_t charge_fr = 0;
+    TChain* Fr = loadRuns(397, 405, nullptr, &charge_fr); //ForwardRuns
+
+
+    Float_t charge_br = 0;
+    TChain* Br = loadRuns(383, 384, nullptr, &charge_br); //BackwardRuns
+
+    cout<< " _ - _ - _ - _ - _ - _ - _ - _ - _ - _ - _ - _ - _ - _ - _ - _ - _ - _ - _ - _ - _ - _ - _ - _ - _ - _ - _ - _" << endl;
+    cout << "Total charge for forward runs: " << charge_fr << " µC" << endl;
+    cout << "Total charge for backward runs: " << charge_br << " µC" << endl;
+
+// Up to here we loaded the runs and got the total charge for forward and backward runs
+
+
+
+//create my output file
+TFile *fOut = new TFile(outputFileName.c_str(), "RECREATE");
+TNamed *processing_info= new TNamed("File produced by prod_DDX.cpp:",Form("version1.2025-08-07.0 in %s",cur_time.c_str()));
+
+//if we are taking the energy based on the corrected ToF, it is more straight forward: 
+
+//we need a loop for energies: 
+
+Float_t Ea, Eb; // Ea and Eb are defined based on the binwidth and the energy:: 
+Int_t Nbins = 400;
+
+std::vector<std::vector<std::vector<TH1D*>>> Hddx; // vector for TH1D for each particle and angle 
+
+
+TCanvas *c;
+if(plotIt) c =  new TCanvas("c","c",800,600);
+
+for (const auto& bin : energy_bins) {
+    Float_t Ea = bin.first;
+    Float_t Eb = bin.second;
+    Float_t En = (Ea + Eb) / 2.0; // Energy in MeV
+    cout << "Processing energy: " << En << " MeV" << endl;
+    cout << " ---> Ea: " << Ea << " MeV, Eb: " << Eb << " MeV" << endl;
+
+    std::vector<std::vector<TH1D*>> angle_vec; // angle vector
+
+
+    //Now we can loop over angles and particles
+    for(float angle : angles){
+
+        
+        std::vector<TH1D*> particle_vec; //vector for particles
+
+        for(char particle : particles){
+            cout << "Processing angle: " << angle << " deg, particle: " << particle << endl;
+
+            // Here we call the function that does the actual work       
+
+            //Create the name and title for the given histo.. 
+            TString hname = Form("h_E%.1f_A%.1f_P%c", En, angle, particle);
+            hname.ReplaceAll(".", "p");
+            TString htitle = Form("E=%.1f - %.1f MeV, angle=%.1f deg, particle=%c", Ea, Eb, angle, particle);
+
+            // Create the histogram
+            TH1D* hist = new TH1D(hname, htitle, Nbins, 0, 40); // bins de 0 a 10, exemplo
+            
+            //hist for si1: 
+            TH1D* histSi1 = new TH1D("hsi1", "hsi1", 20*Nbins, 0, 40); // bins de 0 a 10, exemplo
+            //TH1D* histSi1 = nullptr;
+
+
+            if(angle<=80){
+                Fr->Draw(Form("E>>%s", hname.Data()), Form("ENN>%f && ENN<%f && PID==%d && ang == %f", Ea, Eb, pCode(particle), angle));
+                if(matchingCORR) Fr->Draw("si1>>hsi1", Form("ENN>%f && ENN<%f && PID==%d && ang == %f", Ea, Eb, pCode(particle), angle));
+            }else{
+                Br->Draw(Form("E>>%s", hname.Data()), Form("ENN>%f && ENN<%f && PID==%d && ang == %f", Ea, Eb, pCode(particle), angle));
+                if(matchingCORR) Br->Draw("si1>>hsi1", Form("ENN>%f && ENN<%f && PID==%d && ang == %f", Ea, Eb, pCode(particle), angle));
+            }
+            
+            TH1D *hist_Mcorr;
+            getAZ(particle); //update Z and A based on the particle
+            string newname = string(hname.Data()) + "newE";
+            if(particle == 'p' || particle == 'd' || particle == 't'){
+                int telID = int(angle / 20);
+                hist_Mcorr = newE(histSi1, newname, thicknessFirstTel(telID),A,Z); // Apply the newE function to the histogram
+                hist_Mcorr->Rebin(20);
+            }
+
+            //required transformations on hist:: 
+            if(pause_each) {
+                c->cd();
+                hist->Draw();
+                hist_Mcorr->SetLineColor(kRed);
+                if(particle == 'p' || particle == 'd' || particle == 't') hist_Mcorr->Draw("same");
+                c->Update();
+                cout << "Press Enter to continue..." << endl;
+                cin.get(); // Wait for user input
+            }
+
+            if(matchingCORR) {
+                particle_vec.push_back(hist_Mcorr);
+            } else {
+                gDirectory->Remove(histSi1);
+                delete histSi1;
+                particle_vec.push_back(hist);
+            }
+            
+        }
+        angle_vec.push_back(particle_vec);
+    }
+
+    Hddx.push_back(angle_vec);
+
+}
+
+    processing_info->Write();
+    fOut->Write();
+    fOut->Close();
+    cout << "Output file " << outputFileName << " created." << endl;
+
+    cout <<"\nTotal execution time: "<< double(clock() - tStart) / (double)CLOCKS_PER_SEC<<" s."<<endl;
+    cout<<"prod_DXX.cpp, version 1.2025-08-07.0"<<endl;
+
+    
+
+
+}
