@@ -54,9 +54,9 @@ void prod_DDX(
 
     //: : : Defining what we want to get: 
         //std::vector<float> angles =  {20.0, 40.0, 60.0, 80.0, 100.0, 120.0, 140.0, 160.0};
-    std::vector<float> angles =  {20.0};
+    std::vector<float> angles =  {20.0, 40.0, 60.0, 80.0, 100.0, 120.0, 140.0, 160.0};
     //std::vector<char> particles = {'p', 'd', 't', 'h', 'a'};
-    std::vector<char> particles = {'p', 'd'};
+    std::vector<char> particles = { 'p', 'd', 't', 'h', 'a'};
     //string outputFileName = "prod_DDX.root";
     cout << "Output file name: " << outputFileName << endl;
 
@@ -166,6 +166,9 @@ for (const auto& bin : energy_bins) {
         std::vector<TH1D*> particle_vec; //vector for particles
 
         for(char particle : particles){
+            
+            getAZ(particle); //update Z and A based on the particle
+            
             cout << "Processing angle: " << angle << " deg, particle: " << particle << endl;
 
             // Here we call the function that does the actual work       
@@ -173,16 +176,18 @@ for (const auto& bin : energy_bins) {
             //Create the name and title for the given histo.. 
             TString hname = Form("h_E%.1f_A%.1f_P%c", En, angle, particle);
             hname.ReplaceAll(".", "p");
-            TString htitle = Form("E_{NN}=%.1f-%.1f MeV, ang=%.1f deg, %s", Ea, Eb, angle, particleName(particle).c_str());
+
+            TString htitle = Form("E_{NN}=%.1f-%.1f MeV, ang=%.0fdeg, %s", Ea, Eb, angle, particleName(particle).c_str());
 
             // Create the histogram to be saved (has to be created out of the if): 
-            TH1D* hist = new TH1D(hname, htitle, Nbins, 0, 40); 
-            
-            getAZ(particle); //update Z and A based on the particle
+            TH1D* hist = new TH1D(hname.Data(), htitle.Data(), Nbins, 0, 40); 
+            //TH1D* hist = nullptr;
             
             //conditions for the cuts:
             string conditions = Form("ENN>%f && ENN<%f && PID==%d && ang == %f", Ea, Eb, pCode(particle), angle);
             cout << "Conditions: " << conditions << endl;
+
+
             if(
                 (targetmat == "MedleyCarbon" || targetmat == "C" || targetmat == "CMedley")
                 && (angle == 20 || angle == 40 ||  angle == 80 || angle == 100 || angle == 120 || angle == 160)
@@ -192,41 +197,43 @@ for (const auto& bin : energy_bins) {
                     conditions = Form("ENN>%f && ENN<%f && PID==%d && ang == %f && ee%d", Ea, Eb, pCode(particle), angle,(int)angle/20);
                 else
                     conditions = Form("ENN>%f && ENN<%f && PID==%d && ang == %f && ee%d", Ea, Eb, pCode(particle), angle, (int)(180 - angle)/20);
-                cout << " - ->> Corrected conditions: " << conditions << endl;
+                cout << " [Carbon] -->> Corrected conditions: " << conditions << endl;
             }
 
             //if p d or t && match correction ON: 
             if(matchingCORR && (particle == 'p' || particle == 'd' || particle == 't')) { //if we need to apply the matching correction:
 
-                TH1D* histSi1 = new TH1D("hsi1", "hsi1", 20*Nbins, 0, 40); //create the histogram for si1
+                TH1D* histSi1 = new TH1D(Form("hsi1_%c_%.1f",particle,angle), Form("hsi1_%c_%.1f_title",particle,angle), 20*Nbins, 0, 40); //create the histogram for si1
 
                 if(angle<=80){
                     //Fr->Draw("si1>>hsi1", Form("ENN>%f && ENN<%f && PID==%d && ang == %f", Ea, Eb, pCode(particle), angle));
-                    Fr->Draw("si1>>hsi1", conditions.c_str());
+                    Fr->Draw(Form("si1>>hsi1_%c_%.1f",particle,angle), conditions.c_str(),"goff");
                 }else{
                     //Br->Draw("si1>>hsi1", Form("ENN>%f && ENN<%f && PID==%d && ang == %f", Ea, Eb, pCode(particle), angle));
-                    Br->Draw("si1>>hsi1", conditions.c_str());
+                    Br->Draw(Form("si1>>hsi1_%c_%.1f",particle,angle), conditions.c_str(),"goff");
                 }
                 
                 //hsi1 constructed, now we can apply the newE function to the histogram
                 
                 hname = string(hname.Data()) + "_MC";
-                cout <<"\n-- -- \n -- -- \n -- -- -- -- \n -- -- -- -- -- \n --- -- -- -- -- -- \n";
-                cout<<"Info :: particle = "<< particle << ", angle= " << angle << ", A = " << A << ", Z = " << Z << endl;
-                cout<< "Conditions:"<<conditions<<endl;
-                cout << "Thickness first tel:"<<thicknessFirstTel(int(angle / 20))<<endl;
+                htitle = string(htitle.Data()) + ", MC";
+                // cout <<"\n-- -- \n -- -- \n -- -- -- -- \n -- -- -- -- -- \n --- -- -- -- -- -- \n";
+                // cout<<"Info :: particle = "<< particle << ", angle= " << angle << ", A = " << A << ", Z = " << Z << endl;
+                // cout<< "Conditions:"<<conditions<<endl;
+                // cout << "Thickness first tel:"<<thicknessFirstTel(int(angle / 20))<<endl;
 
                 //now we attribute
 
-                
-                hist = newE(histSi1, hname.Data(), thicknessFirstTel(int(angle / 20)), A, Z); // Apply the newE function to the histogram
+                Float_t thSi1 = thicknessFirstTel(int(angle / 20));//µm
+                hist = newE(histSi1, hname.Data(), htitle.Data(), thSi1, Z, A); // Apply the newE function to the histogram
                 hist->Rebin(20); // Rebin the histogram to 20 bins
-                
+                //hist->SetNameTitle(hname.Data(), htitle.Data()); // Set the name and title of the histogram
+
                 //gDirectory->Remove(histSi1); // Remove the histogram from the directory
                 //delete histSi1; // Delete the histogram to free memory
 
             }else{
-    
+                
                 if(angle<=80){
                     //Fr->Draw(Form("E>>%s", hname.Data()), Form("ENN>%f && ENN<%f && PID==%d && ang == %f", Ea, Eb, pCode(particle), angle));
                     Fr->Draw(Form("E>>%s", hname.Data()), conditions.c_str());
@@ -243,6 +250,7 @@ for (const auto& bin : energy_bins) {
                 cout<< "Applying TTC correction to " << hist->GetName() <<endl;
                 hist = correctSpec(hist, 1,particle, angle, targetmat); 
                 hname = string(hname.Data()) + "_TTC";
+                htitle = string(htitle.Data()) + ", TTC";
                 hist->SetNameTitle(hname.Data(), htitle.Data());
             }
 
