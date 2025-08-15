@@ -12,7 +12,7 @@
 #include <iostream>
 #include <fstream>
 #include "/mnt/medley/LucasAnalysis/useful.h" //version6.10.2024.0002
-//#include "/home/pi/ganil/kalscripts/eloss/GetPPlot.cpp"
+#include "src/GetPfactor.cc"
 
 
 #include "TStopwatch.h"
@@ -42,7 +42,7 @@ return (Qch2/Qc)* ((mch2/mmch2) / (mc/mmc));
 }
 
 
-TH1D* flux_reconstruction(string ch2file = "pspec_runs_035-038_CH2.root", string cfile = "pspec_runs_053-058_C.root", string name = "totExTTC"){
+TH1D* flux_reconstruction(string ch2file = "pspec_runs_035-038_CH2.root", string cfile = "pspec_runs_053-058_Cv2.root", string name = "totExTTC"){
 //TH1D* flux_reconstruction(string ch2file = "protonsCH2.root", string cfile = "protonsC.root", string name = "hexp"){
 TFile *ff = new TFile(ch2file.c_str(), "READ");
 
@@ -88,6 +88,16 @@ double mb_to_cm2 = 1e-27 ;//cm²
 
 TGraph *xs = new TGraph("/mnt/medley/LucasAnalysis/2023/fluxMedley_script/XS/nn.org_np_2to40MeV_LABrf_20.40.60.80deg.csv","%lg %lg %*lg %*lg %*lg",",");
 
+
+
+cout << "Charge (µC): " << qCH2 << endl;
+//cout << "Duration (s): " << duration_val << endl;
+
+Double_t factor_mult = pow(L,2)/(NatH*mb_to_cm2*Omegatel*qCH2);
+cout<<"Factor = "<<factor_mult<<endl;
+
+
+
 // double NA = 6.023e23;
 // double NatH = 2*mch2*NA/14.0; // [mass of CH2 ⋅ NA / MM(CH2)] //TAKE A LOOK HERE
 // double L = 464.72; //cm
@@ -95,7 +105,7 @@ TGraph *xs = new TGraph("/mnt/medley/LucasAnalysis/2023/fluxMedley_script/XS/nn.
 // double omega_tel = 0.040 ;//sr 
 // double omega_tgt = 0.00002272935814;// sr
 
-double factor_mult = TMath::Pi()*2*sin(TMath::Pi()*20/180)*pow(L,2)/(NatH*omega_tel*qCH2*cm2_per_barn );
+//double factor_mult = TMath::Pi()*2*sin(TMath::Pi()*20/180)*pow(L,2)/(NatH*omega_tel*qCH2*cm2_per_barn );
 
 TH1D *nn = (TH1D*)hh->Clone();
 nn->SetNameTitle("nn","nn");
@@ -106,7 +116,7 @@ for(Int_t b=1;b<=nn->GetNbinsX();b++){
     bincounts = nn->GetBinContent(b);
     bincenter = nn->GetBinCenter(b);
 
-    xs_value = xs->Eval(bincenter)/1e3;// in b
+    xs_value = xs->Eval(bincenter);// in b
     bin_width = nn->GetBinWidth(b); // in MeV
 
     bincontent = factor_mult*bincounts/(xs_value*bin_width); //1e3 because xs is given in mb
@@ -137,15 +147,32 @@ for(Int_t b=1;b<=nn2->GetNbinsX();b++){
     
 }
 nn2->SetLineColor(kRed);
-nn2->Draw("same");
+nn2->Draw();
+nn2->SetTitle("Neutron flux from direct method, 2022");
+nn2->SetNameTitle("nn22","nn22");
+nn2->SetBinContent(1,0); // Set first bin content to 0 to avoid division by zero in further calculations
+nn2->SetTitle("NFS' spectral neutron flux 22/23");
+nn2->GetYaxis()->SetTitle("n sr^{-1} 1-MeV^{-1} #muC^{-1}");
+nn2->GetXaxis()->SetTitle("E (MeV)");
+gStyle->SetOptStat(0);
 
+TFile *fflux = new TFile("../2023/nflux_direct/nn2.root","READ");
 
-
-TFile *fflux = new TFile("run111.root","READ");
-TGraphErrors *nspec = (TGraphErrors *)fflux->Get("Nspectrum");
-nspec->SetLineWidth(2);
-
+TH1D *nspec = (TH1D *)fflux->Get("nn2");
+//spec->SetLineWidth(2);
+//nspec->SetLineColor(kBlue);
 nspec->Draw("same");
+
+
+TLegend *leg = new TLegend(0.6,0.7,0.9,0.9);
+leg->AddEntry(nn2,"2022","l");
+leg->AddEntry(nspec,"2023","l");
+leg->Draw();
+
+ // TGraphErrors *nspec = (TGraphErrors *)fflux->Get("Nspectrum");
+// nspec->SetLineWidth(2);
+
+// nspec->Draw("same");
 
 
 
