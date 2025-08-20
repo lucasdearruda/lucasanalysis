@@ -51,7 +51,7 @@ void prod_DDX(
     //cout<< ".L /mnt/medley/LucasAnalysis/2023/XS_calcs/Aug25/src/runLoader.cxx" << endl;
     //cout<< ".L /mnt/medley/LucasAnalysis/2023/XS_calcs/Aug25/src/functions.cxx" << endl;
     cout<<endl<<endl<<endl<<endl;
-
+    
     //: : : Defining what we want to get: 
         //std::vector<float> angles =  {20.0, 40.0, 60.0, 80.0, 100.0, 120.0, 140.0, 160.0};
     std::vector<float> angles =  {20.0, 40.0, 60.0, 80.0, 100.0, 120.0, 140.0, 160.0};
@@ -135,13 +135,23 @@ if(targetmat == "MedleyCarbon" || targetmat == "C" || targetmat == "CMedley") {
 // I want to exclude    ee1.C ee2.C
 //and consider only ee4.C, for this case we have to remove angles for tel3 as well 
 
-    gROOT->ProcessLine(".L  /mnt/medley/LucasAnalysis/2023/XS_calcs/eeCcuts/ee1.C");
-    gROOT->ProcessLine(".L  /mnt/medley/LucasAnalysis/2023/XS_calcs/eeCcuts/ee2.C");
-    gROOT->ProcessLine(".L  /mnt/medley/LucasAnalysis/2023/XS_calcs/eeCcuts/ee3.C");
+    gROOT->ProcessLine(".L  /mnt/medley/LucasAnalysis/2022/XS/CarbonCuts/ee1.C");
+    gROOT->ProcessLine(".L  /mnt/medley/LucasAnalysis/2022/XS/CarbonCuts/ee2.C");
+    gROOT->ProcessLine(".L  /mnt/medley/LucasAnalysis/2022/XS/CarbonCuts/ee4.C");
     cut_ee[0] = (TCutG *)gROOT->GetListOfSpecials()->FindObject("ee1");
     cut_ee[1] = (TCutG *)gROOT->GetListOfSpecials()->FindObject("ee2");
     //cut_ee[2] = (TCutG *)gROOT->GetListOfSpecials()->FindObject("ee3"); THERE IS NO ee3 FOR CARBON
     cut_ee[3] = (TCutG *)gROOT->GetListOfSpecials()->FindObject("ee4");
+
+    // Remove 60deg and 120 deg if they exist
+    cout<<"removing possible 60seg and 160deg angles from the calculations..."<<endl;
+    angles.erase(std::remove(angles.begin(), angles.end(), 60.0f), angles.end());
+    angles.erase(std::remove(angles.begin(), angles.end(), 120.0f), angles.end());
+    cout<< angles.size() << " angles loaded for carbon: ";
+    for(float angle : angles) {
+        cout << angle << " ";
+    }
+
 }
 
 std::vector<std::vector<std::vector<TH1D*>>> Hddx; // vector for TH1D for each particle and angle 
@@ -211,10 +221,7 @@ for (const auto& bin : energy_bins) {
             cout << "Conditions: " << conditions << endl;
 
 
-            if(
-                (targetmat == "MedleyCarbon" || targetmat == "C" || targetmat == "CMedley")
-                && (angle == 20 || angle == 40 ||  angle == 80 || angle == 100 || angle == 120 || angle == 160)
-                ) {
+            if((targetmat == "MedleyCarbon" || targetmat == "C" || targetmat == "CMedley") ) {
                 //if we are using the carbon target, we have to apply the cuts:
                 if(angle<=80)
                     conditions = Form("ENN>%f && ENN<%f && PID==%d && ang == %f && ee%d", Ea, Eb, pCode(particle), angle,(int)angle/20);
