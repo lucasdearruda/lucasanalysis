@@ -1,3 +1,8 @@
+//prod_DXX.cpp, version 2025-08-21.0
+//I am revising it
+// - first thing: add the string for the output file name inside the function
+
+
 //prod_DXX.cpp, version 2025-08-08.0
 // Script for evaluation the ddx for Fe in 2023 runs
 // This script accepts multiple runs
@@ -31,16 +36,25 @@ using namespace std;
 // Different than before, many settings will be defined within the script, not passed as arguments
 void prod_DDX(
     bool matchingCORR = true,
-    bool TTC = false,
+    bool TTC = true,
     bool plotIt = true, 
     bool saveIt = true, 
-    bool pause_each = false, 
-    string outputFileName = "prod_DDX.root"    
+    bool pause_each = false
     ) {
     
     string cur_time = getCurrentTime();
     clock_t tStart = clock();
-    
+    string outputFileName = "prod_DDX"  ; 
+
+    //create the output file name based on the parameters:
+    if(matchingCORR) {
+        outputFileName += "_MC";
+    }
+    if(TTC) {
+        outputFileName += "_TTC";
+    }
+    outputFileName += ".root";
+
     //For iron: 
     Attribute_Target("Fe_thick_Medley");
     //for carbon:
@@ -54,10 +68,13 @@ void prod_DDX(
 
     //: : : Defining what we want to get: 
         //std::vector<float> angles =  {20.0, 40.0, 60.0, 80.0, 100.0, 120.0, 140.0, 160.0};
+
     std::vector<float> angles =  {20.0, 40.0, 60.0, 80.0, 100.0, 120.0, 140.0, 160.0};
+    
     //std::vector<char> particles = {'p', 'd', 't', 'h', 'a'};
-    std::vector<char> particles = { 'p', 'd', 't', 'h', 'a'};
-    //string outputFileName = "prod_DDX.root";
+    std::vector<char> particles = { 'p', 'a'};
+
+    
     cout << "Output file name: " << outputFileName << endl;
 
     //: : : Here we can define using loops os stuff like that::
@@ -65,10 +82,33 @@ void prod_DDX(
     //I defined the pairs because we know that the relationship bet time and energi is non-linear
     //and we measured neutrons's energy (calc. from ToF)...
     std::vector<std::pair<float, float>> energy_bins = {
-        {25, 26}//,
-        //{26, 27}
-        // ... outros bins conforme sua necessidade
-    };
+        //{25, 26}//,
+        {3.5, 4.5},
+        {4.5, 5.5},
+        {5.5, 6.5},
+        {6.5, 7.5},
+        {7.5, 8.5},
+        {8.5, 9.5},
+        {9.5, 10.5},
+        {10.5, 11.5},
+        {11.5, 12.5},
+        {12.5, 13.5},
+        {13.5, 14.5},
+        {14.5, 15.5},
+        {15.5, 16.5},
+        {16.5, 17.6},
+        {17.6, 18.8},
+        {18.8, 20.1},
+        {20.1, 21.6},
+        {21.6, 23.2},
+        {23.2, 25},
+        {25, 27},
+        {27, 29.3},
+        {29.3, 32},
+        {32, 35},
+        {35, 38.4},
+        {38.4, 40}
+    };s
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -77,23 +117,32 @@ void prod_DDX(
 
     cout<< "Loading runs and charges..." << endl;  
     //for Fe:
-    std::vector<int> runsForward = {400,402};
+    std::vector<int> runsForward = {397,405};
     std::vector<int> runsBackward = {383,384};
 
     //for carbon
     //std::vector<int> runsForward = {35,39};
     //std::vector<int> runsBackward = {383,384};
 
-
+    TChain* Fr = nullptr; 
+    TChain* Br = nullptr;
     cout<< "Starting prod_DDX..." << endl;
 
     //quick benchmark
     Float_t charge_fr = 0;
-    TChain* Fr = loadRuns(397, 405, nullptr, &charge_fr); //ForwardRuns
-
-
     Float_t charge_br = 0;
-    TChain* Br = loadRuns(383, 384, nullptr, &charge_br); //BackwardRuns
+
+    for(size_t i = 0; i + 1 < runsForward.size(); i += 2) {//two by two 
+        Fr = loadRuns(runsForward[i], runsForward[i+1], Fr, &charge_fr);
+    }
+
+    for(size_t i = 0; i + 1 < runsBackward.size(); i += 2) {//two by two 
+        Br = loadRuns(runsBackward[i], runsBackward[i+1], Br, &charge_br);
+    }
+
+
+    //TChain* Fr = loadRuns(397, 405, nullptr, &charge_fr); //ForwardRuns
+    //TChain* Br = loadRuns(383, 384, nullptr, &charge_br); //BackwardRuns
 
     cout<< " _ - _ - _ - _ - _ - _ - _ - _ - _ - _ - _ - _ - _ - _ - _ - _ - _ - _ - _ - _ - _ - _ - _ - _ - _ - _ - _ - _" << endl;
     cout << "Total charge for forward runs: " << charge_fr << " µC" << endl;
@@ -107,17 +156,7 @@ void prod_DDX(
 Float_t Ea, Eb; // Ea and Eb are defined based on the binwidth and the energy:: 
 Int_t Nbins = 200;
 Float_t Factor = 0;
-
-                // //protons npt
-                // cout << Form("\n- - -   LOADING NON-PUNCH-THROUGH CUTS FOR dE1:dE2 (UPPER BRANCH)   - - -\n")<< "... " ;
-                // cout << Form("\n->[tel %d] loading NPT PROTONS CUT: %s/p_npt_%d.C",telN, cuts_path.c_str(),telN)<< "... " ;
-                // gROOT->ProcessLine(Form(".L  %s/p_npt_%d.C", cuts_path.c_str(),telN));
-                // cut_protons[telN] = (TCutG *)gROOT->GetListOfSpecials()->FindObject(Form("p_npt_%d",telN));
-                // if(cut_protons[telN]!=NULL) cout << "  --> OK."<< endl;
-                // cut_protons[telN]->SetName(Form("p_npt_%d",telN));
-                // cut_protons[telN]->SetLineWidth(2);
-                // cut_protons[telN]->SetLineColor(kRed);
-            
+        
 string targetmat = "Fe_thick_Medley"; // Target material
 TCutG * cut_ee[4];
 
@@ -145,13 +184,19 @@ if(plotIt) c =  new TCanvas("c","c",800,600);
 // Process everything, looping over energies, angles and particles
 //__.__.__.__.__.__.__.__.__.__.__.__.__.__.__.__.__.__.__.__.__.__.__.__.__.__.__.__.__.__.__.__.__.__.__.__.__.__.__.__.__.__.__.__.__.__.__.__.__.__.__.__.__.__.
 
+cout<<"..L = " << L << " cm"<<endl;;
+cout<<"..A_tgt = " << A_tgt <<" cm²"<<endl;
+cout<< "..Nc = " << Nc << " atoms/cm³"<<endl;
+cout<<"..omega_tel = " << omega_tel << " sr"<<endl;
+cout<<"...charge_fr = " << charge_fr << " µC."<<endl;
+cout<<"...charge_br = " << charge_br << " µC."<<endl;
 
 
 for (const auto& bin : energy_bins) {
     Float_t Ea = bin.first;
     Float_t Eb = bin.second;
     Float_t En = (Ea + Eb) / 2.0; // Energy in MeV
-    Float_t flux = getNflux(Ea, Eb); // Get the flux for the given energy range, in n/sr/µC/MeV
+    Float_t flux = getNflux(Ea, Eb); // Get the flux for the given energy range, in n/sr/µC/MeV - from functions.cxx
     cout << "Processing energy: " << En << " MeV" << endl;
     cout << " ---> Ea: " << Ea << " MeV, Eb: " << Eb << " MeV" << endl;
     cout << "   ---> neutron flux: " << flux << " n/sr/µC/MeV" << endl;
@@ -164,17 +209,25 @@ for (const auto& bin : energy_bins) {
 
         
         std::vector<TH1D*> particle_vec; //vector for particles
-
+      
+        if(angle<100){
+            Factor = 1e3*L*L*cm2_to_barn/(flux*Nc*omega_tel*charge_fr); // *TMath::Cos(45*TMath::DegToRad())
+        }else{
+            Factor = 1e3*L*L*cm2_to_barn/(flux*Nc*omega_tel*charge_br);
+        }
+        cout<< " ** Factor = " << Factor << endl;
+        
+        
         for(char particle : particles){
             
             getAZ(particle); //update Z and A based on the particle
             
-            cout << "Processing angle: " << angle << " deg, particle: " << particle << endl;
-
+            cout <<"Processing angle: " << angle << " deg, particle: " << particle << endl;
+            
             // Here we call the function that does the actual work       
 
             //Create the name and title for the given histo.. 
-            TString hname = Form("h_E%.1f_A%.1f_P%c", En, angle, particle);
+            TString hname = Form("P%c_E%.1f_A%.1fdeg", particle, En, angle);
             hname.ReplaceAll(".", "p");
 
             TString htitle = Form("E_{NN}=%.1f-%.1f MeV, ang=%.0fdeg, %s", Ea, Eb, angle, particleName(particle).c_str());
@@ -185,7 +238,7 @@ for (const auto& bin : energy_bins) {
             
             //conditions for the cuts:
             string conditions = Form("ENN>%f && ENN<%f && PID==%d && ang == %f", Ea, Eb, pCode(particle), angle);
-            cout << "Conditions: " << conditions << endl;
+            cout << "  - Conditions: " << conditions << endl;
 
 
             if(
@@ -197,13 +250,13 @@ for (const auto& bin : energy_bins) {
                     conditions = Form("ENN>%f && ENN<%f && PID==%d && ang == %f && ee%d", Ea, Eb, pCode(particle), angle,(int)angle/20);
                 else
                     conditions = Form("ENN>%f && ENN<%f && PID==%d && ang == %f && ee%d", Ea, Eb, pCode(particle), angle, (int)(180 - angle)/20);
-                cout << " [Carbon] -->> Corrected conditions: " << conditions << endl;
+                cout << "  - [Carbon] -->> Corrected conditions: " << conditions << endl;
             }
 
             //if p d or t && match correction ON: 
             if(matchingCORR && (particle == 'p' || particle == 'd' || particle == 't')) { //if we need to apply the matching correction:
 
-                TH1D* histSi1 = new TH1D(Form("hsi1_%c_%.1f",particle,angle), Form("hsi1_%c_%.1f_title",particle,angle), 20*Nbins, 0, 40); //create the histogram for si1
+                TH1D* histSi1 = new TH1D(Form("hsi1_%c_%.1f",particle,angle), Form("hsi1_%c_%.1f_title",particle,angle), 20*Nbins, 0, 50); //create the histogram for si1
 
                 if(angle<=80){
                     //Fr->Draw("si1>>hsi1", Form("ENN>%f && ENN<%f && PID==%d && ang == %f", Ea, Eb, pCode(particle), angle));
@@ -248,7 +301,7 @@ for (const auto& bin : energy_bins) {
             //required transformations on hist:: 
             if(TTC){
                 cout<< "Applying TTC correction to " << hist->GetName() <<endl;
-                hist = correctSpec(hist, 1,particle, angle, targetmat); 
+                hist = correctSpec(hist, true,particle, angle, targetmat); //from functions.cxx
                 hname = string(hname.Data()) + "_TTC";
                 htitle = string(htitle.Data()) + ", TTC";
                 hist->SetNameTitle(hname.Data(), htitle.Data());
@@ -273,17 +326,12 @@ for (const auto& bin : energy_bins) {
             // ζ = target angle
             // [φ(En)] = n/sr/µC/MeV
             //
-            if(angle<100){
-                Factor = 1e3*L*L*cm2_to_barn/(flux*Nc*omega_tel*charge_fr*TMath::Cos(45*TMath::DegToRad()));
-            }else{
-                Factor = 1e3*L*L*cm2_to_barn/(flux*Nc*omega_tel*charge_fr*TMath::Cos(45*TMath::DegToRad()));
-            }
-            cout<< "Factor = " << Factor << endl;
-            cout<<"\n..L = " << L << "\n..cm, A_tgt = " << A_tgt << " cm²,\n..Nc = " << Nc << " atoms/cm³,\n..omega_tel = " << omega_tel << " sr,\n..charge_fr = " << charge_fr << " µC."<<endl;
+            
             for(int bn = 1;bn<=hist->GetNbinsX();bn++){
                 Double_t binContent = hist->GetBinContent(bn);
+                Double_t binWidth = hist->GetBinWidth(bn);
                 if(binContent > 0) {
-                    hist->SetBinContent(bn, binContent * Factor / hist->GetBinWidth(bn));
+                    hist->SetBinContent(bn, binContent * Factor / binWidth);
                 } else {
                     hist->SetBinContent(bn, 0); // Avoid division by zero
                 }
@@ -324,7 +372,7 @@ fOut->Close();
 cout << "Output file " << outputFileName << " created." << endl;
 
 cout <<"\nTotal execution time: "<< double(clock() - tStart) / (double)CLOCKS_PER_SEC<<" s."<<endl;
-cout<<"prod_DXX.cpp, version 1.2025-08-07.0"<<endl;
+cout<<"prod_DXX.cpp, version 1.2025-08-21.0"<<endl;
 
     
 
