@@ -1,3 +1,7 @@
+//prod_DXX.cpp, version 2025-08-25.0
+// I added some TNameds to the output file, with the runs used
+// and some TNameds with the input parameters, and target info
+
 //prod_DXX.cpp, version 2025-08-21.0
 //I am revising it
 // - first thing: add the string for the output file name inside the function
@@ -39,12 +43,13 @@ void prod_DDX(
     bool TTC = true,
     bool plotIt = true, 
     bool saveIt = true, 
-    bool pause_each = false
+    bool pause_each = false,
+    bool verbose = true
     ) {
     
     string cur_time = getCurrentTime();
     clock_t tStart = clock();
-    string outputFileName = "prod_DDX"  ; 
+    string outputFileName = "prod_DDX_thick"  ; 
 
     //create the output file name based on the parameters:
     if(matchingCORR) {
@@ -56,7 +61,9 @@ void prod_DDX(
     outputFileName += ".root";
 
     //For iron: 
-    Attribute_Target("Fe_thick_Medley");
+    string mytarget= "Fe_thick_Medley";
+    Attribute_Target(mytarget);
+        //Attribute_Target("Fe_thin");
     //for carbon:
     //Attribute_Target("MedleyCarbon");
     version();
@@ -69,7 +76,8 @@ void prod_DDX(
     //: : : Defining what we want to get: 
         //std::vector<float> angles =  {20.0, 40.0, 60.0, 80.0, 100.0, 120.0, 140.0, 160.0};
 
-    std::vector<float> angles =  {20.0, 40.0, 60.0, 80.0, 100.0, 120.0, 140.0, 160.0};
+    //std::vector<float> angles =  {20.0, 40.0, 60.0, 80.0, 100.0, 120.0, 140.0, 160.0};
+    std::vector<float> angles =  {20.0};
     
     //std::vector<char> particles = {'p', 'd', 't', 'h', 'a'};
     std::vector<char> particles = { 'p', 'a'};
@@ -108,7 +116,7 @@ void prod_DDX(
         {32, 35},
         {35, 38.4},
         {38.4, 40}
-    };s
+    };
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -116,9 +124,19 @@ void prod_DDX(
 //__.__.__.__.__.__.__.__.__.__.__.__.__.__.__.__.__.__.__.__.__.__.__.__.__.__.__.__.__.__.__.__.__.__.__.__.__.__.__.__.__.__.__.__.__.__.__.__.__.__.__.__.__.__.
 
     cout<< "Loading runs and charges..." << endl;  
-    //for Fe:
+    
+    
+    //for Fe-thick: _ _ _ _ _ _ _ _ _ 
     std::vector<int> runsForward = {397,405};
-    std::vector<int> runsBackward = {383,384};
+                        //std::vector<int> runsBackward = {383,384}; PROBLEMATIC RUNS (120° very weird)!!!! 
+    std::vector<int> runsBackward = {410,412};
+
+    //for Fe-thin: _ _ _ _ _ _ _ _ _ 
+    // std::vector<int> runsForward = {389,394};
+    //                     //std::vector<int> runsBackward = {383,384}; PROBLEMATIC RUNS!!!! 
+    // std::vector<int> runsBackward = {385,387};
+
+
 
     //for carbon
     //std::vector<int> runsForward = {35,39};
@@ -197,9 +215,9 @@ for (const auto& bin : energy_bins) {
     Float_t Eb = bin.second;
     Float_t En = (Ea + Eb) / 2.0; // Energy in MeV
     Float_t flux = getNflux(Ea, Eb); // Get the flux for the given energy range, in n/sr/µC/MeV - from functions.cxx
-    cout << "Processing energy: " << En << " MeV" << endl;
-    cout << " ---> Ea: " << Ea << " MeV, Eb: " << Eb << " MeV" << endl;
-    cout << "   ---> neutron flux: " << flux << " n/sr/µC/MeV" << endl;
+    if(verbose)cout << "Processing energy: " << En << " MeV" << endl;
+    if(verbose)cout << " ---> Ea: " << Ea << " MeV, Eb: " << Eb << " MeV" << endl;
+    if(verbose)cout << "   ---> neutron flux: " << flux << " n/sr/µC/MeV" << endl;
 
     std::vector<std::vector<TH1D*>> angle_vec; // angle vector
 
@@ -215,7 +233,7 @@ for (const auto& bin : energy_bins) {
         }else{
             Factor = 1e3*L*L*cm2_to_barn/(flux*Nc*omega_tel*charge_br);
         }
-        cout<< " ** Factor = " << Factor << endl;
+        if(verbose)cout<< " ** Factor = " << Factor << endl;
         
         
         for(char particle : particles){
@@ -300,7 +318,7 @@ for (const auto& bin : energy_bins) {
 
             //required transformations on hist:: 
             if(TTC){
-                cout<< "Applying TTC correction to " << hist->GetName() <<endl;
+                if(verbose)cout<< "Applying TTC correction to " << hist->GetName() <<endl;
                 hist = correctSpec(hist, true,particle, angle, targetmat); //from functions.cxx
                 hname = string(hname.Data()) + "_TTC";
                 htitle = string(htitle.Data()) + ", TTC";
@@ -354,7 +372,15 @@ for (const auto& bin : energy_bins) {
 
 
 TFile *fOut = new TFile(outputFileName.c_str(), "RECREATE");
-TNamed *processing_info= new TNamed("File produced by prod_DDX.cpp:",Form("version2025-08-08.0 in %s",cur_time.c_str()));
+TNamed *processing_info= new TNamed("File produced by prod_DDX.cpp:",Form("version2025-08-25.0 in %s",cur_time.c_str()));
+
+
+std::string forwardStr = makeRunsString(runsForward);
+std::string backwardStr = makeRunsString(runsBackward);
+
+TNamed *runs_infoF = new TNamed("Forward runs:", forwardStr.c_str());
+TNamed *runs_infoB = new TNamed("Backward runs:", backwardStr.c_str());
+
 
 // Loop for saving the histograms::0
 for (const auto& angle_vec : Hddx) {
@@ -365,14 +391,34 @@ for (const auto& angle_vec : Hddx) {
     }
 }
 
+ // --- Create a TNamed for each flag ---
+    TNamed* flag_matchingCORR = new TNamed("matchingCORR", matchingCORR ? "true" : "false");
+    TNamed* flag_TTC         = new TNamed("TTC", TTC ? "true" : "false");
+    TNamed* flag_plotIt      = new TNamed("plotIt", plotIt ? "true" : "false");
+    TNamed* flag_saveIt      = new TNamed("saveIt", saveIt ? "true" : "false");
+    TNamed* flag_pause_each  = new TNamed("pause_each", pause_each ? "true" : "false");
+    TNamed* flag_verbose     = new TNamed("verbose", verbose ? "true" : "false");
+    TNamed* target_named     = new TNamed("Target", mytarget.c_str());
 
+
+
+flag_pause_each->Write();
+flag_matchingCORR->Write();
+flag_TTC->Write();
+flag_plotIt->Write();
+flag_saveIt->Write();
+flag_verbose->Write();
+target_named->Write();
+
+runs_infoF->Write();
+runs_infoB->Write();
 processing_info->Write();
 fOut->Write();
 fOut->Close();
 cout << "Output file " << outputFileName << " created." << endl;
 
 cout <<"\nTotal execution time: "<< double(clock() - tStart) / (double)CLOCKS_PER_SEC<<" s."<<endl;
-cout<<"prod_DXX.cpp, version 1.2025-08-21.0"<<endl;
+cout<<"prod_DXX.cpp, version 1.2025-08-25.0"<<endl;
 
     
 
