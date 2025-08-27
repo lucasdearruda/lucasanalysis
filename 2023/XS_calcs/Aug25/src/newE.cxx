@@ -12,7 +12,8 @@
 //bool considerangle = false,
 TH1D *newE(
     TH1D *hh = nullptr, 
-    string nametitle = "h", 
+    string hname = "h", 
+    string htitle = "htitle", 
     Double_t tSi1 = 53.4, 
     Int_t Z = 1,
     Int_t A = 1
@@ -33,7 +34,7 @@ TH1D *newE(
 
     Int_t nbins = hh->GetNbinsX();
     Int_t ncounts = hh->GetEntries();
-    TH1D *h = new TH1D(nametitle.c_str(), nametitle.c_str(), nbins, hh->GetBinLowEdge(0),  hh->GetBinLowEdge(nbins+1));
+    TH1D *h = new TH1D(hname.c_str(), htitle.c_str(), nbins, hh->GetBinLowEdge(0),  hh->GetBinLowEdge(nbins+1));
 
 
     // TRandom2 *rn = new TRandom2();

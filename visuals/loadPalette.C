@@ -36,6 +36,7 @@ void readRGBFileAndSetPalette(const std::string& filename) {
     // Set the palette in gStyle directly
     int nColors = colors.size();
     gStyle->SetPalette(nColors, &colors[0]);
+     gStyle->SetNumberContours(nColors); // ✅ <-- THIS makes it smooth
 }
 
 

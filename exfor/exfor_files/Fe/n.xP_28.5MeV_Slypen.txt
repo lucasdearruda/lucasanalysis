@@ -1,0 +1,399 @@
+ENTRY            22884   20200911   20210105   20210104       2291
+SUBENT        22884001   20200911   20210105   20210104       2291
+BIB                 20        104
+TITLE       Light charged particle emission induced by fast
+            neutrons with energies between 25 and 65 MeV on iron
+AUTHOR     (I.Slypen,N.Nica,A.Koning,E.Raeymackers,S.Benck,
+            J.P.Meulders,V.Corcalciuc)
+INSTITUTE  (2BLGLVN) Slypen, Nica, Raeymackers, Benck, Meulders
+           (3RUMBUC) Nica, Corcalciuc
+           (2NEDNRG) Nica, Koning, Nuclear Research and
+                     Consultancy Group NRG, Petten, Netherlands
+REFERENCE  (J,JP/G,30,45,2004)    Main reference,cross sections
+            were superseded by data from At.Data&Nucl.Data Tabl.87
+           (J,AND,87,231,2004)     Final numerical data set
+                                for natural iron in Table 1
+REL-REF    (M,22810001,N.Nica+,J,JP/G,28,2823,2002)  Data
+            analysis details
+           (M,22807001,S.Benck+,J,NSE,141,(1),55,2002)  Exp.
+                                         details, error structure
+           (I,,I.Slypen+,J,NIM/A,337,431,1994) Experim. details
+           (M,,I.Slypen+,J,NIM/B,88,275,1994) - thick target
+           correction procedure by Monte Carlo simulation program
+           (I,,A.Bol+,J,NIM,214,169,1983)  Description of the
+                 CYCLONE facility
+FACILITY   (CYCLO,2BLGLVN)  Fast neutron facility cyclotron
+                            'CYCLONE'
+INC-SOURCE (P-LI7)  65 MeV proton beam strikes 3 mm thick
+             natural lithium target. proton current is 12 micro-A
+             producing ~1.0E+5 neutrons/cm2/sec at the location
+             of the target
+INC-SPECT   Full width at half-maximum is ~2 MeV containing
+            90% of neutrons/MeV plus a flat continuum of
+            low-energy neutrons.
+           -For energy calibration the proton and deuteron recoi-
+            ling from respectively a polypropylene (1 mm thick)
+            and deuterated polypropylene target (0.6 mm thick)
+            were used.
+           (EN-RSL) -half width of the incident neutron energy bin
+DETECTOR   (COIN,TELES,SCIN,CSICR)  Four charged particles
+             detector consisting of six telescopes were used
+             simultaneously, each of them consists of
+             1.  'Delta-E' Detector NE102 plastic scintillator,
+                  0.1 mm thick, 4 cm in diameter, and
+             2.   Cs-I(TL) 'E' detector, crystal 22 mm thick,
+                  38.1 mm in diameter
+METHOD     (TOF)  The time-of-flight was deduced from the
+              time difference between the capacitive beam pickoff
+              located upstream from the neutron-producing target,
+              and the delta-E detector. only those events of
+              charged particles detection  were registered which
+              are associated with neutrons in the main neutron
+              peak.
+           (COINC,EDE)
+ANALYSIS    Interpolation and extrapolation of double-differential
+            data was performed with the help of two-parameter
+            formula a*exp(b*cos(theta)), theta is angle of scatte-
+            ring in lab. system
+MONITOR    (1-H-1(N,EL)1-H-1,,DA)   Cross sections were measured
+             at degrees between 20 and 70 degree with step 10 deg,
+             110, 140 and 160 degree in each of the telescopes
+MONIT-REF  (,S.Benck+,J,NP/A,615,220,1997)
+SAMPLE      Natural iron target 0.5 mm thick, 6*6 cm2 surface,
+            density 2.4 gram/cm2
+CORRECTION  The solid angle and thick target corrections were
+            made with the help of Monte Carlo simulation program
+ADD-RES    (THEO,COMP)  GNASH and TALYS codes were used for light
+              charged particles cross sections evaluation.
+           The iron data are also compared with previously
+           published cobalt results (see Entry 22810).
+ERR-ANALYS (ERR-T) Total error includes ERR-SYS and DATA-ERR
+             (as it is given in thesis)
+           (ERR-SYS,7.,8.) uncertainty of the cross section
+            absolute scale due to:
+           (ERR-1) uncertainty in the measured reference (n,p)
+                  cross sections (5%),
+           (ERR-2) uncertainty in the beam monitoring (2%),
+           (ERR-3,2.,5.) uncertainty in the statistics in the
+                         H(n,p) recoil proton peak (2-5%),
+           (ERR-4) uncertainty in solid angle corrections (1%),
+           (ERR-5) uncertainty in number of target nuclei, etc.
+           (DATA-ERR,5.5) The overall relative uncertainties of
+           the experimental points in the spectra are about 5.5%,
+           8.5%, 15.% and 25% for respectively p, d, t and alpha
+           at 62.7 MeV. They are mainly given by the statistics
+           in the spectra. At lower ejectile energies, the thick
+           target corrections contribute with supplementary
+           uncertainties. For all the other incident neutron
+           energies (continuum), these values are between 2 and 3
+           times higher as a consequence of the lower incident
+           neutron flux.
+COMMENT    Prof.Raeymackers recommended to adopt values in the
+           Atom.Data&Nucl.Data Tabl.87(2004)231-305 article rather
+           than the values in J.Phys.G30(2004)45-64
+STATUS     (TABLE) Table 1 of AND,87,231,2004
+HISTORY    (20061220C)  SM
+           (20070131A)  42 new SUBENTS added
+           (20101105A) SD: comma between two author's names added:
+           A.Koning E.Raeymackers => A.Koning,E.Raeymackers
+           Subents 002-005 deleted => duplication with data
+           from 22884.007 - 010. See COMMENT from author.
+           Several ref. moved to REL-REF in Subent 001.
+           In Subent 006 in STATUS code TABLE added.
+           STATUS deleted from Subent 001 - exists in every Subent
+           (20151024A) SD: Subent 006 deleted - theoretical total
+           production cross sections - not for EXFOR. Major
+           corrections in all Subents.
+           (20200911U) SD: Small correction in ERR-ANALYS.
+ENDBIB             104
+COMMON               4          3
+ERR-1      ERR-2      ERR-4      ERR-5
+PER-CENT   PER-CENT   PER-CENT   PER-CENT
+         5.         2.         1.        1.
+ENDCOMMON            3
+ENDSUBENT          111
+SUBENT        22884020   20151024   20160603   20160523       2246
+BIB                  3         10
+REACTION  1(26-FE-0(N,X)1-H-1,,DA/DE)
+          2(26-FE-0(N,X)1-H-1,,DA/DE,,,DERIV)
+            Data extrapolated of interpolated
+EN-SEC     (E,P)  Middle point of the secondary energy bin
+HISTORY    (20151024A) SD: Calculated data lines (marked by FLAG
+           before) were moved to separated DATA col. (see
+           REACTION (2)). DATA-ERR -> ERR-T . ERR-ANALYS deleted.
+            ERR-S deleted (max error of recoil peak is given
+           in Subent 001). E-RSL deleted (wrong code was used).
+           EN-RSL-FW -> EN-RSL.
+ENDBIB              10
+COMMON               2          3
+EN         EN-RSL
+MEV        MEV
+ 28.5       1.5
+ENDCOMMON            3
+DATA                 6        261
+E          ANG        DATA      1ERR-T     1DATA      2ERR-T     2
+MEV        ADEG       MB/SR/MEV  MB/SR/MEV  MB/SR/MEV  MB/SR/MEV
+         5.        2.5                            0.186      0.186
+         5.        10.                            0.182      0.182
+         5.        20.      0.506      0.195
+         5.        30.      0.072      0.073
+         5.        40.      0.249      0.131
+         5.        50.      0.072      0.073
+         5.        60.      0.131      0.095
+         5.        70.      0.065      0.065
+         5.        80.                            0.049      0.049
+         5.        90.                            0.037      0.037
+         5.       100.                            0.028      0.028
+         5.       110.      0.021      0.021
+         5.       120.                            0.017      0.017
+         5.       130.                            0.013      0.013
+         5.       140.      0.011      0.011
+         5.       150.                            0.009      0.009
+         5.       160.      0.008      0.008
+         5.       170.                            0.008      0.008
+         5.      177.5                            0.007      0.007
+         7.        2.5                            7.275      0.740
+         7.        10.                            7.191      0.731
+         7.        20.      6.308      0.705
+         7.        30.      5.986      0.693
+         7.        40.      5.864      0.668
+         7.        50.      5.720      0.677
+         7.        60.      5.668      0.646
+         7.        70.      4.763      0.581
+         7.        80.                            3.704      0.497
+         7.        90.                            3.214      0.422
+         7.       100.                            2.788      0.359
+         7.       110.      2.624      0.306
+         7.       120.                            2.135      0.289
+         7.       130.                            1.900      0.275
+         7.       140.      2.029      0.193
+         7.       150.                            1.583      0.305
+         7.       160.      1.084      0.170
+         7.       170.                            1.436      0.332
+         7.      177.5                            1.420      0.329
+         9.        2.5                            5.542      0.476
+         9.        10.                            5.496      0.472
+         9.        20.      5.493      0.460
+         9.        30.      5.422      0.474
+         9.        40.      4.782      0.413
+         9.        50.      4.657      0.427
+         9.        60.      3.544      0.349
+         9.        70.      4.349      0.409
+         9.        80.                            3.435      0.406
+         9.        90.                            3.106      0.343
+         9.       100.                            2.809      0.288
+         9.       110.      2.263      0.204
+         9.       120.                            2.325      0.204
+         9.       130.                            2.140      0.172
+         9.       140.      2.140      0.146
+         9.       150.                            1.881      0.162
+         9.       160.      1.794      0.178
+         9.       170.                            1.756      0.174
+         9.      177.5                            1.741      0.173
+        11.        2.5                            3.143      0.277
+        11.        10.                            3.112      0.274
+        11.        20.      3.213      0.265
+        11.        30.      3.498      0.294
+        11.        40.      2.503      0.224
+        11.        50.      2.284      0.227
+        11.        60.      1.945      0.205
+        11.        70.      2.053      0.216
+        11.        80.                            1.758      0.206
+        11.        90.                            1.556      0.194
+        11.       100.                            1.377      0.182
+        11.       110.      1.021      0.104
+        11.       120.                            1.094      0.141
+        11.       130.                            0.989      0.116
+        11.       140.      1.020      0.077
+        11.       150.                            0.846      0.094
+        11.       160.      0.840      0.094
+        11.       170.                            0.778      0.091
+        11.      177.5                            0.770      0.090
+        13.        2.5                            1.966      0.551
+        13.        10.                            1.942      0.544
+        13.        20.      2.481      0.199
+        13.        30.      2.193      0.202
+        13.        40.      1.471      0.148
+        13.        50.      1.249      0.145
+        13.        60.      1.217      0.141
+        13.        70.      0.750      0.110
+        13.        80.                            0.951      0.227
+        13.        90.                            0.816      0.167
+        13.       100.                            0.700      0.120
+        13.       110.      0.506      0.062
+        13.       120.                            0.526      0.079
+        13.       130.                            0.463      0.076
+        13.       140.      0.502      0.048
+        13.       150.                            0.381      0.075
+        13.       160.      0.449      0.059
+        13.       170.                            0.343      0.075
+        13.      177.5                            0.339      0.074
+        15.        2.5                            1.748      0.165
+        15.        10.                            1.724      0.163
+        15.        20.      1.767      0.156
+        15.        30.      1.615      0.143
+        15.        40.      1.636      0.139
+        15.        50.      1.214      0.128
+        15.        60.      0.860      0.099
+        15.        70.      0.882      0.113
+        15.        80.                            0.800      0.105
+        15.        90.                            0.679      0.096
+        15.       100.                            0.576      0.088
+        15.       110.      0.397      0.052
+        15.       120.                            0.423      0.070
+        15.       130.                            0.370      0.062
+        15.       140.      0.395      0.035
+        15.       150.                            0.299      0.049
+        15.       160.      0.289      0.044
+        15.       170.                            0.267      0.043
+        15.      177.5                            0.264      0.042
+        17.        2.5                            1.515      0.120
+        17.        10.                            1.492      0.118
+        17.        20.      1.395      0.112
+        17.        30.      1.267      0.116
+        17.        40.      1.361      0.111
+        17.        50.      1.204      0.112
+        17.        60.      0.834      0.089
+        17.        70.      0.691      0.083
+        17.        80.                            0.644      0.082
+        17.        90.                            0.538      0.079
+        17.       100.                            0.449      0.075
+        17.       110.      0.294      0.037
+        17.       120.                            0.320      0.058
+        17.       130.                            0.276      0.049
+        17.       140.      0.292      0.028
+        17.       150.                            0.219      0.036
+        17.       160.      0.218      0.032
+        17.       170.                            0.194      0.031
+        17.      177.5                            0.191      0.030
+        19.        2.5                            1.495      0.124
+        19.        10.                            1.471      0.122
+        19.        20.      1.485      0.116
+        19.        30.      1.182      0.112
+        19.        40.      1.307      0.109
+        19.        50.      1.005      0.103
+        19.        60.      0.796      0.087
+        19.        70.      0.602      0.077
+        19.        80.                            0.593      0.079
+        19.        90.                            0.489      0.063
+        19.       100.                            0.402      0.051
+        19.       110.      0.372      0.041
+        19.       120.                            0.279      0.033
+        19.       130.                            0.238      0.027
+        19.       140.      0.200      0.022
+        19.       150.                            0.185      0.026
+        19.       160.      0.185      0.030
+        19.       170.                            0.162      0.028
+        19.      177.5                            0.160      0.028
+        21.        2.5                            1.418      0.120
+        21.        10.                            1.390      0.117
+        21.        20.      1.340      0.110
+        21.        30.      1.362      0.120
+        21.        40.      0.974      0.094
+        21.        50.      0.879      0.096
+        21.        60.      0.623      0.077
+        21.        70.      0.513      0.071
+        21.        80.                            0.453      0.058
+        21.        90.                            0.356      0.046
+        21.       100.                            0.280      0.037
+        21.       110.      0.197      0.030
+        21.       120.                            0.179      0.034
+        21.       130.                            0.147      0.035
+        21.       140.      0.166      0.020
+        21.       150.                            0.108      0.027
+        21.       160.      0.085      0.020
+        21.       170.                            0.091      0.019
+        21.      177.5                            0.090      0.019
+        23.        2.5                            1.300      0.110
+        23.        10.                            1.274      0.108
+        23.        20.      1.123      0.101
+        23.        30.      1.119      0.109
+        23.        40.      1.145      0.102
+        23.        50.      0.701      0.086
+        23.        60.      0.575      0.074
+        23.        70.      0.464      0.068
+        23.        80.                            0.391      0.055
+        23.        90.                            0.304      0.044
+        23.       100.                            0.236      0.036
+        23.       110.      0.179      0.029
+        23.       120.                            0.147      0.024
+        23.       130.                            0.119      0.020
+        23.       140.      0.113      0.017
+        23.       150.                            0.086      0.018
+        23.       160.      0.071      0.018
+        23.       170.                            0.072      0.017
+        23.      177.5                            0.071      0.017
+        25.        2.5                            1.038      0.097
+        25.        10.                            1.013      0.094
+        25.        20.      0.842      0.087
+        25.        30.      1.045      0.105
+        25.        40.      0.703      0.080
+        25.        50.      0.565      0.077
+        25.        60.      0.470      0.067
+        25.        70.      0.276      0.052
+        25.        80.                            0.251      0.045
+        25.        90.                            0.186      0.037
+        25.       100.                            0.138      0.031
+        25.       110.      0.073      0.018
+        25.       120.                            0.079      0.019
+        25.       130.                            0.062      0.015
+        25.       140.      0.062      0.012
+        25.       150.                            0.042      0.019
+        25.       160.      0.066      0.018
+        25.       170.                            0.034      0.023
+        25.      177.5                            0.033      0.023
+        27.        2.5                            0.740      0.082
+        27.        10.                            0.720      0.080
+        27.        20.      0.598      0.074
+        27.        30.      0.676      0.084
+        27.        40.      0.550      0.070
+        27.        50.      0.377      0.063
+        27.        60.      0.259      0.050
+        27.        70.      0.168      0.041
+        27.        80.                            0.156      0.034
+        27.        90.                            0.113      0.028
+        27.       100.                            0.081      0.022
+        27.       110.      0.069      0.018
+        27.       120.                            0.044      0.013
+        27.       130.                            0.034      0.010
+        27.       140.      0.028      0.008
+        27.       150.                            0.022      0.009
+        27.       160.      0.019      0.009
+        27.       170.                            0.018      0.009
+        27.      177.5                            0.017      0.009
+        29.        2.5                            0.361      0.058
+        29.        10.                            0.350      0.056
+        29.        20.      0.290      0.051
+        29.        30.      0.264      0.053
+        29.        40.      0.271      0.049
+        29.        50.      0.168      0.042
+        29.        60.      0.125      0.035
+        29.        70.      0.108      0.033
+        29.        80.                            0.063      0.023
+        29.        90.                            0.044      0.016
+        29.       100.                            0.030      0.011
+        29.       110.      0.014      0.008
+        29.       120.                            0.015      0.008
+        29.       130.                            0.011      0.008
+        29.       140.      0.014      0.007
+        29.       150.                            0.007      0.006
+        29.       160.      0.006      0.005
+        29.       170.                            0.006      0.005
+        29.      177.5                            0.005      0.004
+        31.        2.5                            0.123      0.037
+        31.        10.                            0.118      0.035
+        31.        20.      0.064      0.031
+        31.        30.      0.106      0.037
+        31.        40.      0.153      0.041
+        31.        50.      0.052      0.028
+        31.        60.      0.029      0.017
+        31.        70.      0.030      0.017
+        31.        80.                            0.019      0.013
+        31.        90.                            0.012      0.009
+        31.       100.                            0.008      0.007
+        31.       110.      0.005      0.005
+        31.       120.                            0.003      0.003
+        31.       130.                            0.002      0.002
+ENDDATA            263
+ENDSUBENT          282
+ENDENTRY             2

@@ -1,0 +1,267 @@
+ENTRY    22718   20181002   20190405   20190405    2272
+SUBENT    22718001   20181002   20190405   20190405    2272
+BIB    17    80
+TITLE    Experimental cross sections for light charged particle
+    production induced by neutrons with energies between
+    25 and 75 MeV incident on carbon
+AUTHOR     (I.Slypen, S.Benck, J.P.Meulders, V.Corcalciuc,
+     M.B.Chadwick, C.Dufauquez)
+INSTITUTE  (2BLGLVN)  Slypen, Benck, Meulders, Dufauques
+     (1USALRL)  Chadwick
+     (3RUMBUC)  Corcalciuc
+REFERENCE  (J,AND,76,26,2000)    Main reference, final data
+    tables for fast neutron-induced production of proton,
+    deuteron, triton, and alpha particle in carbon
+     (J,NP/A,671,20,2000)    Method of data fit for double-
+    differential cross sections. Cross sections for
+    triton and alpha-particles cross sections
+     (J,NP/A,671,3,2000) Integr. cr.sect., Data reduction
+    procedures described.
+     (J,MED,27,2541,2000)  Subents 046-050
+     Authors:J.P.Meulders, S.Benck, I.Slypen, V.Corcalciuc
+     (J,PMB,40,73,1995)  Subents 051-055
+     (J,PMB,45,577,2000) Subents 056-059
+     Authors: I.Slypen,  S.Benck, J.P.Meulders, V.Corcalciuc
+REL-REF    (R,,D.J.Brenner+,J,AND,41,71,1989) Angular distribution
+    approximation
+     (I,,A.Bol+,J,NIM,214,169,1983)    Experimental details
+     (M,,I.Slypen+,J,RJP,38,419,1993) The experim. set-up
+    described in details. Prelim.results at 62.7 MeV.
+     (M,,I.Slypen+,J,NIM/A,337,431,1994)  Analysis details
+     (O,22303001,I.Slypen+,J,PR/C,51,(3),1303,199503) Exp.
+    details, prelim. data given for H-1 and H-2 emission
+     (O,22704001,I.Slypen+,J,PR/C,53,1309,1996)  Triton and
+    helium production on carbon at the same energies
+     (O,23440001,J.P.Meulders+,J,MED,27,2541,2000)
+    Kerma factors for H .
+    See also ADD-RES in 23440 .
+     (O,22724001,J.P.Meulders+,J,MED,27,2541,2000)
+    Kerma factors for O.
+FACILITY   (CYCLO,2BLGLVN) Louvain-la-Neuve cyclotron 'CYCLONE'
+    10 microamperes proton current beam
+INC-SOURCE (P-LI7) 3.3 mm thick natural lithium target, 10.E+6
+    neutron/sec at the location of the reaction chamber
+DETECTOR   (TELES,SCIN,CSICR)  Four charged-particles detector
+    telescopes. Each consists of delta-E plastic scintil-
+    lator NE102 and E-detector CsI(Tl)
+METHOD     (TOF)   Time-of-flight method for neutron energy
+    determination.  The time resolution in the
+    experiment was 0.8 ns.
+     (EDE)   E-deltaE  method for particles identification
+     (COINC) Coincidence between E and delta-E detectors
+ANALYSIS    Angular dependence was approximated by the two
+    parametric expression a*exp(b*cos(theta)) in the angle
+    interval 0. - 180. degree
+MONITOR    (1-H-1(N,EL)1-H-1,,SIG)
+MONIT-REF  (,S.Benck+,J,NP/A,615,220,1997)
+SAMPLE    Elemental carbon target 5*5 cm2 surface and 1 mm
+    thickness
+CORRECTION  Corrections were made on the sample thickness for
+    low energy charged particles
+STATUS     (TABLE) Data from Table of AND,76,26,2000
+ERR-ANALYS (ERR-T)   Total error includes statistical and ERR-SYS
+    uncertainties:
+     (ERR-SYS,,7.) The uncertainty of the absolute cross
+    section scale is about 7%, contributed by errors in:
+     (ERR-5,2.,5.) Error of the statistics in the H(n,p)
+    recoil proton peak. Minimal error = 2%
+     (ERR-1)    Error of the H(n,p) cross section
+     (ERR-2)    Error of the beam monitoring
+     (ERR-3)    Error of the solid angle correction
+     (ERR-4)    Error of the number of the sample nuclei
+    * The collimation system of each charged particle
+    detector telescope had an angular opening between 2.
+    and 3. degr.
+     * EN-RSL - half width of the incident neuron energy bin
+HISTORY    (20080809C)   SM
+     (20151009A) SD: Calculated data lines (marked by FLAG)
+     were moved to separated REACTION (multiple reaction
+     formalism used) in Subents 002 - 033,035,038,041,044.
+     Part of refs moved to REL-REF. STATUS "COREL" deleted.
+     ERR-ANALYS update.
+     (20181002A) M.M. Subents 046 - 059 were added .
+    EN-RSL -> EN-RSL-HW ( half width)
+ENDBIB    80
+COMMON    4    3
+ERR-1    ERR-2    ERR-3    ERR-4
+PER-CENT   PER-CENT   PER-CENT   PER-CENT
+    5.    2.    1.    1.
+ENDCOMMON    3
+ENDSUBENT     87
+SUBENT    22718004   20181002   20190405   20190405    2272
+BIB    3    9
+REACTION  1(6-C-12(N,X)1-H-1,,DA/DE)
+    2(6-C-12(N,X)1-H-1,,DA/DE,,,CALC)
+    Data interpolated or extrapolated
+EN-SEC     (E,P)   Middle point of the secondary energy bin
+HISTORY    (20151009A) SD: Calculated data lines (marked by FLAG)
+     were moved to separated REACTION (multiple reaction
+     formalism used). E-RSL, ANG-RSL deleted (wrong
+     definition) EN-RSL-FW -> EN-RSL.
+     (20181002U) M.M. EN-RSL -> EN-RSL-HW
+ENDBIB    9
+COMMON    2    3
+EN    EN-RSL-HW
+MEV    MEV
+  32.5    1.5
+ENDCOMMON    3
+DATA    6    154
+E    ANG    DATA    1ERR-T     1DATA    2ERR-T     2
+MEV    ADEG    MB/SR/MEV  MB/SR/MEV  MB/SR/MEV  MB/SR/MEV
+ 5.    2.5    1.291    0.155
+ 5.    10.    1.275    0.153
+ 5.    20.    1.553    0.432
+ 5.    30.    1.147    0.138
+ 5.    40.    1.049    0.126
+ 5.    50.    0.940    0.113
+ 5.    60.    0.797    0.132
+ 5.    70.    0.719    0.086
+ 5.    80.    0.619    0.074
+ 5.    90.    0.531    0.064
+ 5.    100.    0.455    0.055
+ 5.    110.    0.368    0.053
+ 5.    120.    0.325    0.099
+ 5.    130.    0.300    0.036
+ 5.    140.    0.268    0.032
+ 5.    150.    0.460    0.130
+ 5.    160.    0.230    0.028
+ 5.    170.    0.221    0.027
+ 5.    177.5    0.218    0.026
+ 7.    2.5    1.941    0.233
+ 7.    10.    1.907    0.229
+ 7.    20.    2.037    0.204
+ 7.    30.    1.647    0.198
+ 7.    40.    0.809    0.296
+ 7.    50.    1.457    0.198
+ 7.    60.    1.388    0.106
+ 7.    70.    0.689    0.076
+ 7.    80.    0.699    0.084
+ 7.    90.    0.510    0.092
+ 7.    100.    0.301    0.061
+ 7.    110.    0.303    0.036
+ 7.    120.    0.324    0.055
+ 7.    130.    0.295    0.045
+ 7.    140.    0.350    0.046
+ 7.    150.    0.376    0.063
+ 7.    160.    0.177    0.021
+ 7.    170.    0.167    0.020
+ 7.    177.5    0.164    0.020
+ 9.    2.5    1.196    0.144
+ 9.    10.    1.178    0.141
+ 9.    20.    1.245    0.106
+ 9.    30.    1.037    0.124
+ 9.    40.    0.676    0.068
+ 9.    50.    1.048    0.108
+ 9.    60.    0.890    0.058
+ 9.    70.    0.559    0.054
+ 9.    80.    0.495    0.059
+ 9.    90.    0.430    0.060
+ 9.    100.    0.367    0.050
+ 9.    110.    0.264    0.027
+ 9.    120.    0.212    0.027
+ 9.    130.    0.166    0.026
+ 9.    140.    0.190    0.024
+ 9.    150.    0.192    0.031
+ 9.    160.    0.247    0.043
+ 9.    170.    0.143    0.017
+ 9.    177.5    0.141    0.017
+11.    2.5    1.134    0.136
+11.    10.    1.113    0.134
+11.    20.    1.109    0.088
+11.    30.    1.034    0.084
+11.    40.    0.851    0.064
+11.    50.    0.919    0.078
+11.    60.    0.622    0.041
+11.    70.    0.420    0.038
+11.    80.    0.228    0.035
+11.    90.    0.207    0.032
+11.    100.    0.220    0.030
+11.    110.    0.171    0.018
+11.    120.    0.191    0.022
+11.    130.    0.107    0.018
+11.    140.    0.141    0.018
+11.    150.    0.165    0.025
+11.    160.    0.167    0.021
+11.    170.    0.080    0.010
+11.    177.5    0.079    0.009
+13.    2.5    1.140    0.137
+13.    10.    1.114    0.134
+13.    20.    1.111    0.063
+13.    30.    1.150    0.063
+13.    40.    0.710    0.047
+13.    50.    0.484    0.046
+13.    60.    0.687    0.040
+13.    70.    0.307    0.029
+13.    80.    0.327    0.037
+13.    90.    0.123    0.021
+13.    100.    0.136    0.020
+13.    110.    0.120    0.014
+13.    120.    0.132    0.015
+13.    130.    0.054    0.011
+13.    140.    0.100    0.012
+13.    150.    0.082    0.014
+13.    160.    0.197    0.017
+13.    170.    0.045    0.005
+13.    177.5    0.044    0.005
+15.    2.5    1.200    0.144
+15.    10.    1.164    0.140
+15.    20.    1.050    0.062
+15.    30.    1.287    0.066
+15.    40.    0.639    0.043
+15.    50.    0.383    0.038
+15.    60.    0.512    0.026
+15.    70.    0.209    0.023
+15.    80.    0.347    0.036
+15.    90.    0.142    0.020
+15.    100.    0.074    0.014
+15.    110.    0.063    0.008
+15.    120.    0.053    0.009
+15.    130.    0.039    0.010
+15.    140.    0.046    0.008
+15.    150.    0.016    0.006
+15.    160.    0.101    0.012
+15.    170.    0.018    0.002
+15.    177.5    0.017    0.002
+17.    2.5    1.117    0.134
+17.    10.    1.073    0.129
+17.    20.    1.012    0.061
+17.    30.    1.136    0.062
+17.    40.    0.619    0.038
+17.    50.    0.218    0.022
+17.    60.    0.411    0.023
+17.    70.    0.103    0.013
+17.    80.    0.257    0.024
+17.    90.    0.087    0.015
+17.    100.    0.066    0.010
+17.    110.    0.027    0.006
+17.    120.    0.027    0.007
+19.    2.5    1.346    0.161
+19.    10.    1.271    0.152
+19.    20.    0.901    0.057
+19.    30.    1.198    0.064
+19.    40.    0.590    0.036
+19.    50.    0.233    0.022
+19.    60.    0.189    0.016
+19.    70.    0.060    0.012
+19.    80.    0.170    0.019
+19.    90.    0.060    0.010
+19.    100.    0.017    0.006
+21.    2.5    0.783    0.094
+21.    10.    0.730    0.088
+21.    20.    0.484    0.042
+21.    30.    0.786    0.052
+21.    40.    0.242    0.034
+21.    50.    0.099    0.017
+21.    60.    0.074    0.011
+21.    70.    0.019    0.006
+21.    80.    0.040    0.011
+21.    90.    0.027    0.007
+23.    2.5    0.189    0.023
+23.    10.    0.186    0.022
+23.    20.    0.178    0.028
+23.    30.    0.165    0.027
+25.    2.5    0.017    0.002
+25.    10.    0.017    0.002
+ENDDATA    156
+ENDSUBENT    174
+ENDENTRY    2

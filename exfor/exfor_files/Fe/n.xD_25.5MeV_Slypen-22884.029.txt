@@ -1,0 +1,226 @@
+ENTRY            22884   20200911   20210105   20210104       2291
+SUBENT        22884001   20200911   20210105   20210104       2291
+BIB                 20        104
+TITLE       Light charged particle emission induced by fast
+            neutrons with energies between 25 and 65 MeV on iron
+AUTHOR     (I.Slypen,N.Nica,A.Koning,E.Raeymackers,S.Benck,
+            J.P.Meulders,V.Corcalciuc)
+INSTITUTE  (2BLGLVN) Slypen, Nica, Raeymackers, Benck, Meulders
+           (3RUMBUC) Nica, Corcalciuc
+           (2NEDNRG) Nica, Koning, Nuclear Research and
+                     Consultancy Group NRG, Petten, Netherlands
+REFERENCE  (J,JP/G,30,45,2004)    Main reference,cross sections
+            were superseded by data from At.Data&Nucl.Data Tabl.87
+           (J,AND,87,231,2004)     Final numerical data set
+                                for natural iron in Table 1
+REL-REF    (M,22810001,N.Nica+,J,JP/G,28,2823,2002)  Data
+            analysis details
+           (M,22807001,S.Benck+,J,NSE,141,(1),55,2002)  Exp.
+                                         details, error structure
+           (I,,I.Slypen+,J,NIM/A,337,431,1994) Experim. details
+           (M,,I.Slypen+,J,NIM/B,88,275,1994) - thick target
+           correction procedure by Monte Carlo simulation program
+           (I,,A.Bol+,J,NIM,214,169,1983)  Description of the
+                 CYCLONE facility
+FACILITY   (CYCLO,2BLGLVN)  Fast neutron facility cyclotron
+                            'CYCLONE'
+INC-SOURCE (P-LI7)  65 MeV proton beam strikes 3 mm thick
+             natural lithium target. proton current is 12 micro-A
+             producing ~1.0E+5 neutrons/cm2/sec at the location
+             of the target
+INC-SPECT   Full width at half-maximum is ~2 MeV containing
+            90% of neutrons/MeV plus a flat continuum of
+            low-energy neutrons.
+           -For energy calibration the proton and deuteron recoi-
+            ling from respectively a polypropylene (1 mm thick)
+            and deuterated polypropylene target (0.6 mm thick)
+            were used.
+           (EN-RSL) -half width of the incident neutron energy bin
+DETECTOR   (COIN,TELES,SCIN,CSICR)  Four charged particles
+             detector consisting of six telescopes were used
+             simultaneously, each of them consists of
+             1.  'Delta-E' Detector NE102 plastic scintillator,
+                  0.1 mm thick, 4 cm in diameter, and
+             2.   Cs-I(TL) 'E' detector, crystal 22 mm thick,
+                  38.1 mm in diameter
+METHOD     (TOF)  The time-of-flight was deduced from the
+              time difference between the capacitive beam pickoff
+              located upstream from the neutron-producing target,
+              and the delta-E detector. only those events of
+              charged particles detection  were registered which
+              are associated with neutrons in the main neutron
+              peak.
+           (COINC,EDE)
+ANALYSIS    Interpolation and extrapolation of double-differential
+            data was performed with the help of two-parameter
+            formula a*exp(b*cos(theta)), theta is angle of scatte-
+            ring in lab. system
+MONITOR    (1-H-1(N,EL)1-H-1,,DA)   Cross sections were measured
+             at degrees between 20 and 70 degree with step 10 deg,
+             110, 140 and 160 degree in each of the telescopes
+MONIT-REF  (,S.Benck+,J,NP/A,615,220,1997)
+SAMPLE      Natural iron target 0.5 mm thick, 6*6 cm2 surface,
+            density 2.4 gram/cm2
+CORRECTION  The solid angle and thick target corrections were
+            made with the help of Monte Carlo simulation program
+ADD-RES    (THEO,COMP)  GNASH and TALYS codes were used for light
+              charged particles cross sections evaluation.
+           The iron data are also compared with previously
+           published cobalt results (see Entry 22810).
+ERR-ANALYS (ERR-T) Total error includes ERR-SYS and DATA-ERR
+             (as it is given in thesis)
+           (ERR-SYS,7.,8.) uncertainty of the cross section
+            absolute scale due to:
+           (ERR-1) uncertainty in the measured reference (n,p)
+                  cross sections (5%),
+           (ERR-2) uncertainty in the beam monitoring (2%),
+           (ERR-3,2.,5.) uncertainty in the statistics in the
+                         H(n,p) recoil proton peak (2-5%),
+           (ERR-4) uncertainty in solid angle corrections (1%),
+           (ERR-5) uncertainty in number of target nuclei, etc.
+           (DATA-ERR,5.5) The overall relative uncertainties of
+           the experimental points in the spectra are about 5.5%,
+           8.5%, 15.% and 25% for respectively p, d, t and alpha
+           at 62.7 MeV. They are mainly given by the statistics
+           in the spectra. At lower ejectile energies, the thick
+           target corrections contribute with supplementary
+           uncertainties. For all the other incident neutron
+           energies (continuum), these values are between 2 and 3
+           times higher as a consequence of the lower incident
+           neutron flux.
+COMMENT    Prof.Raeymackers recommended to adopt values in the
+           Atom.Data&Nucl.Data Tabl.87(2004)231-305 article rather
+           than the values in J.Phys.G30(2004)45-64
+STATUS     (TABLE) Table 1 of AND,87,231,2004
+HISTORY    (20061220C)  SM
+           (20070131A)  42 new SUBENTS added
+           (20101105A) SD: comma between two author's names added:
+           A.Koning E.Raeymackers => A.Koning,E.Raeymackers
+           Subents 002-005 deleted => duplication with data
+           from 22884.007 - 010. See COMMENT from author.
+           Several ref. moved to REL-REF in Subent 001.
+           In Subent 006 in STATUS code TABLE added.
+           STATUS deleted from Subent 001 - exists in every Subent
+           (20151024A) SD: Subent 006 deleted - theoretical total
+           production cross sections - not for EXFOR. Major
+           corrections in all Subents.
+           (20200911U) SD: Small correction in ERR-ANALYS.
+ENDBIB             104
+COMMON               4          3
+ERR-1      ERR-2      ERR-4      ERR-5
+PER-CENT   PER-CENT   PER-CENT   PER-CENT
+         5.         2.         1.        1.
+ENDCOMMON            3
+ENDSUBENT          111
+SUBENT        22884029   20151024   20160603   20160523       2246
+BIB                  3          8
+REACTION  1(26-FE-0(N,X)1-H-2,,DA/DE)
+          2(26-FE-0(N,X)1-H-2,,DA/DE,,,DERIV)
+            Data extrapolated of interpolated
+EN-SEC     (E,D)  Middle point of the secondary energy bin
+HISTORY    (20151018A) SD: Calculated data lines (marked by FLAG
+           before) were moved to separated DATA col. (see
+           REACTION (2)). DATA-ERR -> ERR-T . ERR-ANALYS deleted.
+           E-RSL deleted (wrong code was used).EN-RSL-FW -> EN-RSL
+ENDBIB               8
+COMMON               2          3
+EN         EN-RSL
+MEV        MEV
+ 25.5       1.5
+ENDCOMMON            3
+DATA                 6         90
+E          ANG        DATA      1ERR-T     1DATA      2ERR-T     2
+MEV        ADEG       MB/SR/MEV  MB/SR/MEV  MB/SR/MEV  MB/SR/MEV
+        13.        2.5                            1.698      0.245
+        13.        10.                            1.555      0.224
+        13.        20.      1.135      0.170
+        13.        30.      0.812      0.151
+        13.        40.      0.021      0.021
+        13.        50.      0.024      0.024
+        13.        60.      0.073      0.042
+        13.        70.      0.025      0.025
+        13.        80.                            0.010      0.009
+        13.        90.                            0.004      0.003
+        13.       100.                            0.001      0.001
+        13.       110.      0.034      0.020
+        13.       120.                            0.001      0.001
+        13.       130.                            0.001      0.001
+        13.       140.      0.008      0.008
+        15.        2.5                            1.173      0.171
+        15.        10.                            1.114      0.163
+        15.        20.      0.975      0.138
+        15.        30.      0.740      0.131
+        15.        40.      0.108      0.044
+        15.        50.      0.065      0.037
+        15.        60.      0.142      0.054
+        15.        70.      0.128      0.052
+        15.        80.                            0.060      0.036
+        15.        90.                            0.032      0.024
+        15.       100.                            0.017      0.015
+        15.       110.      0.018      0.012
+        15.       120.                            0.005      0.005
+        15.       130.                            0.003      0.003
+        15.       140.      0.015      0.011
+        17.        2.5                            0.940      0.149
+        17.        10.                            0.883      0.140
+        17.        20.      0.815      0.115
+        17.        30.      0.605      0.110
+        17.        40.      0.241      0.062
+        17.        50.      0.150      0.053
+        17.        60.      0.160      0.053
+        17.        70.      0.102      0.042
+        17.        80.                            0.026      0.022
+        17.        90.                            0.012      0.011
+        17.       100.                            0.006      0.005
+        17.       110.      0.040      0.018
+        17.       120.                            0.001      0.001
+        17.       130.                            0.001      0.001
+        17.       140.      0.013      0.009
+        19.        2.5                            0.797      0.132
+        19.        10.                            0.748      0.124
+        19.        20.      0.692      0.101
+        19.        30.      0.523      0.098
+        19.        40.      0.189      0.051
+        19.        50.      0.130      0.043
+        19.        60.      0.114      0.043
+        19.        70.      0.173      0.052
+        19.        80.                            0.019      0.019
+        19.        90.                            0.009      0.009
+        19.       100.                            0.004      0.004
+        19.       110.      0.044      0.018
+        19.       120.                            0.001      0.001
+        19.       130.                            0.001      0.001
+        19.       140.      0.018      0.011
+        21.        2.5                            0.656      0.104
+        21.        10.                            0.629      0.099
+        21.        20.      0.529      0.087
+        21.        30.      0.590      0.078
+        21.        40.      0.362      0.057
+        21.        50.      0.123      0.036
+        21.        60.      0.150      0.038
+        21.        70.      0.121      0.043
+        21.        80.                            0.053      0.033
+        21.        90.                            0.031      0.023
+        21.       100.                            0.019      0.016
+        21.       110.      0.028      0.014
+        21.       120.                            0.007      0.007
+        21.       130.                            0.005      0.005
+        21.       140.      0.018      0.008
+        23.        2.5                            0.274      0.093
+        23.        10.                            0.278      0.089
+        23.        20.      0.330      0.077
+        23.        30.      0.320      0.071
+        23.        40.      0.212      0.050
+        23.        50.      0.102      0.036
+        23.        60.      0.113      0.034
+        23.        70.      0.070      0.037
+        23.        80.                            0.044      0.028
+        23.        90.                            0.026      0.019
+        23.       100.                            0.015      0.013
+        23.       110.      0.025      0.013
+        23.       120.                            0.005      0.005
+        23.       130.                            0.003      0.003
+        23.       140.      0.011      0.006
+ENDDATA             92
+ENDSUBENT          109
+ENDENTRY             2

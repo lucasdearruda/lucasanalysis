@@ -1,0 +1,32 @@
+#
+#
+#
+projectile n
+element fe
+mass 0
+energy 25
+
+#outspectra y
+#filespectrum d
+best y
+labddx y
+
+ddxmode 2
+fileddxa p 20.
+fileddxa p 40.
+fileddxa p 60.
+fileddxa p 80.
+fileddxa p 100.
+fileddxa p 120.
+fileddxa p 140.
+fileddxa p 160.
+
+fileddxa a 20.
+fileddxa a 40.
+fileddxa a 60.
+fileddxa a 80.
+fileddxa a 100.
+fileddxa a 120.
+fileddxa a 140.
+fileddxa a 160.
+

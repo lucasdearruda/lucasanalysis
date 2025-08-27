@@ -1,0 +1,154 @@
+ENTRY            22884   20200911   20210105   20210104       2291
+SUBENT        22884001   20200911   20210105   20210104       2291
+BIB                 20        104
+TITLE       Light charged particle emission induced by fast
+            neutrons with energies between 25 and 65 MeV on iron
+AUTHOR     (I.Slypen,N.Nica,A.Koning,E.Raeymackers,S.Benck,
+            J.P.Meulders,V.Corcalciuc)
+INSTITUTE  (2BLGLVN) Slypen, Nica, Raeymackers, Benck, Meulders
+           (3RUMBUC) Nica, Corcalciuc
+           (2NEDNRG) Nica, Koning, Nuclear Research and
+                     Consultancy Group NRG, Petten, Netherlands
+REFERENCE  (J,JP/G,30,45,2004)    Main reference,cross sections
+            were superseded by data from At.Data&Nucl.Data Tabl.87
+           (J,AND,87,231,2004)     Final numerical data set
+                                for natural iron in Table 1
+REL-REF    (M,22810001,N.Nica+,J,JP/G,28,2823,2002)  Data
+            analysis details
+           (M,22807001,S.Benck+,J,NSE,141,(1),55,2002)  Exp.
+                                         details, error structure
+           (I,,I.Slypen+,J,NIM/A,337,431,1994) Experim. details
+           (M,,I.Slypen+,J,NIM/B,88,275,1994) - thick target
+           correction procedure by Monte Carlo simulation program
+           (I,,A.Bol+,J,NIM,214,169,1983)  Description of the
+                 CYCLONE facility
+FACILITY   (CYCLO,2BLGLVN)  Fast neutron facility cyclotron
+                            'CYCLONE'
+INC-SOURCE (P-LI7)  65 MeV proton beam strikes 3 mm thick
+             natural lithium target. proton current is 12 micro-A
+             producing ~1.0E+5 neutrons/cm2/sec at the location
+             of the target
+INC-SPECT   Full width at half-maximum is ~2 MeV containing
+            90% of neutrons/MeV plus a flat continuum of
+            low-energy neutrons.
+           -For energy calibration the proton and deuteron recoi-
+            ling from respectively a polypropylene (1 mm thick)
+            and deuterated polypropylene target (0.6 mm thick)
+            were used.
+           (EN-RSL) -half width of the incident neutron energy bin
+DETECTOR   (COIN,TELES,SCIN,CSICR)  Four charged particles
+             detector consisting of six telescopes were used
+             simultaneously, each of them consists of
+             1.  'Delta-E' Detector NE102 plastic scintillator,
+                  0.1 mm thick, 4 cm in diameter, and
+             2.   Cs-I(TL) 'E' detector, crystal 22 mm thick,
+                  38.1 mm in diameter
+METHOD     (TOF)  The time-of-flight was deduced from the
+              time difference between the capacitive beam pickoff
+              located upstream from the neutron-producing target,
+              and the delta-E detector. only those events of
+              charged particles detection  were registered which
+              are associated with neutrons in the main neutron
+              peak.
+           (COINC,EDE)
+ANALYSIS    Interpolation and extrapolation of double-differential
+            data was performed with the help of two-parameter
+            formula a*exp(b*cos(theta)), theta is angle of scatte-
+            ring in lab. system
+MONITOR    (1-H-1(N,EL)1-H-1,,DA)   Cross sections were measured
+             at degrees between 20 and 70 degree with step 10 deg,
+             110, 140 and 160 degree in each of the telescopes
+MONIT-REF  (,S.Benck+,J,NP/A,615,220,1997)
+SAMPLE      Natural iron target 0.5 mm thick, 6*6 cm2 surface,
+            density 2.4 gram/cm2
+CORRECTION  The solid angle and thick target corrections were
+            made with the help of Monte Carlo simulation program
+ADD-RES    (THEO,COMP)  GNASH and TALYS codes were used for light
+              charged particles cross sections evaluation.
+           The iron data are also compared with previously
+           published cobalt results (see Entry 22810).
+ERR-ANALYS (ERR-T) Total error includes ERR-SYS and DATA-ERR
+             (as it is given in thesis)
+           (ERR-SYS,7.,8.) uncertainty of the cross section
+            absolute scale due to:
+           (ERR-1) uncertainty in the measured reference (n,p)
+                  cross sections (5%),
+           (ERR-2) uncertainty in the beam monitoring (2%),
+           (ERR-3,2.,5.) uncertainty in the statistics in the
+                         H(n,p) recoil proton peak (2-5%),
+           (ERR-4) uncertainty in solid angle corrections (1%),
+           (ERR-5) uncertainty in number of target nuclei, etc.
+           (DATA-ERR,5.5) The overall relative uncertainties of
+           the experimental points in the spectra are about 5.5%,
+           8.5%, 15.% and 25% for respectively p, d, t and alpha
+           at 62.7 MeV. They are mainly given by the statistics
+           in the spectra. At lower ejectile energies, the thick
+           target corrections contribute with supplementary
+           uncertainties. For all the other incident neutron
+           energies (continuum), these values are between 2 and 3
+           times higher as a consequence of the lower incident
+           neutron flux.
+COMMENT    Prof.Raeymackers recommended to adopt values in the
+           Atom.Data&Nucl.Data Tabl.87(2004)231-305 article rather
+           than the values in J.Phys.G30(2004)45-64
+STATUS     (TABLE) Table 1 of AND,87,231,2004
+HISTORY    (20061220C)  SM
+           (20070131A)  42 new SUBENTS added
+           (20101105A) SD: comma between two author's names added:
+           A.Koning E.Raeymackers => A.Koning,E.Raeymackers
+           Subents 002-005 deleted => duplication with data
+           from 22884.007 - 010. See COMMENT from author.
+           Several ref. moved to REL-REF in Subent 001.
+           In Subent 006 in STATUS code TABLE added.
+           STATUS deleted from Subent 001 - exists in every Subent
+           (20151024A) SD: Subent 006 deleted - theoretical total
+           production cross sections - not for EXFOR. Major
+           corrections in all Subents.
+           (20200911U) SD: Small correction in ERR-ANALYS.
+ENDBIB             104
+COMMON               4          3
+ERR-1      ERR-2      ERR-4      ERR-5
+PER-CENT   PER-CENT   PER-CENT   PER-CENT
+         5.         2.         1.        1.
+ENDCOMMON            3
+ENDSUBENT          111
+SUBENT        22884007   20151024   20160603   20160523       2246
+BIB                  5         16
+REACTION   (26-FE-0(N,X)1-H-1,PAR,SIG)
+EN-SEC     (E-MIN,P)  Minimal energy of particle detection
+ANALYSIS   (INTAD,INTED)
+STATUS     (DEP,22884019)
+           (DEP,22884020)
+           (DEP,22884021)
+           (DEP,22884022)
+           (DEP,22884023)
+           (DEP,22884024)
+           (DEP,22884025)
+           (DEP,22884026)
+           (DEP,22884027)
+           (DEP,22884028)
+HISTORY    (20151024U) SD: DATA-ERR -> ERR-T . ERR-ANALYS deleted.
+            ERR-S deleted (max error of recoil peak is given
+           in Subent 001). EN-RSL-FW -> EN-RSL.
+ENDBIB              16
+COMMON               1          3
+E-MIN
+MEV
+    4.0
+ENDCOMMON            3
+DATA                 4         10
+EN         EN-RSL     DATA       ERR-T
+MEV        MEV        MB         MB
+ 25.5       1.5        244.1      39.2
+ 28.5       1.5        331.0      39.6
+ 31.5       1.5        364.1      43.8
+ 34.5       1.5        392.4      55.2
+ 37.5       1.5        417.0      50.1
+ 41.0       2.0        446.2      52.0
+ 45.0       2.0        490.7      56.3
+ 49.0       2.0        576.5      67.7
+ 53.5       2.5        564.3      69.9
+ 62.7       2.0        543.9      34.8
+ENDDATA             12
+ENDSUBENT           37
+ENDENTRY             2

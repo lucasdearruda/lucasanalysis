@@ -139,15 +139,15 @@ rand->SetSeed(seed);
 
 
 
-//Create a canvas to temporarly store the corrected spectrum
-TCanvas *corrCv = new TCanvas("corrCv","corrCv",50,50,1598,678);
-corrCv->SetLeftMargin(0.14);
-corrCv->Divide(2,1);
+// //Create a canvas to temporarly store the corrected spectrum
+// TCanvas *corrCv = new TCanvas("corrCv","corrCv",50,50,1598,678);
+// corrCv->SetLeftMargin(0.14);
+// corrCv->Divide(2,1);
 
 
 
 int cvID = 1;
-corrCv->cd(cvID);
+//corrCv->cd(cvID);
 
 gStyle->SetOptStat(0); // Desativar a caixa de estatísticas
 gStyle->SetTextSize(0.04);
@@ -155,13 +155,13 @@ gStyle->SetTitleYSize(0.04);
 
 gPad->SetGridx();
 gPad->SetGridy();
-// Configurações do canvas
-corrCv->cd(cvID)->SetRightMargin(0.14);
-corrCv->cd(cvID)->SetTopMargin(0.08);
-corrCv->cd(cvID)->SetLeftMargin(0.14);
-corrCv->cd(cvID)->SetBottomMargin(0.14);
+// // Configurações do canvas
+// corrCv->cd(cvID)->SetRightMargin(0.14);
+// corrCv->cd(cvID)->SetTopMargin(0.08);
+// corrCv->cd(cvID)->SetLeftMargin(0.14);
+// corrCv->cd(cvID)->SetBottomMargin(0.14);
 
-h->Draw("colz");
+//h->Draw("colz");
 h->GetYaxis()->SetTitleSize(0.06);
 h->GetYaxis()->SetLabelSize(0.06);
 h->GetZaxis()->SetLabelSize(0.06);
@@ -190,14 +190,14 @@ expSpec->SetLineColor(kBlack);
 expSpec->SetLineWidth(2);
 
 cvID =2;
-corrCv->cd(cvID);
+//corrCv->cd(cvID);
 
 
 // Configurações do canvas
-corrCv->cd(cvID)->SetRightMargin(0.03);
-corrCv->cd(cvID)->SetTopMargin(0.08);
-corrCv->cd(cvID)->SetLeftMargin(0.14);
-corrCv->cd(cvID)->SetBottomMargin(0.14);
+// corrCv->cd(cvID)->SetRightMargin(0.03);
+// corrCv->cd(cvID)->SetTopMargin(0.08);
+// corrCv->cd(cvID)->SetLeftMargin(0.14);
+// corrCv->cd(cvID)->SetBottomMargin(0.14);
 
 expSpec->SetTitle("");
 expSpec->Draw("hist e1");
@@ -217,13 +217,13 @@ expSpec->GetYaxis()->SetLabelSize(0.06);
 
 gPad->SetGridx();
 gPad->SetGridy();
-corrected_exp->Draw("same");
+//corrected_exp->Draw("same");
 
 // Find the maximum counts between corrected_exp and expSpec
 Double_t maxCounts = TMath::Max(corrected_exp->GetMaximum(), expSpec->GetMaximum());
 std::cout << "The maximum counts between corrected_exp and expSpec is: " << maxCounts << std::endl;
 
-expSpec->GetYaxis()->SetRangeUser(0,maxCounts*1.15);
+//expSpec->GetYaxis()->SetRangeUser(0,maxCounts*1.15);
 
 
 //regarding the directory    
@@ -276,35 +276,35 @@ if(correctDead){
     for(int i = 1; i <= c2_exp->GetNbinsX(); i++){
         c2_exp->SetBinContent(i,corrected_exp->GetBinContent(i)*Ffunc->Eval(corrected_exp->GetBinCenter(i)));
     }
-    corrCv->cd(2);
+    //corrCv->cd(2);
     c2_exp->SetLineColor(kBlue);
     c2_exp->SetFillColor(kCyan);
     c2_exp->SetFillStyle(3004);
     c2_exp->SetLineWidth(2);
-    c2_exp->Draw("same");
-    TLegend *leg = new TLegend(0.6,0.6,0.9,0.9);
-    leg->AddEntry(expSpec,"Experimental Spectrum","lpf");
-    leg->AddEntry(corrected_exp,"Corrected Spectrum","lpf");
-    leg->AddEntry(c2_exp,"Corrected Spectrum with F factor","lpf");
-    leg->Draw();
+   // c2_exp->Draw("same");
+    // TLegend *leg = new TLegend(0.6,0.6,0.9,0.9);
+    // leg->AddEntry(expSpec,"Experimental Spectrum","lpf");
+    // leg->AddEntry(corrected_exp,"Corrected Spectrum","lpf");
+    // leg->AddEntry(c2_exp,"Corrected Spectrum with F factor","lpf");
+    // leg->Draw();
 
 }else{ // if correctDead is false...
-    corrCv->cd(2);
-    TLegend *leg = new TLegend(0.6,0.6,0.9,0.9);
-    leg->AddEntry(expSpec,"Experimental Spectrum","lpf");
-    leg->AddEntry(corrected_exp,"Corrected Spectrum","lpf");
-    leg->Draw();
+    // corrCv->cd(2);
+    // TLegend *leg = new TLegend(0.6,0.6,0.9,0.9);
+    // leg->AddEntry(expSpec,"Experimental Spectrum","lpf");
+    // leg->AddEntry(corrected_exp,"Corrected Spectrum","lpf");
+    // leg->Draw();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-if(saveCanvas){
-    corrCv->SaveAs(Form("%s/%s_TTC.root",directory.c_str(),pSpecFileName.substr(0, pSpecFileName.find_last_of('.')).c_str()));
-    corrCv->SaveAs(Form("%s/%s_TTC.png",directory.c_str(),pSpecFileName.substr(0, pSpecFileName.find_last_of('.')).c_str()));
-    corrCv->SaveAs(Form("%s/%s_TTC.pdf",directory.c_str(),pSpecFileName.substr(0, pSpecFileName.find_last_of('.')).c_str()));
-    cout << "Saving canvas as: " << Form("%s/%s_TTC.root (.pdf and .png)",directory.c_str(),pSpecFileName.substr(0, pSpecFileName.find_last_of('.')).c_str()) << endl;
+// if(saveCanvas){
+//     corrCv->SaveAs(Form("%s/%s_TTC.root",directory.c_str(),pSpecFileName.substr(0, pSpecFileName.find_last_of('.')).c_str()));
+//     corrCv->SaveAs(Form("%s/%s_TTC.png",directory.c_str(),pSpecFileName.substr(0, pSpecFileName.find_last_of('.')).c_str()));
+//     corrCv->SaveAs(Form("%s/%s_TTC.pdf",directory.c_str(),pSpecFileName.substr(0, pSpecFileName.find_last_of('.')).c_str()));
+//     cout << "Saving canvas as: " << Form("%s/%s_TTC.root (.pdf and .png)",directory.c_str(),pSpecFileName.substr(0, pSpecFileName.find_last_of('.')).c_str()) << endl;
     
-}
+// }
 
 
 timer.Print();

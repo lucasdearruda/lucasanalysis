@@ -27,7 +27,7 @@ unsigned long long version(bool show = true) {
 
     if (show) {
         cout << "// Set of functions developed by Lucas de Arruda //" << endl;
-        cout << "version2025.08.07.001" << endl << endl;
+        cout << "version2025.08.25.001" << endl << endl;
         cout << "2025-08-07 :: Adding several functions:" << endl;
         cout << "  -> getAZ" << endl;
         cout << "  -> Attribute_Target" << endl;
@@ -42,6 +42,8 @@ unsigned long long version(bool show = true) {
         cout << "  -> defineParticle: sets Z and A based on particle symbol (p, d, t, h, a) and prints its name." << endl;
         cout << "  -> correctSpec: return the corrected spectrum after applying the TTC" << endl;
         cout << "  -> particleName: return the particlename from the particle char" << endl;
+        cout << "2025-08-25 :: Adding extra function:" << endl;
+        cout << "  -> makeRunsString: generate a formatted string of run numbers or intervals for TNamed/logging" << endl;
 
         cout << endl;
 
@@ -54,7 +56,7 @@ unsigned long long version(bool show = true) {
         cout << "A = " << A << endl;
         cout << "Z = " << Z << endl;
         cout << "binWidth = " << binWidth << " MeV" << endl;
-        cout << "L = " << M << " cm" << endl;
+        cout << "L = " << L << " cm" << endl;
         cout << "A_tgt = " << A_tgt << " cm^2" << endl;
         cout << "cm2_to_barn = " <<  cm2_to_barn<< " b/cm^2" << endl;
     }
@@ -72,6 +74,33 @@ void getAZ(char particle) {
         case 'a': Z = 2; A = 4; break;  // alfa (hélio-4)
         default:  Z = 0; A = 0; break;  // inválido
     }
+}
+
+/*
+ * makeRunsString:
+ *  - Takes a vector of integers representing runs.
+ *  - Interprets each pair of elements as a range [start-end].
+ *    - If the two elements are equal, it is considered a single run.
+ *  - Constructs a formatted string:
+ *       "start1-end1, single_run, start2-end2, ..."
+ *  - Returns the string ready to use in TNamed or for logging.
+ *  - Example:
+ *       runs = {397,405,408,408,410,410,425,438}
+ *       -> returns "397-405, 408, 410, 425-438"
+ */
+std::string makeRunsString(const std::vector<int>& runs) {
+    std::stringstream ss;
+    for (size_t i = 0; i < runs.size(); i += 2) {
+        if (i + 1 < runs.size() && runs[i] != runs[i+1]) {
+            // caso seja um intervalo
+            ss << runs[i] << "-" << runs[i+1];
+        } else {
+            // caso seja um único run
+            ss << runs[i];
+        }
+        if (i + 2 < runs.size()) ss << ", ";
+    }
+    return ss.str();
 }
 
 

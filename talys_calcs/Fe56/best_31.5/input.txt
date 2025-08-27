@@ -1,0 +1,14 @@
+#
+#
+#
+projectile n
+element fe
+mass 56
+energy 31.5
+
+#outspectra y
+#filespectrum d
+best y
+
+ddxmode 2
+fileddxa d 20.

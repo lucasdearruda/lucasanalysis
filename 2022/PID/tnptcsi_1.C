@@ -10,9 +10,9 @@
    cutg->SetLineColor(2);
    cutg->SetLineWidth(2);
    cutg->SetPoint(0,0.,0.);
-   cutg->SetPoint(1,0.5,0.0);
-   cutg->SetPoint(2,0.5,18.23416);
-   cutg->SetPoint(3,0.0,18.5849);
-   cutg->SetPoint(4,0.0,0.0);
+cutg->SetPoint(1,0.806765,0);
+cutg->SetPoint(2,0.806765,18.0184);
+cutg->SetPoint(3,0,18.5849);
+cutg->SetPoint(4,0,0);
    //cutg->Draw("");
 }

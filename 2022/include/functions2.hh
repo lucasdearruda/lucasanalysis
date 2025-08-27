@@ -1,6 +1,16 @@
 #ifndef FUNCTIONS_HH
 #define FUNCTIONS_HH
 
+//Update: 2025-08-18.1
+// - Added asthetics in htof plot for 'GetGflash'
+
+//Update: 2025-08-13.1
+// - Added print method to MedleyData struct
+// - Updated particles definitions
+// - new version to GetGflash function
+//
+
+
 #include <string>
 #include <cmath>
 #include <optional>
@@ -19,6 +29,14 @@ struct MedleyData {
     std::string Target;
     Int_t RunTime;
     Float_t RunCharge;
+	void Print() const {
+        std::cout << "RunN         : " << RunN << '\n'
+                  << "MedleyConfig : " << MedleyConfig << '\n'
+                  << "Target       : " << Target << '\n'
+                  << "RunTime      : " << RunTime << " s\n"
+                  << "RunCharge    : " << RunCharge << " μC\n";
+    }
+	
 };
 
 // Função para obter os dados de uma run específica
@@ -93,10 +111,8 @@ double ToFparticleNumber(double Eparticle, int particle, double L = 5.044)
 	double c= 0.299792458;
 	double m;
 
+
 	switch(particle){//data from codata
-        	case 6://neutrons
-        		m = 939.56542052;
-        		break;
 		case 1://protons
 			m = 938.27208816;
 			break;
@@ -112,6 +128,12 @@ double ToFparticleNumber(double Eparticle, int particle, double L = 5.044)
 		case 5://alphas
 			m = 3727.3794066;
 			break;
+		case 6://H (p or d or t)
+			m = 938.27208816;
+			break; // consider proton mass as a default since there are much more protons than deuterons or tritons
+		case 7://He (He-3 os He-4)
+			m = 3727.3794066;
+			break;
 		default:
 			m = 938.27208816;//proton
 	}
@@ -120,9 +142,10 @@ double ToFparticleNumber(double Eparticle, int particle, double L = 5.044)
 }
 
 
-Float_t GetGflash(TTree *tx, const std::string& branchname = "Medley_1_dE2_ToF", float guess = 500, bool closecanvas = false) {
+//Float_t GetGflash(TTree *tx, const std::string& branchname = "Medley_1_dE2_ToF", float guess = 500, bool closecanvas = false) {
 //Float_t GetGflash(TTree *tx, string branchname="Medley_1_dE2_ToF", float guess = 500, bool closecanvas = false){
-
+//New version of GetGflash function, as 2023:
+Float_t GetGflash(TTree *tx, string branchname="Medley_1_dE2_ToF", float guess = 500, bool closecanvas = false, Float_t sigma= 4,Float_t threshold= 0.1){
 
 	TCanvas *Ctof = new TCanvas("ctof",Form("Time of flight"),50,50,600,600);
 
@@ -159,7 +182,19 @@ Float_t GetGflash(TTree *tx, const std::string& branchname = "Medley_1_dE2_ToF",
         tof_peak[1] = gaussian->GetParError(1);
     }
 
-
+    if(!closecanvas){
+        TLatex *latex = new TLatex();
+        latex->SetNDC();
+        latex->SetTextColor(kRed);
+        latex->SetTextSize(0.04);
+        latex->DrawLatex(0.5, 0.8, Form("ToF peak: %.2f ns", tof_peak[0]));
+		gStyle->SetOptStat("e");
+		gPad->SetGridx();
+		gPad->SetGridy();
+		htof->GetYaxis()->SetMaxDigits(3);
+		htof->GetYaxis()->SetTitle("counts");
+		htof->GetXaxis()->SetTitle("raw (inv)ToF (ns)");
+    }
 	if(closecanvas) Ctof->Close();
 	
 	return tof_peak[0];

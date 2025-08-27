@@ -4,7 +4,7 @@
 // Tgis file contains the function loadRuns() which loads the runs from the defined folder, providing also the integrated chage
 
 
-TTree* loadRuns(Int_t runa = 28, Int_t runb = 30,Float_t *charge = nullptr, string folder = "/mnt/medley/LucasAnalysis/2023/reducedv61"){
+TChain* loadRuns(Int_t runa = 28, Int_t runb = 30,Float_t *charge = nullptr, string folder = "/mnt/medley/LucasAnalysis/2023/reducedv61"){
 
 
 

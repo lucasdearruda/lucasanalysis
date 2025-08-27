@@ -1,0 +1,15 @@
+#
+#
+#
+projectile n
+element cr
+mass 52
+#energy 10.
+energy energies
+outspectra y
+filespectrum n p d t h a
+best n
+#fileddxe p 12.
+#ddxmode 3
+#outangle y
+#fileelastic y

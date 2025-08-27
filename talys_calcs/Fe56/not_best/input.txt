@@ -1,0 +1,14 @@
+#
+#
+#
+projectile n
+element fe
+mass 56
+#energy 10.
+energy energies
+outspectra y
+filespectrum n p d t h a
+#fileddxe p 12.
+#ddxmode 3
+#outangle y
+#fileelastic y

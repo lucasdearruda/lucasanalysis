@@ -1,0 +1,14 @@
+#
+#
+#
+projectile p
+element h
+mass 1
+energy 20.
+#energy energylist
+#outspectra y
+#filespectrum n p d t h a
+#fileddxe p 12.
+#ddxmode 3
+outangle y
+fileelastic y

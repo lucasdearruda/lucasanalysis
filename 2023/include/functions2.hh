@@ -136,7 +136,9 @@ double ToFparticleNumber(double Eparticle, int particle, double L = 4.6472)
 
 //function for getting gamma flash
 //Float_t GetGflash(TTree *tx, string branchname="Medley_1_dE2_ToF", float guess = 500, bool closecanvas = false){
-Float_t GetGflash(TTree *tx, string branchname="Medley_1_dE2_ToF", float guess = 500, bool closecanvas = false, Float_t sigma= 4,Float_t threshold= 0.1){
+
+//Altered 2025-08-22: I added the TCanvas*& c = nullptr, so we can retrieve the thing from outsite of the function
+Float_t GetGflash(TTree *tx, string branchname="Medley_1_dE2_ToF", float guess = 500, bool closecanvas = false, Float_t sigma= 4,Float_t threshold= 0.1, TCanvas*& c = nullptr){
 
 
 	TCanvas *Ctof = new TCanvas("ctof",Form("Time of flight"),50,50,600,600);
@@ -173,7 +175,7 @@ Float_t GetGflash(TTree *tx, string branchname="Medley_1_dE2_ToF", float guess =
         tof_peak[1] = gaussian->GetParError(1);
     }
 
-
+	if(!closecanvas)	c = Ctof; //Altered 2025-08-22
 	if(closecanvas) Ctof->Close();
 	
 	return tof_peak[0];

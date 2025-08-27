@@ -1,0 +1,17 @@
+#
+#
+#
+projectile p
+element fe
+mass 56
+energy 67
+
+#outspectra y
+#filespectrum d
+best y
+#outangle y
+ddxmode 2
+fileddxa p 15.
+fileddxa p 40.
+fileddxa p 60.
+fileddxa p 80.

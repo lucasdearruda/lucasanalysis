@@ -73,6 +73,7 @@ Double_t M = 0;
 Double_t L = 464.72; //cm
 Double_t cm2_to_mbarn = 1e+27 ;//cm²
 
+Double_t nflux_En;//Added 2025-08-01
 
 const Double_t NA = 6.02214076e23; // mol^-1
 Double_t Nc = 0;                   // precisa ser calculada, depois que mc e M forem definidos
@@ -274,7 +275,7 @@ TGraph * histoToGraph(TH1D *hh){
 // runsBackward: vector of run numbers for the backward angle
     //Disclaimer: ---------------------------------------------------------------------------------------------------------------
     // runsForward and runsBackward are vectors containing intvs of runs:
-    //  std::vector<int> runsForward = {12, 12, 15, 15, 18, 21, 44, 44, 56, 59}; -->12, 15, 18 to 21, 44 to 59
+    //  std::vector<int> runsForward = {12, 12, 15, 15, 18, 21, 44, 44, 56, 59}; -->12, 15, 18 to 21, 44 and 56 to 59
     //to input this into totalCharge, we need to iterate over the vector two by two:
     // std::vector<int> runs = {12, 15, 18, 19, 20, 21, 44, 56, 57, 58, 59};
 // Match_CORR: boolean to activate of not the matching correction

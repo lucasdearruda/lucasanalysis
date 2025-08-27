@@ -1,0 +1,169 @@
+ENTRY            22467   20000603   20030311   20050926       0000
+SUBENT        22467001   20000603   20030311   20050926       0000
+BIB                 17         40
+INSTITUTE  (2JPNOSA)
+TITLE       Measurements of Double-Differential Cross Sections
+            Of Charged Particles Emission Reactions For Several
+            Structural Elements of Fusion Power Reactors by
+            14.1 MeV Incident Neutrons
+AUTHOR     (Kokooo, I.Murata, A.Takahashi)
+REFERENCE  (J,NSE,132,(1),16,1999)   Main Reference
+REL-REF    (N,,A.TAKAHASHI+,J,NIM/A,401,97,1997)  Experimental
+               Details and Ddx Data For Fe-Nat and Be-9
+FACILITY   (CCW)    The Intense 14 MeV Neutron Source OKTAVIAN
+                    At Osaka University. 350-KeV Cockroft-Walton
+            Accelerator in Pulsed-Beam Mode with 2-Mhz Repetition
+            Rate, 2 Ns Pulse Width, 10 Microamperes Average
+            Deutron Beam Current
+INC-SOURCE (D-T)
+MONITOR    (1-H-1(N,EL)1-H-1,,DA,P) For proton emission
+                                    measurements
+MONIT-REF  (,,R,BNL-NCS-17541,1991) ENDF/B-VI Summary
+                                    Documentation
+DETECTOR   (CSICR)  Cs-I scintillation detector (2 mm thickness,
+             5 cm diameter) was used as a charged-particle
+             detector. Detector was placed inside a lead shield
+           (SCIN) NE213 detector was used as neutron flux monitor
+METHOD     (TOF)   Flight path varied from 32.0 to 56.7 cm
+             according to emission angle Of charged particles
+ANALYSIS   .Two-dimensional analysis of energy and time-of-flight
+            (E-TOF) of emitted charged particles. Pulse-shape
+            discrimination technique is applied to distinguish
+            particle type, i.e. proton or alpha and eliminate
+            gamma-ray signals
+PART-DET   (A,P)
+SAMPLE     .Polyethilene C-H2 sample 2.5 cm diameter, 18 micro-m
+            thickness for standard sample
+ADD-RES    (THEO)  Program package  was used with simplified
+                   input format version (SINCROS-II)
+ERR-ANALYS (ERR-T)  Total error
+           (EN-ERR) Error of the Neutron Spectrum Center
+HISTORY    (20000502C)   Compiled by SM
+           (20000602A)   Updated EDX Subents
+           (20000603U)  Last checking has been done.
+ENDBIB              40
+COMMON               2          3
+EN         EN-ERR
+MEV        MEV
+       14.1        0.1
+ENDCOMMON            3
+ENDSUBENT           47
+SUBENT        22467004   20000603   20030311   20050926       0000
+BIB                  3          4
+REACTION   (26-FE-0(N,X)1-H-1,,DA/DE)
+              35. - 110. Deg.
+SAMPLE     .Diameter 70 mm, thickness 30 micrometers
+STATUS     (APRVD)  I.Murata, 20000322
+ENDBIB               4
+NOCOMMON             0          0
+DATA                 4        105
+E          ANG        DATA       ERR-T
+MEV        ADEG       MB/SR/MEV  MB/SR/MEV
+       1.75        35.      3.278    1.82441
+       2.25        35.    6.07693      .8235
+       2.25        45.     2.6393    .818918
+       2.25        65.    3.02279    .816221
+       2.25        90.    1.46622    1.03241
+       2.25       110.     .29642    .662203
+       2.75        35.    4.45877    .328652
+       2.75        45.    2.96762    .337988
+       2.75        65.    2.36509    .318769
+       2.75        90.    1.58266    .437251
+       2.75       110.    .575496    .272706
+       3.25        35.    4.66512    .202438
+       3.25        45.    3.79638    .213953
+       3.25        65.    3.70587    .216215
+       3.25        90.    2.44212    .295184
+       3.25       110.    1.43826    .247225
+       3.75        35.    3.65518    .152215
+       3.75        45.    3.29331    .159308
+       3.75        65.    3.87121    .158291
+       3.75        90.    2.64096    .233627
+       3.75       110.    2.02924     .19857
+       4.25        35.    3.35417    .136364
+       4.25        45.    3.19578    .142506
+       4.25        65.    3.51521    .161923
+       4.25        90.    2.80409    .208949
+       4.25       110.    2.02353    .161884
+       4.75        35.    3.15498    .116977
+       4.75        45.    3.17593    .123598
+       4.75        65.    3.46707     .13639
+       4.75        90.    2.74769    .163781
+       4.75       110.     1.9869     .14869
+       5.25        35.    3.12241    .114911
+       5.25        45.    3.28951    .137937
+       5.25        65.    3.15613    .130059
+       5.25        90.    2.90188    .152284
+       5.25       110.    1.99709    .131911
+       5.75        35.    3.06811    .128338
+       5.75        45.    3.11082    .119425
+       5.75        65.    3.03453    .101904
+       5.75        90.    3.01113    .145964
+       5.75       110.    2.05436     .12266
+       6.25        35.    2.88681    .100607
+       6.25        45.    2.99217    .102983
+       6.25        65.    3.22818    .108152
+       6.25        90.    2.66244    .124859
+       6.25       110.    1.81601    .134299
+       6.75        35.    2.34853   .0950713
+       6.75        45.    2.82337    .105168
+       6.75        65.    2.87634    .100213
+       6.75        90.    2.66375    .117022
+       6.75       110.    1.75514    .113298
+       7.25        35.    2.25589    .104762
+       7.25        45.     2.5836    .100984
+       7.25        65.    2.56145   .0856083
+       7.25        90.    2.29931    .123136
+       7.25       110.    1.51975   .0926946
+       7.75        35.    2.09727   .0801075
+       7.75        45.    2.42052   .0903191
+       7.75        65.    2.07314   .0814783
+       7.75        90.    2.38904   .0997194
+       7.75       110.    1.53027    .101303
+       8.25        35.     1.9316   .0871001
+       8.25        45.    2.21202    .105835
+       8.25        65.     1.9049    .080131
+       8.25        90.    1.73621    .108419
+       8.25       110.     1.1109   .0828095
+       8.75        35.    1.79295   .0783287
+       8.75        45.    1.94612   .0857625
+       8.75        65.    1.54738   .0693878
+       8.75        90.    1.54012     .10225
+       8.75       110.    .685986   .0782294
+       9.25        35.    1.23349   .0766177
+       9.25        45.    1.08387    .084959
+       9.25        65.    1.38992   .0793659
+       9.25        90.    .957385   .0718449
+       9.25       110.    .596242   .0668752
+       9.75        35.    .923396   .0635547
+       9.75        45.    1.14464   .0813591
+       9.75        65.    1.42584   .0630197
+       9.75        90.    .730126   .0647213
+       9.75       110.    .330534   .0561799
+      10.25        35.    .906469   .0793864
+      10.25        45.     .70919   .0829385
+      10.25        65.    .867783   .0678969
+      10.25        90.    .690733   .0634913
+      10.25       110.    .376678   .0730854
+      10.75        35.    .632335   .0679123
+      10.75        45.    .752596   .0668317
+      10.75        65.     .63112   .0454988
+      10.75        90.    .485848   .0567609
+      10.75       110.    .338739   .0438899
+      11.25        35.    .309653   .0505394
+      11.25        45.    .273444   .0526679
+      11.25        65.    .414484   .0489355
+      11.25        90.    .239326   .0419414
+      11.25       110.    .201739   .0418165
+      11.75        35.    .161675   .0513561
+      11.75        45.    .104331   .0334318
+      11.75        65.     .26476   .0318368
+      11.75        90.    .229163   .0339333
+      11.75       110.   .0747468   .0317112
+      12.25        35.   .0814867   .0368361
+      12.25        65.    .122153   .0261818
+      12.25        90.   .0989986   .0276983
+      12.25       110.   .0497975   .0225858
+ENDDATA            107
+ENDSUBENT          116
+ENDENTRY             2
