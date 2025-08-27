@@ -44,6 +44,8 @@ if __name__ == "__main__":
     # Verifica se os parâmetros de linha de comando foram fornecidos corretamente
     if len(sys.argv) < 3 or len(sys.argv) > 4:
         print("Uso: python textparser.py <input_file.txt> <output_file.csv> [<extra_column_value>]")
+        print("\nO parâmetro extra_column na sua função parse_to_csv serve para inserir um valor extra como uma nova coluna no início de cada linha de dados extraída do arquivo de entrada.")
+        print("Exemplo: python textparser.py input.txt output.csv 42.0, vai inserir o valor 42.0 como a primeira coluna em cada linha do CSV gerado.")
         sys.exit(1)
 
     input_file = sys.argv[1]
