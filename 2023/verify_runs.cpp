@@ -101,9 +101,9 @@ Float_t GetGflash(TTree *tx, Int_t telN = 1, Int_t runN=0,Float_t sigma= 4,Float
 		htof->GetXaxis()->SetTitle("raw (inv)ToF (ns)");
     }
     if(saveIt){
-        Ctof->SaveAs(Form("verifications/r%d_t%d.png",runN,telN));
-        Ctof->SaveAs(Form("verifications/PDFs/r%d_t%d.pdf",runN,telN));
-        Ctof->SaveAs(Form("verifications/ROOTs/r%d_t%d.root",runN,telN));
+        Ctof->SaveAs(Form("verifications/%03d_t%d.png",runN,telN));
+        Ctof->SaveAs(Form("verifications/PDFs/%03d_t%d.pdf",runN,telN));
+        Ctof->SaveAs(Form("verifications/ROOTs/%03d_t%d.root",runN,telN));
     }
 	if(closecanvas) Ctof->Close();
 	
@@ -152,16 +152,16 @@ void plotPIDall(TTree *Tree, int runN = 0, bool saveCanvas = true){
             cut_deuteronsPT[telN]->Draw("same");
             cut_tritonsPT[telN]->Draw("same");
         
-        }    // }else{
-        //     cut_he34[telN]->Draw("same");
-        //     if(telN != 7){
-        //         cut_protons[telN]->Draw("same");
-        //         cut_dt[telN]->Draw("same");
-        //     }else{
-        //         cutH[telN]->Draw("same");    
-        //     }
-            
-        // }
+        }else{
+            cut_he34[telN]->Draw("same");
+            if(telN != 7){
+                cut_protons[telN]->Draw("same");
+                cut_dt[telN]->Draw("same");
+            }else{
+                cutH[telN]->Draw("same");    
+            }
+        
+        }
         
 
         cPID->cd(2);
@@ -180,9 +180,9 @@ void plotPIDall(TTree *Tree, int runN = 0, bool saveCanvas = true){
 
 
         if (saveCanvas) {
-            cPID->SaveAs(Form("verifications/r%d_PID_dE_t%d.png",runN, telN));
-            cPID->SaveAs(Form("verifications/PDFs/r%d_PID_dE_t%d.pdf",runN, telN));
-            cPID->SaveAs(Form("verifications/ROOTs/r%d_PID_dE_t%d.root",runN, telN));
+            cPID->SaveAs(Form("verifications/%03d_PID_dE_t%d.png",runN, telN));
+            cPID->SaveAs(Form("verifications/PDFs/%03d_PID_dE_t%d.pdf",runN, telN));
+            cPID->SaveAs(Form("verifications/ROOTs/%03d_PID_dE_t%d.root",runN, telN));
         }
         
     }
@@ -196,20 +196,29 @@ void plotPID(TTree *Tree, int telN = 1, int runN = 0, bool saveCanvas = true){
     TCanvas *cPID = new TCanvas("cPID", "cPID", 50, 50, 1400, 700);
     cPID->Divide(2, 1);
     
-    TH2D *hde12 = new TH2D("hde12", "dE1 vs dE2", 400, 0, 30, 400, 0, 10);  
+
+    if(runN == 0) runN =-1;
+    TH2D *hde12 = new TH2D("hde12", Form("dE1 vs dE2 -  Run%d, Tel%d",runN,telN), 400, 0, 30, 400, 0, 10);  
+    if(telN>4) hde12 = new TH2D("hde12", Form("dE1 vs dE2 - Run%d, Tel%d",runN,telN), 400, 0, 30, 400, 0, 5);  
     hde12->GetYaxis()->SetTitle("dE1 (MeV)");
     hde12->GetXaxis()->SetTitle("dE2 (MeV)");
 
-    TH2D *hde23 = new TH2D("hde23", "dE2 vs Eres", 400, 0, 40, 400, 0, 18);  
+    TH2D *hde23 = new TH2D("hde23", Form("dE2 vs Eres - Run%d, Tel%d",runN,telN), 400, 0, 40, 400, 0, 18);  
+    if(telN>4) hde23 = new TH2D("hde23", Form("dE2 vs Eres - Run%d, Tel%d",runN,telN), 400, 0, 40, 400, 0, 12);  
     hde23->GetYaxis()->SetTitle("dE2 (MeV)");
     hde23->GetXaxis()->SetTitle("Eres (MeV)");
 
 
     cPID->cd(1);
+    cPID->cd(1)->SetLeftMargin(0.14);
     Tree->Draw(Form("Medley_%d_dE1*%f:Medley_%d_dE2*%f>>hde12", telN,g1[telN-1], telN,g2[telN-1]), Form("Medley_%d_dE1>0 && Medley_%d_dE2>0", telN, telN),"colz");
     gPad->SetGridx();
     gPad->SetGridy();
     gPad->SetLogz();
+    
+    gPad->Update();
+    auto palette = (TPaletteAxis*)hde12->GetListOfFunctions()->FindObject("palette");
+    if(palette != nullptr) palette->SetX2NDC(palette->GetX1NDC()+0.5*(palette->GetX2NDC()-palette->GetX1NDC()));
 
     if(telN<=4){
         cut_protons[telN]->Draw("same");
@@ -221,23 +230,29 @@ void plotPID(TTree *Tree, int telN = 1, int runN = 0, bool saveCanvas = true){
         cut_deuteronsPT[telN]->Draw("same");
         cut_tritonsPT[telN]->Draw("same");
     
-    }    // }else{
-    //     cut_he34[telN]->Draw("same");
-    //     if(telN != 7){
-    //         cut_protons[telN]->Draw("same");
-    //         cut_dt[telN]->Draw("same");
-    //     }else{
-    //         cutH[telN]->Draw("same");    
-    //     }
+    }else{
+        cut_he34[telN]->Draw("same");
+        if(telN != 7){
+            cut_protons[telN]->Draw("same");
+            cut_dt[telN]->Draw("same");
+        }else{
+            cutH[telN]->Draw("same");    
+        }
         
-    // }
+    }
     
 
     cPID->cd(2);
+    cPID->cd(2)->SetLeftMargin(0.14);
     Tree->Draw(Form("Medley_%d_dE2*%f:Medley_%d_Eres*%f>>hde23", telN,g2[telN-1], telN,g3[telN-1]), Form("Medley_%d_dE2>0 && Medley_%d_Eres>0", telN, telN),"colz");
     gPad->SetGridx();
     gPad->SetGridy();
     gPad->SetLogz();
+    
+    gPad->Update();
+    palette = (TPaletteAxis*)hde23->GetListOfFunctions()->FindObject("palette");
+    if(palette != nullptr)  palette->SetX2NDC(palette->GetX1NDC()+0.5*(palette->GetX2NDC()-palette->GetX1NDC()));
+
     
     if(telN<=4){
         cut_protonsCsI[telN]->Draw("same");
@@ -249,9 +264,9 @@ void plotPID(TTree *Tree, int telN = 1, int runN = 0, bool saveCanvas = true){
 
 
     if (saveCanvas) {
-        cPID->SaveAs(Form("verifications/r%d_PID_dE_t%d.png",runN, telN));
-        cPID->SaveAs(Form("verifications/PDFs/r%d_PID_dE_t%d.pdf",runN, telN));
-        cPID->SaveAs(Form("verifications/ROOTs/r%d_PID_dE_t%d.root",runN, telN));
+        cPID->SaveAs(Form("verifications/%03d_PID_dE_t%d.png",runN, telN));
+        cPID->SaveAs(Form("verifications/PDFs/%03d_PID_dE_t%d.pdf",runN, telN));
+        cPID->SaveAs(Form("verifications/ROOTs/%03d_PID_dE_t%d.root",runN, telN));
     }
     
 }
@@ -385,46 +400,46 @@ for(int telN = 1; telN<=8; telN++){//just up tel 4 for now 2025-08-13
             cut_deuteronsNPTCsI[telN]->SetLineWidth(2);
             cut_deuteronsNPTCsI[telN]->SetLineColor(kGreen);
     }else{
-        //     if(!warn_tels58){
-        //         cout << "\n . . .  - - - - - - - - - - - - - -   . . . \n . . . - - - TELESCOPES 5 - 8  - - -  . . . "<<"\n . . .  - - - - - - - - - - - - - -   . . . "<<endl;
-        //         warn_tels58 = true;
-        //     }
-        //     if(telN != 7 ){
-        //         //cout << Form("\n- - -   LOADING NON-PUNCH-THROUGH CUTS FOR dE1:dE2 (UPPER BRANCH)   - - -\n")<< "... " ;
-        //         cout << Form("\n->[tel %d] loading NPT PROTONS CUT: %s/p_npt_%d.C",telN, cuts_path.c_str(),telN)<< "... " ;
-        //         gROOT->ProcessLine(Form(".L  %s/p_npt_%d.C", cuts_path.c_str(),telN));
-        //         cut_protons[telN] = (TCutG *)gROOT->GetListOfSpecials()->FindObject(Form("p_npt_%d",telN));
-        //         if(cut_protons[telN]!=NULL) cout << "  --> OK."<< endl;
-        //         cut_protons[telN]->SetName(Form("p_npt_%d",telN));
-        //         cut_protons[telN]->SetLineWidth(2);
-        //         cut_protons[telN]->SetLineColor(kRed);
+            if(!warn_tels58){
+                cout << "\n . . .  - - - - - - - - - - - - - -   . . . \n . . . - - - TELESCOPES 5 - 8  - - -  . . . "<<"\n . . .  - - - - - - - - - - - - - -   . . . "<<endl;
+                warn_tels58 = true;
+            }
+            if(telN != 7 ){
+                //cout << Form("\n- - -   LOADING NON-PUNCH-THROUGH CUTS FOR dE1:dE2 (UPPER BRANCH)   - - -\n")<< "... " ;
+                cout << Form("\n->[tel %d] loading NPT PROTONS CUT: %s/p_npt_%d.C",telN, cuts_path.c_str(),telN)<< "... " ;
+                gROOT->ProcessLine(Form(".L  %s/p_npt_%d.C", cuts_path.c_str(),telN));
+                cut_protons[telN] = (TCutG *)gROOT->GetListOfSpecials()->FindObject(Form("p_npt_%d",telN));
+                if(cut_protons[telN]!=NULL) cout << "  --> OK."<< endl;
+                cut_protons[telN]->SetName(Form("p_npt_%d",telN));
+                cut_protons[telN]->SetLineWidth(2);
+                cut_protons[telN]->SetLineColor(kRed);
 
-        //         cout << Form("\n->[tel %d] loading NPT DEUTERON-TRITONS CUT: %s/dt_%d.C",telN, cuts_path.c_str(),telN)<< "... " ;
-        //         gROOT->ProcessLine(Form(".L  %s/dt_%d.C", cuts_path.c_str(),telN));
-        //         cut_dt[telN] = (TCutG *)gROOT->GetListOfSpecials()->FindObject(Form("dt_%d",telN));
-        //         if(cut_dt[telN]!=NULL) cout << "  --> OK."<< endl;
-        //         cut_dt[telN]->SetName(Form("dt_%d",telN));
-        //         cut_dt[telN]->SetLineWidth(2);
-        //         cut_dt[telN]->SetLineColor(kBlue);
+                cout << Form("\n->[tel %d] loading NPT DEUTERON-TRITONS CUT: %s/dt_%d.C",telN, cuts_path.c_str(),telN)<< "... " ;
+                gROOT->ProcessLine(Form(".L  %s/dt_%d.C", cuts_path.c_str(),telN));
+                cut_dt[telN] = (TCutG *)gROOT->GetListOfSpecials()->FindObject(Form("dt_%d",telN));
+                if(cut_dt[telN]!=NULL) cout << "  --> OK."<< endl;
+                cut_dt[telN]->SetName(Form("dt_%d",telN));
+                cut_dt[telN]->SetLineWidth(2);
+                cut_dt[telN]->SetLineColor(kBlue);
 
-        //     }else{
-        //         cout << Form("\n->[tel %d] loading H(1, 2 or 3) CUT: %s/h_%d.C",telN, cuts_path.c_str(),telN)<< "... " ;
-        //         gROOT->ProcessLine(Form(".L  %s/h_%d.C", cuts_path.c_str(),telN));
-        //         cutH[telN] = (TCutG *)gROOT->GetListOfSpecials()->FindObject(Form("h_%d",telN));
-        //         if(cutH[telN]!=NULL) cout << "  --> OK."<< endl;
-        //         cutH[telN]->SetName(Form("h_%d",telN));
-        //         cutH[telN]->SetLineWidth(2);
-        //         cutH[telN]->SetLineColor(kRed);
-        //     }
-        //     cout << Form("\n->[tel %d] loading He(3 or 4) CUTS: %s/he_%d.C",telN, cuts_path.c_str(),telN)<< "... " ;
-        //     gROOT->ProcessLine(Form(".L  %s/he_%d.C", cuts_path.c_str(),telN));
-        //     cut_he34[telN] = (TCutG *)gROOT->GetListOfSpecials()->FindObject(Form("he_%d",telN));
-        //     if(cut_he34[telN]!=NULL) cout << "  --> OK."<< endl;
-        //     cut_he34[telN]->SetName(Form("he_%d",telN));
-        //     cut_he34[telN]->SetLineWidth(2);
-        //     cut_he34[telN]->SetLineColor(8);
-         cout<<". 5 6 7 8 ."<<endl;
-         }
+            }else{
+                cout << Form("\n->[tel %d] loading H(1, 2 or 3) CUT: %s/h_%d.C",telN, cuts_path.c_str(),telN)<< "... " ;
+                gROOT->ProcessLine(Form(".L  %s/h_%d.C", cuts_path.c_str(),telN));
+                cutH[telN] = (TCutG *)gROOT->GetListOfSpecials()->FindObject(Form("h_%d",telN));
+                if(cutH[telN]!=NULL) cout << "  --> OK."<< endl;
+                cutH[telN]->SetName(Form("h_%d",telN));
+                cutH[telN]->SetLineWidth(2);
+                cutH[telN]->SetLineColor(kRed);
+            }
+            cout << Form("\n->[tel %d] loading He(3 or 4) CUTS: %s/he_%d.C",telN, cuts_path.c_str(),telN)<< "... " ;
+            gROOT->ProcessLine(Form(".L  %s/he_%d.C", cuts_path.c_str(),telN));
+            cut_he34[telN] = (TCutG *)gROOT->GetListOfSpecials()->FindObject(Form("he_%d",telN));
+            if(cut_he34[telN]!=NULL) cout << "  --> OK."<< endl;
+            cut_he34[telN]->SetName(Form("he_%d",telN));
+            cut_he34[telN]->SetLineWidth(2);
+            cut_he34[telN]->SetLineColor(8);
+
+        }
 }
 }
 
@@ -444,54 +459,72 @@ void verify_runs(int runa = -1,int runb = -1, float sigma = 4, float threshold =
     std::regex run_regex("r([0-9]+)_.*\\.root"); // pega o número da run
 
 
-
-for (const auto &entry : fs::directory_iterator(path_to_runs)) {
-    if (entry.is_regular_file() && entry.path().extension() == ".root") {
-        string filename = entry.path().string();
-        string basename = entry.path().filename().string();
-        std::smatch match;
-
-        if (std::regex_match(basename, match, run_regex)) {
-            int runNumber = stoi(match[1].str());
-
-            // Verifica se está no intervalo
-            bool processFile = false;
-            if (runa == -1 && runb == -1) {
-                processFile = true; // processa todos
-            } else if (runa > 0 && runb >= runa && runNumber >= runa && runNumber <= runb) {
-                processFile = true; // processa somente dentro do intervalo
+//new version:: 2025-08-27
+  // --- se não forneceu intervalo, descobre min e max run ---
+    if (runa == -1 && runb == -1) {
+        int minRun = INT_MAX, maxRun = INT_MIN;
+        for (const auto &entry : fs::directory_iterator(path_to_runs)) {
+            if (entry.is_regular_file() && entry.path().extension() == ".root") {
+                string basename = entry.path().filename().string();
+                std::smatch match;
+                if (std::regex_match(basename, match, run_regex)) {
+                    int runNumber = stoi(match[1].str());
+                    minRun = std::min(minRun, runNumber);
+                    maxRun = std::max(maxRun, runNumber);
+                }
             }
-
-            if (!processFile) continue;
-
-            cout << "Processing run: " << runNumber << " (" << filename << ")" << endl;
-
-            // Aqui você abre o TFile, pega o TTree e chama GetGflash pros 8 telescopios
-            TFile *file = TFile::Open(filename.c_str(), "READ");
-            if (!file || file->IsZombie()) {
-                cerr << "Error opening file: " << filename << endl;
-                continue;
-            }
-
-            TTree *tx = (TTree*)file->Get("AD");
-            if (!tx) {
-                cerr << "No tree found in file: " << filename << endl;
-                file->Close();
-                continue;
-            }
-
-            for (int tel = 1; tel <= 8; ++tel) {
-                GetGflash(tx, tel, runNumber, sigma, threshold, guess, tofmin,tofmax);
-                plotPID(tx, tel, runNumber, true);
-            }
-            //plotPID(tx, runNumber, true);
-
-            file->Close();
         }
+        if (minRun == INT_MAX) {
+            cerr << "No valid runs found in directory." << endl;
+            return;
+        }
+        runa = minRun;
+        runb = maxRun;
     }
-}
-cout <<"\nTotal execution time: "<< double(clock() - tStart) / (double)CLOCKS_PER_SEC<<" s."<<endl;
 
+    // --- percorre runs sequencialmente ---
+    for (int runNumber = runa; runNumber <= runb; runNumber++) {
+        cout << "\nProcessing run: " << runNumber << endl;
+        TChain *tx = new TChain("AD");
 
+        bool foundAny = false;
+        char name[1024];
 
+        for (int j = 0; j <= 999; j++) {
+            sprintf(name, "%s/r%04d_%03da.root", path_to_runs.c_str(), runNumber, j);
+            ifstream mfile(name);
+            if (mfile) {
+                mfile.close();
+                cout << "Adding " << name << endl;
+                tx->Add(name);
+                foundAny = true;
+            } else {
+                if (j == 0) {
+                    // nem o _000a.root existe → não existe essa run
+                    break;
+                } else {
+                    // chegou no fim da sequência de splits
+                    break;
+                }
+            }
+        }
+
+        if (!foundAny || tx->GetEntries() == 0) {
+            cout << "No valid files for run " << runNumber << endl;
+            delete tx;
+            continue;
+        }
+
+        // ---- chama análise pros telescópios ----
+        for (int tel = 1; tel <= 8; ++tel) {
+            GetGflash(tx, tel, runNumber, sigma, threshold, guess, tofmin, tofmax);
+            plotPID(tx, tel, runNumber, true);
+        }
+
+        delete tx; // limpa memória
+    }
+
+    cout << "\nTotal execution time: "
+         << double(clock() - tStart) / (double)CLOCKS_PER_SEC
+         << " s." << endl;
 }
