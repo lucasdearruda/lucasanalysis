@@ -31,7 +31,7 @@
 #include <cmath>
 #include <fstream>
 
-#include "/home/e802/Analysis/LucasAnalysis/useful.h"
+#include "/mnt/medley/LucasAnalysis/useful.h"
 
 ///
 //
@@ -53,8 +53,10 @@ int eval_flux2(){
     TStopwatch timer;
     string namefile_CH2,namefile_C,namefile_cut;
 
-    namefile_CH2 = "run_407_specific.root";
-    namefile_C = "run_406_specific.root";
+    // namefile_CH2 = "run_407_specific.root";
+    // namefile_C = "run_406_specific.root";
+    namefile_CH2 = "run_370_specific.root";
+    namefile_C = "run_388_specific.root";
     namefile_cut = "cut_p_tof.root";
 
 
@@ -136,7 +138,7 @@ int eval_flux2(){
     hneutrons->SetNameTitle("hneutrons","hneutrons");
 
     //load XS
-    TGraph *xs = new TGraph("/home/e802/Analysis/LucasAnalysis/fluxMedley_script/XS/nn.org_np_2to40MeV_LABrf_20.40.60.80deg.csv","%lg %lg %*lg %*lg %*lg",",");
+    TGraph *xs = new TGraph("/mnt/medley/LucasAnalysis/2023/fluxMedley_script/XS/nn.org_np_2to40MeV_LABrf_20.40.60.80deg.csv","%lg %lg %*lg %*lg %*lg",",");
 
 
     //stuff for multiplicative factor: 

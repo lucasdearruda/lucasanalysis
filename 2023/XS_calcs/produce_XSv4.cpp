@@ -3,7 +3,20 @@
 #include "TStopwatch.h"
 #include "/mnt/medley/LucasAnalysis/useful.h"
 #include "include/xs_function.cxx"
-void produce_pXSv4(Float_t Ea = 28, Float_t Eb = 29, string filename = "Fe_p_DDX.root");
+Int_t particle = 2;
+
+char particleName(int particle) {
+    switch (particle) {
+        case 1: return 'p'; // Proton
+        case 2: return 'd'; // Deuteron
+        case 3: return 't'; // Triton
+        case 4: return 'h'; // Helium-3
+        case 5: return 'a'; // Alpha
+        default: return '?'; // Unknown particle
+    }
+}
+
+void produce_XSv4(Float_t Ea = 28, Float_t Eb = 29, string filename = Form("Fe_%c_DDX.root",particleName(particle)));
 
 //define binMeV in a HH file 
 //std::vector<std::vector<std::vector<TH1D*>>> allHistos;
@@ -24,41 +37,32 @@ void RunSeveral_vBin(){
 
 
     // Lista de valores
-    // std::vector<Float_t> vals = {
-    //     3.5, 4.5, 5.5, 6.5, 7.5, 8.5, 9.5, 10.5, 11.5, 12.5, 13.5,
-    //     14.5, 15.5, 16.5, 17.6, 18.8, 20.1, 21.6, 23.2, 25, 27,
-    //     29.3, 32, 35, 38.4, 40
-    // };
-
     std::vector<Float_t> vals = {
-        25, 26
+        3.5, 4.5, 5.5, 6.5, 7.5, 8.5, 9.5, 10.5, 11.5, 12.5, 13.5,
+        14.5, 15.5, 16.5, 17.6, 18.8, 20.1, 21.6, 23.2, 25, 27,
+        29.3, 32, 35, 38.4, 40
     };
 
     for (size_t i = 0; i < vals.size() - 1; i++) {
         Float_t Ea = vals[i];
         Float_t Eb = vals[i+1];
 
-        cout << "Calling produce_pXSv4 with Ea = " << Ea << ", Eb = " << Eb << endl;
+        cout << "Calling produce_xSv4 with Ea = " << Ea << ", Eb = " << Eb << endl;
 
         // Se quiser, pode modificar o filename com os valores, ou deixar fixo
-        produce_pXSv4(Ea, Eb, "newresults/Fe_p_DDX_Aug.root");
+        produce_XSv4(Ea, Eb, Form("newresults/Fe_%c_DDX.root", particleName(particle)));
     }
 
 }
 
-void produce_pXSv4(Float_t Ea = 25, Float_t Eb = 26, string filename = "Fe_p_DDX_Aug.root"){ 
+void produce_XSv4(Float_t Ea = 28, Float_t Eb = 29, string filename = Form("Fe_%c_DDX.root", particleName(particle)"Fe_p_DDX.root")){ 
 
 
     TStopwatch timer;
     //std::vector<int> runsForward = {396,405};
     //std::vector<int> runsBackward = {410,412,383,384};
-    
     std::vector<int> runsForward = {396,405};
     std::vector<int> runsBackward = {410,412};
-
-
-    //std::vector<int> runsForward = {41,43};
-    //std::vector<int> runsBackward = {410,411};
 
 
     // std::vector<std::vector<TH1D*>> GetDDX(

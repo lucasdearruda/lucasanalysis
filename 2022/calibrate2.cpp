@@ -86,10 +86,10 @@ cout << "1 | 0.000402, 0.002275, 0.0016942782*\n";
 cout << "2 | 0.000357333, 0.00219807, 0.00117863**\n";
 cout << "3 | 0.000411, 0.002224, 0.0008225\n";
 cout << "4 | 0.000441, 0.002247, 0.0009116\n";
-cout << "5 | 0.001735, 0.002292, 1\n";
-cout << "6 | 0.001888, 0.002310, 1\n";
-cout << "7 | 0.001826, 0.002232, 1\n";
-cout << "8 | 0.001872, 0.002250, 1\n";
+cout << "5 | 0.001735, 0.002292, 0.001\n";
+cout << "6 | 0.001888, 0.002310, 0.001\n";
+cout << "7 | 0.001826, 0.002232, 0.001\n";
+cout << "8 | 0.001872, 0.002250, 0.001\n";
 cout << "* | Updated values 2025-07-10\n";
 cout << "**| Updated values 2025-08-13\n";
 
@@ -161,10 +161,10 @@ void printCampaignCals(){
     cout << "2 | 0.000357333, 0.00219807, 0.00117863**\n";
     cout << "3 | 0.000411, 0.002224, 0.0008225\n";
     cout << "4 | 0.000441, 0.002247, 0.0009116\n";
-    cout << "5 | 0.001735, 0.002292, 1\n";
-    cout << "6 | 0.001888, 0.002310, 1\n";
-    cout << "7 | 0.001826, 0.002232, 1\n";
-    cout << "8 | 0.001872, 0.002250, 1\n";
+    cout << "5 | 0.001735, 0.002292, 0.001\n";
+    cout << "6 | 0.001888, 0.002310, 0.001\n";
+    cout << "7 | 0.001826, 0.002232, 0.001\n";
+    cout << "8 | 0.001872, 0.002250, 0.001\n";
     cout << "* | Updated values 2025-07-10\n";
     cout << "**| Updated values 2025-08-13\n";
     cout << "----------------------------------------------------\n";
@@ -834,4 +834,59 @@ void runMinuitFit() {
     std::cout << "g1 = " << g1_fit << " ± " << err1 << std::endl;
     std::cout << "g2 = " << g2_fit << " ± " << err2 << std::endl;
     std::cout << "g3 (fixo) = " << g_g3 << std::endl;
+}
+
+void plotTelescope(int telN = 1, bool wCuts = false){
+    cout<<"Loading plots for telescope "<<telN<<"..."<<endl;
+    loadPlots(telN, true);
+    cout<<"Loading cuts for telescope "<<telN<<"..."<<endl;
+    loadCuts(telN);
+    cout<<"Setting guesses for telescope "<<telN<<"..."<<endl;
+
+
+    switch (telN) {
+        case 1:
+            setGuesses(0.000402, 0.002275, 0.0016942782);
+            cout << "Assigned values: 0.000402, 0.002275, 0.0016942782" << endl;
+            break;
+        case 2:
+            setGuesses(0.000357333, 0.00219807, 0.00117863);
+            cout << "Assigned values: 0.000357333, 0.00219807, 0.00117863" << endl;
+            break;
+        case 3:
+            setGuesses(0.000411, 0.002224, 0.0008225);
+            cout << "Assigned values: 0.000411, 0.002224, 0.0008225" << endl;
+            break;
+        case 4:
+            setGuesses(0.000441, 0.002247, 0.0009116);
+            cout << "Assigned values: 0.000441, 0.002247, 0.0009116" << endl;
+            break;
+        case 5:
+            setGuesses(0.001735, 0.002292, 0.001);
+            cout << "Assigned values: 0.001735, 0.002292, 0.001" << endl;
+            break;
+        case 6:
+            setGuesses(0.001888, 0.002310, 0.001);
+            cout << "Assigned values: 0.001888, 0.002310, 0.001" << endl;
+            break;
+        case 7:
+            setGuesses(0.001826, 0.002232, 0.001);
+            cout << "Assigned values: 0.001826, 0.002232, 0.001" << endl;
+            break;
+        case 8:
+            setGuesses(0.001872, 0.002250, 0.001);
+            cout << "Assigned values: 0.001872, 0.002250, 0.001" << endl;
+            break;
+        default:
+            cerr << "No guesses defined for telescope " << telN << "!" << endl;
+            break;
+    }
+
+    plotRawDataG(telN);
+    plotPlots(1,(TCanvas*)rawC->cd(1));
+    plotPlots(2,(TCanvas*)rawC->cd(2));
+    if(wCuts){
+        plotCuts(telN,1,(TCanvas*)gROOT->FindObject("rawC_1"));
+        plotCuts(telN,2,(TCanvas*)gROOT->FindObject("rawC_2"));
+    }
 }

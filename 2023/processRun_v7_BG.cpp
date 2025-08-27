@@ -1,5 +1,6 @@
-//version 7.022.2025-08-13.1
-// Updated for 2022 RUNS
+//version 7_BG.2025-08-14.1
+// -- read gamma flash from gammafile = "BGgammaRef.dat";
+// Thanformed version 7.2025-08-05.2 into this to process BG runs. 
 
 #include "TF1.h"
 #include "TH1D.h"
@@ -22,9 +23,15 @@
 #include "TFile.h"
 #include "TGraphErrors.h"
 
+#include <sstream> // para std::istringstream
+#include <assert.h>
+#include <vector>
+#include <iostream>
+#include <cmath>
+#include <fstream>
+
 // Inclua o functions.hh, mas o root-config cuida das libs do ROOT, então nada redundante
-#include "/mnt/medley/LucasAnalysis/2022/include/functions2.hh"
-#include "src/loadcals.cc" //for loading calibrations:
+#include "/mnt/medley/LucasAnalysis/2023/include/functions2.hh"
 
 int main(int argc, char* argv[]) {
 
@@ -47,7 +54,7 @@ int main(int argc, char* argv[]) {
 	int nrun = std::stoi(argv[1]);
     //---ooOOOoo---.---ooOOOoo---.---ooOOOoo---.---ooOOOoo---.---ooOOOoo---.---ooOOOoo---.---ooOOOoo---.---ooOOOoo---.
     
-    string infofile = "/mnt/medley/LucasAnalysis/2022/runlist2022.csv";
+    string infofile = "/mnt/medley/LucasAnalysis/2023/MEDLEY2023v7.csv";
     cout<<"Obtaining run data from "<<infofile<<"..."<<endl;
 
     //obtaining runData: 
@@ -92,13 +99,13 @@ int main(int argc, char* argv[]) {
     //Create the TGraphs for correction:
         //TGraphErrors *correctionP, *correctionD;
 
-        string correctionsPath = "/mnt/medley/LucasAnalysis/2022/Corrections";
+        string correctionsPath = "/mnt/medley/LucasAnalysis/2023/Corrections";
         
         TFile *file = new TFile(Form("%s/dcorrection.root", correctionsPath.c_str()), "READ");
-        TFile *fileP = new TFile(Form("%s/pcorr.root", correctionsPath.c_str()), "READ");
+        TFile *fileP = new TFile(Form("%s/pcorrection.root", correctionsPath.c_str()), "READ");
 
         correctionD = (TGraphErrors *)file->Get("dcorrection");
-        correctionP = (TGraphErrors *)fileP->Get("pcorr");
+        correctionP = (TGraphErrors *)fileP->Get("pcorrection");
 
         Ppoint = correctionP->GetPointX(correctionP->GetN()-1);
         Dpoint = correctionD->GetPointX(correctionD->GetN()-1);
@@ -112,7 +119,7 @@ int main(int argc, char* argv[]) {
     //---ooOOOoo---.---ooOOOoo---.---ooOOOoo---.---ooOOOoo---.---ooOOOoo---.---ooOOOoo---.---ooOOOoo---.---ooOOOoo---.
     //CREATE THE REDUCED TTREE
 
-    const char * outputFileName  = Form("/mnt/medley/LucasAnalysis/2022/reducedv7/%03d.root",nrun);
+    const char * outputFileName  = Form("/mnt/medley/LucasAnalysis/2023/reducedv7/%03d.root",nrun);
     cout<<"--> OUTPUT FILENAME: "<<outputFileName<<"."<<endl;
 
     TFile* outputFile = new TFile(outputFileName, "RECREATE");
@@ -155,14 +162,14 @@ int main(int argc, char* argv[]) {
     TChain *tx = NULL;
 
     if (!tx)
-        tx = new TChain("RD");
+        tx = new TChain("AD");
 
     vector<Int_t> entries;
     Bool_t fExist = true;
     for (Int_t j = 0; j <= 999 && fExist; j++)
     {
         ifstream mfile;
-        sprintf(name, "/mnt/medley/runswithMM_2022/r%04d_%03dr.root", nrun, j);
+        sprintf(name, "/mnt/medley/RootA_2023/r%04d_%03da.root", nrun, j);
         mfile.open(name);
         if (mfile)
         {
@@ -196,11 +203,9 @@ int main(int argc, char* argv[]) {
     //cut npt csi 
     TCutG *cut_protonsNPTCsI[8], *cut_deuteronsNPTCsI[8];
 
-
-
-    string cuts_path =   "/mnt/medley/LucasAnalysis/2022/PID";
+    string cuts_path =   "/mnt/medley/LucasAnalysis/2023/PIDv6";
     bool warn_tels58 = false;
-    for(int telN = 1; telN<=4; telN++){//just up tel 4 for now 2025-08-13
+    for(int telN = 1; telN<=8; telN++){
         
         if(telN<=4){
             
@@ -375,14 +380,37 @@ int main(int argc, char* argv[]) {
     Float_t Gflash[maxTel];
     Float_t tgamma[maxTel];
 
+    //---ooOOOoo---.---ooOOOoo---.---ooOOOoo---.---ooOOOoo---.---ooOOOoo---.---ooOOOoo---.---ooOOOoo---.---ooOOOoo---.
+        //reading the gamma flash :: 
+    string gammafile = "BGgammaRef.dat";  
+    ifstream f(gammafile.c_str());
+    if (!f.is_open()) {
+        cerr << "Erro ao abrir arquivo\n";
+        return 1;
+    }
+
+    string line;
+    int i = 1;
+    while (getline(f, line)) {
+        if (line.empty() || line[0] == '#') continue; // pula comentário/vazio
+
+        istringstream iss(line);
+        if (iss >> Gflash[i]) {
+            i++;
+            if (i > maxTel) break; // já leu 8 valores
+        }
+    }
+    f.close();
+    //---ooOOOoo---.---ooOOOoo---.---ooOOOoo---.---ooOOOoo---.---ooOOOoo---.---ooOOOoo---.---ooOOOoo---.---ooOOOoo---.
+    cout<<"Reading from "<<gammafile.c_str()<<endl;
     for(int i=0;i<5;i++) cout<<"/ : /"<<i<<" /"<<endl; // just to spot it on the terminal 
     for(int n=1;n<=8;n++){
         //Fitting Gamma flash 
 
-        Gflash[n] = GetGflash(tx,Form("Medley_%d_dE2_ToF",n),500,true,3,0.05); // changing it to false, it will let the fitting plot opened to check 
+        //Gflash[n] = GetGflash(tx,Form("Medley_%d_dE2_ToF",n),500,true,3,0.05); // changing it to false, it will let the fitting plot opened to check 
         tgamma[n] = provideTgama(n);
 
-        cout<<".\n.\n.\nFitting Gamma flash for telescope "<<n<<": Gflash = "<<Gflash[n]<<" ns. tgamma = "<<tgamma[n]<<" ns."<<endl;
+        cout<<".\n.\n.\nReading Gamma flash for telescope "<<n<<": Gflash = "<<Gflash[n]<<" ns. tgamma = "<<tgamma[n]<<" ns."<<endl;
 
     }
 
@@ -412,7 +440,6 @@ int main(int argc, char* argv[]) {
     Eres = 0;
 
     //---ooOOOoo---.---ooOOOoo---.---ooOOOoo---.---ooOOOoo---.---ooOOOoo---.---ooOOOoo---.---ooOOOoo---.---ooOOOoo---.
-    loadCals();//loading cals
 
     Long64_t nEntries = tx->GetEntries();
 
@@ -424,7 +451,7 @@ int main(int argc, char* argv[]) {
         particle = 0; //particle starts unidentified
         tofn = 0; //tof starts zero too 
 
-        for(int telN = 1; telN <= 4; telN++){ // FOR EACH TELESCOPE:
+        for(int telN = 1; telN <= 8; telN++){ // FOR EACH TELESCOPE:
             
             //critical verifications: 
             invTof = tx->GetLeaf(Form("Medley_%d_dE2_ToF",telN))->GetValue();
@@ -432,9 +459,9 @@ int main(int argc, char* argv[]) {
 
             if(invTof > Gflash[telN]) continue; //if the event is faster than gamma... go to next telecope:: THIS IS RIGHT NOW (before it was wrong, with break) 2025-07-21
 
-            de1 =  tx->GetLeaf(Form("Medley_%d_dE1",telN))->GetValue()*g1[telN-1];
-            de2 =  tx->GetLeaf(Form("Medley_%d_dE2",telN))->GetValue()*g2[telN-1];
-            Eres =  tx->GetLeaf(Form("Medley_%d_Eres",telN))->GetValue()*g3[telN-1];
+            de1 =  tx->GetLeaf(Form("Medley_%d_dE1",telN))->GetValue();
+            de2 =  tx->GetLeaf(Form("Medley_%d_dE2",telN))->GetValue();
+            Eres =  tx->GetLeaf(Form("Medley_%d_Eres",telN))->GetValue();
             energy = de1+de2+Eres;
 
             si1 = de1;
@@ -451,7 +478,7 @@ int main(int argc, char* argv[]) {
                         //it is a proton!
                         particle = 1;
 
-                    }else if( 
+                    }else if(
                         (cut_deuterons[telN]->IsInside(de2,de1) && cut_deuteronsNPTCsI[telN]->IsInside(Eres,de2))
                         ||
                         (cut_deuteronsPT[telN]->IsInside(de2,de1)&&cut_deuteronsCsI[telN]->IsInside(Eres,de2)) 
@@ -467,13 +494,13 @@ int main(int argc, char* argv[]) {
                         //it is a triton!
                         particle = 3;
 
-                    }else if(cut_alphas[telN]->IsInside(de2,de1)){
-                        //it is an alpha!
-                        particle = 5;
-
                     }else if(cut_he[telN]->IsInside(de2,de1)){
                         //it is a helium!
                         particle = 4;
+
+                    }else if(cut_alphas[telN]->IsInside(de2,de1)){
+                        //it is an alpha!
+                        particle = 5;
 
                     }
                 }else{//particle classification for telescopes 5-8::
@@ -512,7 +539,7 @@ int main(int argc, char* argv[]) {
                 
                 if( (result->MedleyConfig) == 'R')
                     if(telN<=4){
-                        ang = 180-20.*telN; // [1, 2, 3, 4] --> [160, 140, 120, 100] 
+                        ang = 80+20.*telN; // [1, 2, 3, 4] --> [100, 120, 140, 160]
                     }else{
                         ang = 180-20.*telN; // [5, 6, 7, 8] --> [80, 60, 40, 20]
                     }   
@@ -561,7 +588,7 @@ int main(int argc, char* argv[]) {
 
     //some information to add
         TNamed *percentage_proc= new TNamed("processed (percentage): ",to_string(percentage));
-        TNamed *processing_info= new TNamed("processed by processRun_v7.cpp:",Form("version 7.022.2025-08-13.1  in %s",cur_time.c_str()));
+        TNamed *processing_info= new TNamed("processed by processRun_v7.cpp:",Form("version7.2025-08-05.1 in %s",cur_time.c_str()));
         TNamed *charge_in_uC = NULL;
         TNamed *MedleyTarget= NULL;
         TNamed *duration_of_the_run_in_sec= NULL;
@@ -575,7 +602,7 @@ int main(int argc, char* argv[]) {
         TNamed *gamma_flash_in_ns_T7 = new TNamed("gFlash_T7(ns)",to_string(Gflash[7]).c_str());
         TNamed *gamma_flash_in_ns_T8 = new TNamed("gFlash_T8(ns)",to_string(Gflash[8]).c_str());
 
-        TNamed *dist_Medleytarget_T1_in_mm= new TNamed("dist_Medleytarget_T1(mm)",to_string(1e3*L[1]).c_str());
+        TNamed *dist_Medleytarget_T1_in_mm = new TNamed("dist_Medleytarget_T1(mm)",to_string(1e3*L[1]).c_str());
         TNamed *dist_Medleytarget_T2_in_mm= new TNamed("dist_Medleytarget_T2(mm)",to_string(1e3*L[2]).c_str());
         TNamed *dist_Medleytarget_T3_in_mm= new TNamed("dist_Medleytarget_T3(mm)",to_string(1e3*L[3]).c_str());
         TNamed *dist_Medleytarget_T4_in_mm= new TNamed("dist_Medleytarget_T4(mm)",to_string(1e3*L[4]).c_str());
@@ -687,7 +714,7 @@ int main(int argc, char* argv[]) {
     cout <<"\nTotal execution time: "<< double(clock() - tStart) / (double)CLOCKS_PER_SEC<<" s."<<endl;
     //timer.Print();
 
-    cout<<"Compiled from processRun_v7.cpp, version 7.022.2025-08-13.1"<<endl;
+    cout<<"Compiled from processRun_v7.cpp, version 7.2025-07-23.1"<<endl;
     return 0;
 
 }

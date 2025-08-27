@@ -40,7 +40,7 @@ using namespace std;
 // Different than before, many settings will be defined within the script, not passed as arguments
 void prod_DDX(
     bool matchingCORR = true,
-    bool TTC = true,
+    bool TTC = false,
     bool plotIt = true, 
     bool saveIt = true, 
     bool pause_each = false,
@@ -76,8 +76,8 @@ void prod_DDX(
     //: : : Defining what we want to get: 
         //std::vector<float> angles =  {20.0, 40.0, 60.0, 80.0, 100.0, 120.0, 140.0, 160.0};
 
-    //std::vector<float> angles =  {20.0, 40.0, 60.0, 80.0, 100.0, 120.0, 140.0, 160.0};
-    std::vector<float> angles =  {20.0};
+    std::vector<float> angles =  {20.0, 40.0, 60.0, 80.0, 100.0, 120.0, 140.0, 160.0};
+    
     
     //std::vector<char> particles = {'p', 'd', 't', 'h', 'a'};
     std::vector<char> particles = { 'p', 'a'};
@@ -127,9 +127,9 @@ void prod_DDX(
     
     
     //for Fe-thick: _ _ _ _ _ _ _ _ _ 
-    std::vector<int> runsForward = {397,405};
+    std::vector<int> runsForward = {397,404};
                         //std::vector<int> runsBackward = {383,384}; PROBLEMATIC RUNS (120° very weird)!!!! 
-    std::vector<int> runsBackward = {410,412};
+    std::vector<int> runsBackward = {410,413};
 
     //for Fe-thin: _ _ _ _ _ _ _ _ _ 
     // std::vector<int> runsForward = {389,394};

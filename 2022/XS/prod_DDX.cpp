@@ -31,11 +31,11 @@ using namespace std;
 // Different than before, many settings will be defined within the script, not passed as arguments
 void prod_DDX(
     bool matchingCORR = true,
-    bool TTC = true,
+    bool TTC = false,
     bool plotIt = true, 
     bool saveIt = true, 
     bool pause_each = false, 
-    string outputFileName = "prod_DDX_MC_TTC.root"    
+    string outputFileName = "prod_DDX_TTC.root"    
     ) {
     
     string cur_time = getCurrentTime();
@@ -54,7 +54,7 @@ void prod_DDX(
     
     //: : : Defining what we want to get: 
         //std::vector<float> angles =  {20.0, 40.0, 60.0, 80.0, 100.0, 120.0, 140.0, 160.0};
-    std::vector<float> angles =  {20.0, 40.0, 60.0, 80.0, 100.0, 120.0, 140.0, 160.0};
+    std::vector<float> angles =  {20.0};
     //std::vector<char> particles = {'p', 'd', 't', 'h', 'a'};
     std::vector<char> particles = { 'p', 'a'};
     //string outputFileName = "prod_DDX.root";
@@ -77,7 +77,7 @@ void prod_DDX(
 
     cout<< "Loading runs and charges..." << endl;  
     //for Fe:
-    std::vector<int> runsForward = {88,88};
+    std::vector<int> runsForward = {88,90};
     std::vector<int> runsBackward = {94,94};
 
     //for carbon

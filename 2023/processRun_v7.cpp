@@ -1,3 +1,18 @@
+//version 7.2025-08-21.2
+//I updated the ToF correction for protons and deuterons
+// removed the Dpoint and Ppoint variables, they were not used
+
+//version 7.2025-08-20.2
+//Diego spotted an error in the angles attribution, it was fixed today
+//We updated some printing information regarding the progress
+
+//version 7.2025-08-05.2
+// Fixed the information from the .csv
+//version 7.2025-08-05.1
+// Fixed the TNamed for the processing info to include the correct file name and time.
+//version 7.2025-08-05.0
+// I added the correction for the TNamed 'info_tofNN' to include the tof_correction if it is enabled.
+
 //version 7.2025-07-23.0
 //I added the processing for Tels 5-8...
 
@@ -59,7 +74,7 @@ int main(int argc, char* argv[]) {
 	int nrun = std::stoi(argv[1]);
     //---ooOOOoo---.---ooOOOoo---.---ooOOOoo---.---ooOOOoo---.---ooOOOoo---.---ooOOOoo---.---ooOOOoo---.---ooOOOoo---.
     
-    string infofile = "/mnt/medley/LucasAnalysis/2023/MEDLEY2023.csv";
+    string infofile = "/mnt/medley/LucasAnalysis/2023/MEDLEY2023v7.csv";
     cout<<"Obtaining run data from "<<infofile<<"..."<<endl;
 
     //obtaining runData: 
@@ -106,8 +121,8 @@ int main(int argc, char* argv[]) {
 
         string correctionsPath = "/mnt/medley/LucasAnalysis/2023/Corrections";
         
-        TFile *file = new TFile(Form("%s/dcorrection.root", correctionsPath.c_str()), "READ");
-        TFile *fileP = new TFile(Form("%s/pcorrection.root", correctionsPath.c_str()), "READ");
+        TFile *file = new TFile(Form("%s/newDcorr2023.root", correctionsPath.c_str()), "READ");
+        TFile *fileP = new TFile(Form("%s/newPcorr2023.root", correctionsPath.c_str()), "READ");
 
         correctionD = (TGraphErrors *)file->Get("dcorrection");
         correctionP = (TGraphErrors *)fileP->Get("pcorrection");
@@ -521,7 +536,7 @@ int main(int argc, char* argv[]) {
                 
                 if( (result->MedleyConfig) == 'R')
                     if(telN<=4){
-                        ang = 80+20.*telN; // [1, 2, 3, 4] --> [100, 120, 140, 160]
+                        ang = 180-20.*telN; // [1, 2, 3, 4] --> [160, 140, 120, 100] //IMPORTANT CORRECTION 2025-08-20
                     }else{
                         ang = 180-20.*telN; // [5, 6, 7, 8] --> [80, 60, 40, 20]
                     }   
@@ -558,8 +573,11 @@ int main(int argc, char* argv[]) {
 
 
         // Print the progress
-        std::cout << "Progress ["<< nrun <<"]: " << 100.0*entry/(nEntries*percentage/100.0) << "%\r";
-        std::cout.flush();
+        if(entry % 10000 == 0){
+            std::cout << "Progress ["<< nrun <<"]: " << 100.0*entry/(nEntries*percentage/100.0) << "%\r";
+            std::cout.flush();
+        }
+        
         
     }
 
@@ -570,7 +588,7 @@ int main(int argc, char* argv[]) {
 
     //some information to add
         TNamed *percentage_proc= new TNamed("processed (percentage): ",to_string(percentage));
-        TNamed *processing_info= new TNamed("processed by processRun_v7.cpp:version7.2025-07-23.0 in %s",cur_time);
+        TNamed *processing_info= new TNamed("processed by processRun_v7.cpp:",Form("version7.2025-08-21.2 in %s",cur_time.c_str()));
         TNamed *charge_in_uC = NULL;
         TNamed *MedleyTarget= NULL;
         TNamed *duration_of_the_run_in_sec= NULL;
@@ -599,6 +617,8 @@ int main(int argc, char* argv[]) {
         TNamed *info_tof_measured= new TNamed("tof_measured","Gflash - invtof + tgamma == tofNN+ tof_part");
         TNamed *info_tof_correction= new TNamed("tof_correction","correction for proton and deuteron particles, if needed");
         TNamed *info_tofNN= new TNamed("tofNN","tofNN = tof_measured - ToFparticleNumber(energy,particle,L[telN])");
+        if(tof_correction_bool)info_tofNN = new TNamed("tofNN","tofNN = tof_measured - ToFparticleNumber(energy,particle,L[telN]) + tof_correction");
+        
         TNamed *info_ENN= new TNamed("ENN","ENN = En(tofNN) -- energy in MeV from ToFNN");
         TNamed *info_si1= new TNamed("si1","energy deposited in si1 (dE1)");
         TNamed *info_si2= new TNamed("si2","energy deposited in si2 (dE2)");
@@ -694,7 +714,7 @@ int main(int argc, char* argv[]) {
     cout <<"\nTotal execution time: "<< double(clock() - tStart) / (double)CLOCKS_PER_SEC<<" s."<<endl;
     //timer.Print();
 
-    cout<<"Compiled from processRun_v7.cpp, version 7.2025-07-23.0"<<endl;
+    cout<<"Compiled from processRun_v7.cpp, version 7.2025-08-21.2"<<endl;
     return 0;
 
 }
