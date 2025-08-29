@@ -1,3 +1,10 @@
+//version 7.2025-08-29.0
+// We updated the ifs for the angles; adding an error message also if the configuration is not defined in the run database
+
+//version 7.2025-08-27.0
+//I've changed the GetGflash function to include the runN and the param[] to it
+
+
 //version 7.2025-08-21.2
 //I updated the ToF correction for protons and deuterons
 // removed the Dpoint and Ppoint variables, they were not used
@@ -42,7 +49,8 @@
 #include "TGraph.h"
 #include "TFile.h"
 #include "TGraphErrors.h"
-
+#include "TStyle.h"
+#include "TROOT.h"
 
 #include <assert.h>
 #include <vector>
@@ -399,12 +407,26 @@ int main(int argc, char* argv[]) {
 
     Float_t Gflash[maxTel];
     Float_t tgamma[maxTel];
-
+    float param[maxTel][4];
     for(int i=0;i<5;i++) cout<<"/ : /"<<i<<" /"<<endl; // just to spot it on the terminal 
     for(int n=1;n<=8;n++){
         //Fitting Gamma flash 
 
-        Gflash[n] = GetGflash(tx,Form("Medley_%d_dE2_ToF",n),500,true,3,0.05); // changing it to false, it will let the fitting plot opened to check 
+
+
+// Float_t GetGflash(TTree *tx, 
+//                     Int_t telN = 1, 
+//                     Int_t runN=0,
+//                     Float_t sigma= 4,
+//                     Float_t threshold= 0.002,
+//                     float guess = 400,
+//                     float param[] = nullptr,
+//                     float tofmin = 300,
+//                     float tofmax = 500, 
+//                     bool closecanvas = false, 
+//                     bool saveIt=true){
+
+        Gflash[n] = GetGflash(tx,n,nrun,4,0.002,500,param[n-1],300,550); // changing it to false, it will let the fitting plot opened to check 
         tgamma[n] = provideTgama(n);
 
         cout<<".\n.\n.\nFitting Gamma flash for telescope "<<n<<": Gflash = "<<Gflash[n]<<" ns. tgamma = "<<tgamma[n]<<" ns."<<endl;
@@ -534,15 +556,15 @@ int main(int argc, char* argv[]) {
 
             if(particle){
                 
-                if( (result->MedleyConfig) == 'R')
-                    if(telN<=4){
-                        ang = 180-20.*telN; // [1, 2, 3, 4] --> [160, 140, 120, 100] //IMPORTANT CORRECTION 2025-08-20
-                    }else{
-                        ang = 180-20.*telN; // [5, 6, 7, 8] --> [80, 60, 40, 20]
-                    }   
-                else
+                if( (result->MedleyConfig) == 'R'){
+                    ang = 180-20.*telN; // [1, 2, 3, 4] --> [160, 140, 120, 100] //IMPORTANT CORRECTION 2025-08-20 (spotted by Diego)    
+                                        // [5, 6, 7, 8] --> [80, 60, 40, 20]
+                }else if( (result->MedleyConfig) == 'N'){
                     ang = 20.*telN; // [1, 2, 3, 4] --> [20, 40, 60, 80] and [5, 6, 7, 8] --> [100, 120, 140, 160]
-                
+                }else{
+                    ang = -1; //undefined configuration
+                    cerr << "\n\nWARNING: Medley configuration is not defined in the run database!! Check it out!!\n\n"<<endl;                
+                }
                 //evaluate tof normally
                 tof_measured = Gflash[telN] - invTof + tgamma[telN];
                 tofn = tof_measured - ToFparticleNumber(energy,particle,L[telN]);
@@ -588,7 +610,7 @@ int main(int argc, char* argv[]) {
 
     //some information to add
         TNamed *percentage_proc= new TNamed("processed (percentage): ",to_string(percentage));
-        TNamed *processing_info= new TNamed("processed by processRun_v7.cpp:",Form("version7.2025-08-21.2 in %s",cur_time.c_str()));
+        TNamed *processing_info= new TNamed("processed by processRun_v7.cpp:",Form("version 7.2025-08-29.0 in %s",cur_time.c_str()));
         TNamed *charge_in_uC = NULL;
         TNamed *MedleyTarget= NULL;
         TNamed *duration_of_the_run_in_sec= NULL;
@@ -714,7 +736,7 @@ int main(int argc, char* argv[]) {
     cout <<"\nTotal execution time: "<< double(clock() - tStart) / (double)CLOCKS_PER_SEC<<" s."<<endl;
     //timer.Print();
 
-    cout<<"Compiled from processRun_v7.cpp, version 7.2025-08-21.2"<<endl;
+    cout<<"Compiled from processRun_v7.cpp, version 7.2025-08-29.0"<<endl;
     return 0;
 
 }
